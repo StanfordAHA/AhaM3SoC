@@ -30,7 +30,31 @@ module AhaGarnetSoC (
   input   wire            UART0_RXD,          // UART0 Rx Data
   output  wire            UART0_TXD,          // UART0 Tx Data
   input   wire            UART1_RXD,          // UART1 Rx Data
-  output  wire            UART1_TXD           // UART1 Tx Data
+  output  wire            UART1_TXD,          // UART1 Tx Data
+
+  // TLX FWD Channel
+  output  wire                                  TLX_FWD_PAYLOAD_TVALID,
+  input   wire                                  TLX_FWD_PAYLOAD_TREADY,
+  output  wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]   TLX_FWD_PAYLOAD_TDATA_LO,
+  output  wire [(39-`TLX_FWD_DATA_LO_WIDTH):0]  TLX_FWD_PAYLOAD_TDATA_HI,
+
+  output  wire            TLX_FWD_FLOW_TVALID,
+  input   wire            TLX_FWD_FLOW_TREADY,
+  output  wire [1:0]      TLX_FWD_FLOW_TDATA,
+
+  // TLX REV Channel
+  input   wire            TLX_REV_CLK,
+  input   wire                                  TLX_REV_PAYLOAD_TVALID,
+  output  wire                                  TLX_REV_PAYLOAD_TREADY,
+  input   wire [(`TLX_REV_DATA_LO_WIDTH-1):0]   TLX_REV_PAYLOAD_TDATA_LO,
+  input   wire [(79-`TLX_REV_DATA_LO_WIDTH):0]  TLX_REV_PAYLOAD_TDATA_HI,
+
+  input   wire            TLX_REV_FLOW_TVALID,
+  output  wire            TLX_REV_FLOW_TREADY,
+  input   wire [2:0]      TLX_REV_FLOW_TDATA,
+
+  // LoopBack Signal
+  output  wire            LOOP_BACK
 );
 
   // Synchronized Reset Wires
@@ -41,6 +65,7 @@ module AhaGarnetSoC (
   wire            jtag_poreset_n;
   wire            sram_reset_n;
   wire            tlx_reset_n;
+  wire            tlx_rev_reset_n;
   wire            cgra_reset_n;
   wire            dma0_reset_n;
   wire            dma1_reset_n;
@@ -494,10 +519,17 @@ module AhaGarnetSoC (
   );
 
   // ==== Instantiate TLX
-  AhaTlxIntegration u_tlx (
-    .TLX_CLK                      (tlx_clk),
-    .TLX_RESETn                   (tlx_reset_n),
+  wire [39:0]   tlx_fwd_payload_tdata;
+  wire [79:0]   tlx_rev_payload_tdata;
 
+  AhaTlxIntegration u_tlx (
+    // Clocks and Resets
+    .TLX_SIB_CLK                  (tlx_clk),
+    .TLX_SIB_RESETn               (tlx_reset_n),
+    .TLX_REV_CLK                  (TLX_REV_CLK),
+    .TLX_REV_RESETn               (tlx_rev_reset_n),
+
+    // Slave Interface Block Signals
     .TLX_AWID                     (tlx_awid),
     .TLX_AWADDR                   (tlx_awaddr),
     .TLX_AWLEN                    (tlx_awlen),
@@ -532,8 +564,31 @@ module AhaGarnetSoC (
     .TLX_RRESP                    (tlx_rresp),
     .TLX_RLAST                    (tlx_rlast),
     .TLX_RVALID                   (tlx_rvalid),
-    .TLX_RREADY                   (tlx_rready)
+    .TLX_RREADY                   (tlx_rready),
+
+    // Forward Channel
+    .TLX_FWD_PAYLOAD_TVALID       (TLX_FWD_PAYLOAD_TVALID),
+    .TLX_FWD_PAYLOAD_TREADY       (TLX_FWD_PAYLOAD_TREADY),
+    .TLX_FWD_PAYLOAD_TDATA        (tlx_fwd_payload_tdata),
+
+    .TLX_FWD_FLOW_TVALID          (TLX_FWD_FLOW_TVALID),
+    .TLX_FWD_FLOW_TREADY          (TLX_FWD_FLOW_TREADY),
+    .TLX_FWD_FLOW_TDATA           (TLX_FWD_FLOW_TDATA),
+
+    // Reverse Channel
+    .TLX_REV_PAYLOAD_TVALID       (TLX_REV_PAYLOAD_TVALID),
+    .TLX_REV_PAYLOAD_TREADY       (TLX_REV_PAYLOAD_TREADY),
+    .TLX_REV_PAYLOAD_TDATA        (tlx_rev_payload_tdata),
+
+    .TLX_REV_FLOW_TVALID          (TLX_REV_FLOW_TVALID),
+    .TLX_REV_FLOW_TREADY          (TLX_REV_FLOW_TREADY),
+    .TLX_REV_FLOW_TDATA           (TLX_REV_FLOW_TDATA)
   );
+
+  assign TLX_FWD_PAYLOAD_TDATA_LO = tlx_fwd_payload_tdata[`TLX_FWD_DATA_LO_WIDTH-1:0];
+  assign TLX_FWD_PAYLOAD_TDATA_HI = tlx_fwd_payload_tdata[39:`TLX_FWD_DATA_LO_WIDTH];
+
+  assign tlx_rev_payload_tdata    = {TLX_REV_PAYLOAD_TDATA_HI, TLX_REV_PAYLOAD_TDATA_LO};
 
   // ==== Instantiate Platform Controller
   AhaPlatformController u_platform_ctrl (
@@ -544,6 +599,9 @@ module AhaGarnetSoC (
 
     // JTAG Clock
     .JTAG_TCK                     (JTAG_TCK),
+
+    // TLX Reverse Channel Clock
+    .TLX_REV_CLK                  (TLX_REV_CLK),
 
     // Generated Clocks
     .CPU_FCLK                     (cpu_fclk),
@@ -570,6 +628,7 @@ module AhaGarnetSoC (
     .JTAG_PORESETn                (jtag_poreset_n),
     .SRAM_RESETn                  (sram_reset_n),
     .TLX_RESETn                   (tlx_reset_n),
+    .TLX_REV_RESETn               (tlx_rev_reset_n),
     .CGRA_RESETn                  (cgra_reset_n),
     .DMA0_RESETn                  (dma0_reset_n),
     .DMA1_RESETn                  (dma1_reset_n),
@@ -611,7 +670,10 @@ module AhaGarnetSoC (
     .LOCKUP                       (lockup),
     .SYSRESETREQ                  (sysresetreq),
     .SLEEPHOLDACKn                (sleepholdack_n),
-    .WDOG_RESET_REQ               (wdog_reset_req)
+    .WDOG_RESET_REQ               (wdog_reset_req),
+
+    // LoopBack
+    .LOOP_BACK                    (LOOP_BACK)
   );
 
 endmodule

@@ -41,26 +41,104 @@ module Tbench;
   //-----------------------------------------
   // AHASOC Integration
   //-----------------------------------------
+  // TLX FWD Wires
+  wire                                  tlx_fwd_payload_tvalid;
+  wire                                  tlx_fwd_payload_tready;
+  wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]   tlx_fwd_payload_tdata_lo;
+  wire [(39-`TLX_FWD_DATA_LO_WIDTH):0]  tlx_fwd_payload_tdata_hi;
+  wire [39:0]                           tlx_fwd_payload_tdata;
+
+  wire                                  tlx_fwd_flow_tvalid;
+  wire                                  tlx_fwd_flow_tready;
+  wire [1:0]                            tlx_fwd_flow_tdata;
+
+  assign tlx_fwd_payload_tdata = {tlx_fwd_payload_tdata_hi, tlx_fwd_payload_tdata_lo};
+
+  // TLX REV Wires
+  wire                                  tlx_rev_payload_tvalid;
+  wire                                  tlx_rev_payload_tready;
+  wire [(`TLX_REV_DATA_LO_WIDTH-1):0]   tlx_rev_payload_tdata_lo;
+  wire [(79-`TLX_REV_DATA_LO_WIDTH):0]  tlx_rev_payload_tdata_hi;
+  wire [79:0]                           tlx_rev_payload_tdata;
+
+  wire                                  tlx_rev_flow_tvalid;
+  wire                                  tlx_rev_flow_tready;
+  wire [2:0]                            tlx_rev_flow_tdata;
+
+  assign tlx_rev_payload_tdata_lo = tlx_rev_payload_tdata[(`TLX_REV_DATA_LO_WIDTH-1):0];
+  assign tlx_rev_payload_tdata_hi = tlx_rev_payload_tdata[79:`TLX_REV_DATA_LO_WIDTH];
 
   AhaGarnetSoC SOC (
-    .PORESETn         (po_reset_n),
-    .JTAG_RESETn      (nTRST),
+    .PORESETn                       (po_reset_n),
+    .JTAG_RESETn                    (nTRST),
 
-    .MASTER_CLK       (master_clk),
-    .JTAG_TCK         (TCK),
+    .MASTER_CLK                     (master_clk),
+    .JTAG_TCK                       (TCK),
 
-    .JTAG_TDI         (TDI),
-    .JTAG_TMS         (TMS),
-    .JTAG_TDO         (TDO),
+    .JTAG_TDI                       (TDI),
+    .JTAG_TMS                       (TMS),
+    .JTAG_TDO                       (TDO),
 
-    .TPIU_TRACE_DATA  (),
-    .TPIU_TRACE_SWO   (),
-    .TPIU_TRACE_CLK   (),
+    .TPIU_TRACE_DATA                (),
+    .TPIU_TRACE_SWO                 (),
+    .TPIU_TRACE_CLK                 (),
 
-    .UART0_RXD        (uart0_rxd),
-    .UART0_TXD        (uart0_txd),
-    .UART1_RXD        (uart1_rxd),
-    .UART1_TXD        (uart1_txd)
+    .UART0_RXD                      (uart0_rxd),
+    .UART0_TXD                      (uart0_txd),
+    .UART1_RXD                      (uart1_rxd),
+    .UART1_TXD                      (uart1_txd),
+
+    // TLX FWD
+    .TLX_FWD_PAYLOAD_TVALID         (tlx_fwd_payload_tvalid),
+    .TLX_FWD_PAYLOAD_TREADY         (tlx_fwd_payload_tready),
+    .TLX_FWD_PAYLOAD_TDATA_LO       (tlx_fwd_payload_tdata_lo),
+    .TLX_FWD_PAYLOAD_TDATA_HI       (tlx_fwd_payload_tdata_hi),
+
+    .TLX_FWD_FLOW_TVALID            (tlx_fwd_flow_tvalid),
+    .TLX_FWD_FLOW_TREADY            (tlx_fwd_flow_tready),
+    .TLX_FWD_FLOW_TDATA             (tlx_fwd_flow_tdata),
+
+    // TLX REV
+    .TLX_REV_CLK                    (master_clk),
+
+    .TLX_REV_PAYLOAD_TVALID         (tlx_rev_payload_tvalid),
+    .TLX_REV_PAYLOAD_TREADY         (tlx_rev_payload_tready),
+    .TLX_REV_PAYLOAD_TDATA_LO       (tlx_rev_payload_tdata_lo),
+    .TLX_REV_PAYLOAD_TDATA_HI       (tlx_rev_payload_tdata_hi),
+
+    .TLX_REV_FLOW_TVALID            (tlx_rev_flow_tvalid),
+    .TLX_REV_FLOW_TREADY            (tlx_rev_flow_tready),
+    .TLX_REV_FLOW_TDATA             (tlx_rev_flow_tdata),
+
+    // LoopBack
+    .LOOP_BACK                      ()
+  );
+
+  // TLX Master Domain
+  tlx_mem u_tlx_m_dom (
+    // FWD Link
+    .tlx_fwd_clk                    (master_clk),
+    .tlx_fwd_reset_n                (po_reset_n),
+
+    .tlx_fwd_payload_tvalid         (tlx_fwd_payload_tvalid),
+    .tlx_fwd_payload_tready         (tlx_fwd_payload_tready),
+    .tlx_fwd_payload_tdata          (tlx_fwd_payload_tdata),
+
+    .tlx_fwd_flow_tvalid            (tlx_fwd_flow_tvalid),
+    .tlx_fwd_flow_tready            (tlx_fwd_flow_tready),
+    .tlx_fwd_flow_tdata             (tlx_fwd_flow_tdata),
+
+    // REV Link
+    .tlx_rev_clk                    (master_clk),
+    .tlx_rev_reset_n                (po_reset_n),
+
+    .tlx_rev_payload_tvalid         (tlx_rev_payload_tvalid),
+    .tlx_rev_payload_tready         (tlx_rev_payload_tready),
+    .tlx_rev_payload_tdata          (tlx_rev_payload_tdata),
+
+    .tlx_rev_flow_tvalid            (tlx_rev_flow_tvalid),
+    .tlx_rev_flow_tready            (tlx_rev_flow_tready),
+    .tlx_rev_flow_tdata             (tlx_rev_flow_tdata)
   );
 
   //-----------------------------------------

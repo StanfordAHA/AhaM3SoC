@@ -9,8 +9,10 @@
 //------------------------------------------------------------------------------
 module AhaTlxIntegration (
   // Clock and Reset
-  input   wire            TLX_CLK,            // TLX Clock
-  input   wire            TLX_RESETn,         // CGRA PowerOn Reset
+  input   wire            TLX_SIB_CLK,    // Slave Interface Block Clock
+  input   wire            TLX_SIB_RESETn, // SIB Reset
+  input   wire            TLX_REV_CLK,    // REV Channel Clock
+  input   wire            TLX_REV_RESETn, // TLX Reset sync'ed to TLX_REV_CLK
 
   // Slave Interface Block Signals
   input   wire [3:0]      TLX_AWID,
@@ -47,46 +49,88 @@ module AhaTlxIntegration (
   output  wire [1:0]      TLX_RRESP,
   output  wire            TLX_RLAST,
   output  wire            TLX_RVALID,
-  input   wire            TLX_RREADY
+  input   wire            TLX_RREADY,
+
+  // Forward Channel
+  output  wire            TLX_FWD_PAYLOAD_TVALID,
+  input   wire            TLX_FWD_PAYLOAD_TREADY,
+  output  wire [39:0]     TLX_FWD_PAYLOAD_TDATA,
+
+  output  wire            TLX_FWD_FLOW_TVALID,
+  input   wire            TLX_FWD_FLOW_TREADY,
+  output  wire [1:0]      TLX_FWD_FLOW_TDATA,
+
+  // Reverse Channel
+  input   wire            TLX_REV_PAYLOAD_TVALID,
+  output  wire            TLX_REV_PAYLOAD_TREADY,
+  input   wire [79:0]     TLX_REV_PAYLOAD_TDATA,
+
+  input   wire            TLX_REV_FLOW_TVALID,
+  output  wire            TLX_REV_FLOW_TREADY,
+  input   wire [2:0]      TLX_REV_FLOW_TDATA
 );
 
-  wire unused = (| TLX_CLK)             |
-                (| TLX_RESETn)          |
-                (| TLX_AWID)            |
-                (| TLX_AWADDR)          |
-                (| TLX_AWLEN)           |
-                (| TLX_AWSIZE)          |
-                (| TLX_AWBURST)         |
-                (| TLX_AWLOCK)          |
-                (| TLX_AWCACHE)         |
-                (| TLX_AWPROT)          |
-                (| TLX_AWVALID)         |
-                (| TLX_WDATA)           |
-                (| TLX_WSTRB)           |
-                (| TLX_WLAST)           |
-                (| TLX_WVALID)          |
-                (| TLX_BREADY)          |
-                (| TLX_ARID)            |
-                (| TLX_ARADDR)          |
-                (| TLX_ARLEN)           |
-                (| TLX_ARSIZE)          |
-                (| TLX_ARBURST)         |
-                (| TLX_ARLOCK)          |
-                (| TLX_ARCACHE)         |
-                (| TLX_ARPROT)          |
-                (| TLX_ARVALID)         |
-                (| TLX_RREADY);
+  // SIB and Reverse DL Integration
+  nic400_slave_pwr_M1_m_tlx_tlx_AhaIntegration     u_slave_pwr_M1_m_tlx (
+    // Interface between SIB and System Interconnect
+    .awid_m1_m_s                              (TLX_AWID),
+    .awaddr_m1_m_s                            (TLX_AWADDR),
+    .awlen_m1_m_s                             (TLX_AWLEN),
+    .awsize_m1_m_s                            (TLX_AWSIZE),
+    .awburst_m1_m_s                           (TLX_AWBURST),
+    .awlock_m1_m_s                            (TLX_AWLOCK),
+    .awcache_m1_m_s                           (TLX_AWCACHE),
+    .awprot_m1_m_s                            (TLX_AWPROT),
+    .awvalid_m1_m_s                           (TLX_AWVALID),
+    .awready_m1_m_s                           (TLX_AWREADY),
+    .wdata_m1_m_s                             (TLX_WDATA),
+    .wstrb_m1_m_s                             (TLX_WSTRB),
+    .wlast_m1_m_s                             (TLX_WLAST),
+    .wvalid_m1_m_s                            (TLX_WVALID),
+    .wready_m1_m_s                            (TLX_WREADY),
+    .bid_m1_m_s                               (TLX_BID),
+    .bresp_m1_m_s                             (TLX_BRESP),
+    .bvalid_m1_m_s                            (TLX_BVALID),
+    .bready_m1_m_s                            (TLX_BREADY),
+    .arid_m1_m_s                              (TLX_ARID),
+    .araddr_m1_m_s                            (TLX_ARADDR),
+    .arlen_m1_m_s                             (TLX_ARLEN),
+    .arsize_m1_m_s                            (TLX_ARSIZE),
+    .arburst_m1_m_s                           (TLX_ARBURST),
+    .arlock_m1_m_s                            (TLX_ARLOCK),
+    .arcache_m1_m_s                           (TLX_ARCACHE),
+    .arprot_m1_m_s                            (TLX_ARPROT),
+    .arvalid_m1_m_s                           (TLX_ARVALID),
+    .arready_m1_m_s                           (TLX_ARREADY),
+    .rid_m1_m_s                               (TLX_RID),
+    .rdata_m1_m_s                             (TLX_RDATA),
+    .rresp_m1_m_s                             (TLX_RRESP),
+    .rlast_m1_m_s                             (TLX_RLAST),
+    .rvalid_m1_m_s                            (TLX_RVALID),
+    .rready_m1_m_s                            (TLX_RREADY),
 
-  assign TLX_AWREADY      = 1'b1;
-  assign TLX_WREADY       = 1'b1;
-  assign TLX_BID          = 4'h0;
-  assign TLX_BRESP        = 2'b00;
-  assign TLX_BVALID       = 1'b1;
-  assign TLX_ARREADY      = 1'b1;
-  assign TLX_RID          = 4'h0;
-  assign TLX_RDATA        = {64{1'b0}};
-  assign TLX_RRESP        = 2'b00;
-  assign TLX_RLAST        = 1'b1;
-  assign TLX_RVALID       = 1'b1;
+    // FWD Channel
+    .clk_sclk                                 (TLX_SIB_CLK),
+    .clk_sresetn                              (TLX_SIB_RESETn),
 
+    .tvalid_m1_m_tlx_fwd_ib_axi_stream        (TLX_FWD_PAYLOAD_TVALID),
+    .tready_m1_m_tlx_fwd_ib_axi_stream        (TLX_FWD_PAYLOAD_TREADY),
+    .tdata_m1_m_tlx_fwd_ib_axi_stream         (TLX_FWD_PAYLOAD_TDATA),
+
+    .tvalid_m1_m_tlx_fwd_ib_flow              (TLX_FWD_FLOW_TVALID),
+    .tready_m1_m_tlx_fwd_ib_flow              (TLX_FWD_FLOW_TREADY),
+    .tdata_m1_m_tlx_fwd_ib_flow               (TLX_FWD_FLOW_TDATA),
+
+    // REV Channel
+    .dl_rev_M1_m_tlxclk                       (TLX_REV_CLK),
+    .dl_rev_M1_m_tlxresetn                    (TLX_REV_RESETn),
+
+    .tvalid_m1_m_tlx_pl_rev_to_dl_rev_data    (TLX_REV_PAYLOAD_TVALID),
+    .tready_m1_m_tlx_pl_rev_to_dl_rev_data    (TLX_REV_PAYLOAD_TREADY),
+    .tdata_m1_m_tlx_pl_rev_to_dl_rev_data     (TLX_REV_PAYLOAD_TDATA),
+
+    .tvalid_m1_m_tlx_pl_rev_to_dl_rev_flow    (TLX_REV_FLOW_TVALID),
+    .tready_m1_m_tlx_pl_rev_to_dl_rev_flow    (TLX_REV_FLOW_TREADY),
+    .tdata_m1_m_tlx_pl_rev_to_dl_rev_flow     (TLX_REV_FLOW_TDATA)
+  );
 endmodule

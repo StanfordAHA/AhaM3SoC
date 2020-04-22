@@ -16,6 +16,9 @@ module AhaPlatformController (
   // JTAG Clock
   input   wire            JTAG_TCK,           // JTAG Clock
 
+  // TLX Reverse Clock
+  input   wire            TLX_REV_CLK,
+
   // Generated Clocks
   output  wire            CPU_FCLK,
   output  wire            CPU_GCLK,
@@ -51,6 +54,7 @@ module AhaPlatformController (
   output  wire            UART1_RESETn,
   output  wire            WDOG_RESETn,
   output  wire            NIC_RESETn,
+  output  wire            TLX_REV_RESETn,
 
   // Peripheral Clock Qualifiers
   output  wire            TIMER0_CLKEN,
@@ -82,7 +86,10 @@ module AhaPlatformController (
   input   wire            LOCKUP,
   input   wire            SYSRESETREQ,
   input   wire            SLEEPHOLDACKn,
-  input   wire            WDOG_RESET_REQ
+  input   wire            WDOG_RESET_REQ,
+
+  // LoopBack
+  output  wire            LOOP_BACK
 );
 
   wire unused = PMU_WIC_EN_ACK | PMU_WAKEUP | SLEEP | SLEEPDEEP | LOCKUP |
@@ -161,6 +168,20 @@ module AhaPlatformController (
   end
   assign DAP_RESETn = int_dbg_resetn_q & int_dbg_resetn_qq;
 
+  // ===== TLX Reverse Channel Reset
+  reg tlx_rev_reset_n_q;
+  reg tlx_rev_reset_n_qq;
+  always @(posedge TLX_REV_CLK or negedge PORESETn) begin
+    if(~PORESETn) begin
+      tlx_rev_reset_n_q   <= 1'b0;
+      tlx_rev_reset_n_qq  <= 1'b0;
+    end else begin
+      tlx_rev_reset_n_q   <= 1'b1;
+      tlx_rev_reset_n_qq  <= tlx_rev_reset_n_q;
+    end
+  end
+  assign TLX_REV_RESETn  = tlx_rev_reset_n_qq;
+
   // Synchronized Reset Assignments
   assign SRAM_RESETn          = cpu_reset_n;
   assign TLX_RESETn           = cpu_reset_n;
@@ -212,5 +233,8 @@ module AhaPlatformController (
   assign DBGSYSPWRUPACK         = DBGSYSPWRUPREQ;
   assign SLEEPHOLDREQn          = 1'b1;
   assign PMU_WIC_EN_REQ         = 1'b0;
+
+  // LoopBack
+  assign LOOP_BACK              = MASTER_CLK;
 
 endmodule

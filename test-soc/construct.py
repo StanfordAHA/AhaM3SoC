@@ -26,6 +26,7 @@ def construct():
         'dma_single_channel',
         'default_slaves_test',
         'interrupts_test',
+        'tlx_test',
 
         # CXDT Tests
         'discovery',
@@ -45,6 +46,8 @@ def construct():
         'ARM_IP_DIR': '/home/nyengele/Documents/AhaARMIP',
         'AHA_IP_DIR': '/home/nyengele/Documents/aha-soc-v2',
         'GARNET_DIR': '/home/nyengele/Documents/garnet',
+        'TLX_FWD_DATA_LO_WIDTH': 16,
+        'TLX_REV_DATA_LO_WIDTH': 45,
     }
 
     # -------------------------------------------------------------------------
