@@ -42,6 +42,7 @@ module Tbench;
   // AHASOC Integration
   //-----------------------------------------
   // TLX FWD Wires
+  wire                                  tlx_fwd_clk;
   wire                                  tlx_fwd_payload_tvalid;
   wire                                  tlx_fwd_payload_tready;
   wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]   tlx_fwd_payload_tdata_lo;
@@ -68,56 +69,71 @@ module Tbench;
   assign tlx_rev_payload_tdata_lo = tlx_rev_payload_tdata[(`TLX_REV_DATA_LO_WIDTH-1):0];
   assign tlx_rev_payload_tdata_hi = tlx_rev_payload_tdata[79:`TLX_REV_DATA_LO_WIDTH];
 
-  AhaGarnetSoC SOC (
-    .PORESETn                       (po_reset_n),
-    .JTAG_RESETn                    (nTRST),
+  GarnetSOC_pad_frame u_soc (
+    .pad_jtag_intf_i_phy_tck        (1'b0),
+    .pad_jtag_intf_i_phy_tdi        (1'b0),
+    .pad_jtag_intf_i_phy_tdo        (),
+    .pad_jtag_intf_i_phy_tms        (1'b0),
+    .pad_jtag_intf_i_phy_trst_n     (1'b1),
+    .pad_ext_rstb                   (1'b0),
+    .pad_ext_dump_start             (1'b0),
 
-    .MASTER_CLK                     (master_clk),
-    .JTAG_TCK                       (TCK),
+    .pad_PORESETn                   (po_reset_n),
+    .pad_SOC_JTAG_TRSTn             (nTRST),
+    .pad_CGRA_JTAG_TRSTn            (1'b1),
 
-    .JTAG_TDI                       (TDI),
-    .JTAG_TMS                       (TMS),
-    .JTAG_TDO                       (TDO),
+    .pad_MASTER_CLK                 (master_clk),
+    .pad_SOC_JTAG_TCK               (TCK),
+    .pad_CGRA_JTAG_TCK              (1'b0),
 
-    .TPIU_TRACE_DATA                (),
-    .TPIU_TRACE_SWO                 (),
-    .TPIU_TRACE_CLK                 (),
+    .pad_SOC_JTAG_TDI               (TDI),
+    .pad_SOC_JTAG_TMS               (TMS),
+    .pad_SOC_JTAG_TDO               (TDO),
 
-    .UART0_RXD                      (uart0_rxd),
-    .UART0_TXD                      (uart0_txd),
-    .UART1_RXD                      (uart1_rxd),
-    .UART1_TXD                      (uart1_txd),
+    .pad_CGRA_JTAG_TDI              (1'b0),
+    .pad_CGRA_JTAG_TMS              (1'b0),
+    .pad_CGRA_JTAG_TDO              (),
+
+    .pad_TPIU_TRACE_DATA            (),
+    .pad_TPIU_TRACE_SWO             (),
+    .pad_TPIU_TRACE_CLK             (),
+
+    .pad_UART0_RXD                  (uart0_rxd),
+    .pad_UART0_TXD                  (uart0_txd),
+    .pad_UART1_RXD                  (uart1_rxd),
+    .pad_UART1_TXD                  (uart1_txd),
 
     // TLX FWD
-    .TLX_FWD_PAYLOAD_TVALID         (tlx_fwd_payload_tvalid),
-    .TLX_FWD_PAYLOAD_TREADY         (tlx_fwd_payload_tready),
-    .TLX_FWD_PAYLOAD_TDATA_LO       (tlx_fwd_payload_tdata_lo),
-    .TLX_FWD_PAYLOAD_TDATA_HI       (tlx_fwd_payload_tdata_hi),
+    .pad_TLX_FWD_CLK                (tlx_fwd_clk),
+    .pad_TLX_FWD_PAYLOAD_TVALID     (tlx_fwd_payload_tvalid),
+    .pad_TLX_FWD_PAYLOAD_TREADY     (tlx_fwd_payload_tready),
+    .pad_TLX_FWD_PAYLOAD_TDATA_LO   (tlx_fwd_payload_tdata_lo),
+    .pad_TLX_FWD_PAYLOAD_TDATA_HI   (tlx_fwd_payload_tdata_hi),
 
-    .TLX_FWD_FLOW_TVALID            (tlx_fwd_flow_tvalid),
-    .TLX_FWD_FLOW_TREADY            (tlx_fwd_flow_tready),
-    .TLX_FWD_FLOW_TDATA             (tlx_fwd_flow_tdata),
+    .pad_TLX_FWD_FLOW_TVALID        (tlx_fwd_flow_tvalid),
+    .pad_TLX_FWD_FLOW_TREADY        (tlx_fwd_flow_tready),
+    .pad_TLX_FWD_FLOW_TDATA         (tlx_fwd_flow_tdata),
 
     // TLX REV
-    .TLX_REV_CLK                    (master_clk),
+    .pad_TLX_REV_CLK                (master_clk),
 
-    .TLX_REV_PAYLOAD_TVALID         (tlx_rev_payload_tvalid),
-    .TLX_REV_PAYLOAD_TREADY         (tlx_rev_payload_tready),
-    .TLX_REV_PAYLOAD_TDATA_LO       (tlx_rev_payload_tdata_lo),
-    .TLX_REV_PAYLOAD_TDATA_HI       (tlx_rev_payload_tdata_hi),
+    .pad_TLX_REV_PAYLOAD_TVALID     (tlx_rev_payload_tvalid),
+    .pad_TLX_REV_PAYLOAD_TREADY     (tlx_rev_payload_tready),
+    .pad_TLX_REV_PAYLOAD_TDATA_LO   (tlx_rev_payload_tdata_lo),
+    .pad_TLX_REV_PAYLOAD_TDATA_HI   (tlx_rev_payload_tdata_hi),
 
-    .TLX_REV_FLOW_TVALID            (tlx_rev_flow_tvalid),
-    .TLX_REV_FLOW_TREADY            (tlx_rev_flow_tready),
-    .TLX_REV_FLOW_TDATA             (tlx_rev_flow_tdata),
+    .pad_TLX_REV_FLOW_TVALID        (tlx_rev_flow_tvalid),
+    .pad_TLX_REV_FLOW_TREADY        (tlx_rev_flow_tready),
+    .pad_TLX_REV_FLOW_TDATA         (tlx_rev_flow_tdata),
 
     // LoopBack
-    .LOOP_BACK                      ()
+    .pad_LOOP_BACK                  ()
   );
 
   // TLX Master Domain
   tlx_mem u_tlx_m_dom (
     // FWD Link
-    .tlx_fwd_clk                    (master_clk),
+    .tlx_fwd_clk                    (tlx_fwd_clk),
     .tlx_fwd_reset_n                (po_reset_n),
 
     .tlx_fwd_payload_tvalid         (tlx_fwd_payload_tvalid),

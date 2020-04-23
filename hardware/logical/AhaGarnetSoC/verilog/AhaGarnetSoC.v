@@ -10,16 +10,23 @@
 module AhaGarnetSoC (
   // Resets
   input   wire            PORESETn,           // Global Power-on Reset
-  input   wire            JTAG_RESETn,        // JTAG Reset
+  input   wire            SOC_JTAG_TRSTn,     // SOC JTAG Reset
+  input   wire            CGRA_JTAG_TRSTn,    // SOC JTAG Reset
 
   // Clocks
   input   wire            MASTER_CLK,         // Main Clock
-  input   wire            JTAG_TCK,           // JTAG Clock
+  input   wire            SOC_JTAG_TCK,       // SOC JTAG Clock
+  input   wire            CGRA_JTAG_TCK,      // CGRA JTAG Clock
 
-  // JTAG Interface
-  input   wire            JTAG_TDI,           // JTAG Data In Port
-  input   wire            JTAG_TMS,           // JTAG TMS Port
-  output  wire            JTAG_TDO,           // JTAG TDO Port
+  // SOC JTAG Interface
+  input   wire            SOC_JTAG_TDI,       // JTAG Data In Port
+  input   wire            SOC_JTAG_TMS,       // JTAG TMS Port
+  output  wire            SOC_JTAG_TDO,       // JTAG TDO Port
+
+  // CGRA JTAG Interface
+  input   wire            CGRA_JTAG_TDI,       // JTAG Data In Port
+  input   wire            CGRA_JTAG_TMS,       // JTAG TMS Port
+  output  wire            CGRA_JTAG_TDO,       // JTAG TDO Port
 
   // Trace
   output  wire  [3:0]     TPIU_TRACE_DATA,    // Trace Data
@@ -33,6 +40,7 @@ module AhaGarnetSoC (
   output  wire            UART1_TXD,          // UART1 Tx Data
 
   // TLX FWD Channel
+  output  wire            TLX_FWD_CLK,
   output  wire                                  TLX_FWD_PAYLOAD_TVALID,
   input   wire                                  TLX_FWD_PAYLOAD_TREADY,
   output  wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]   TLX_FWD_PAYLOAD_TDATA_LO,
@@ -53,6 +61,16 @@ module AhaGarnetSoC (
   output  wire            TLX_REV_FLOW_TREADY,
   input   wire [2:0]      TLX_REV_FLOW_TDATA,
 
+  // Pad Strength Control
+  output  wire [2:0]      OUT_PAD_DS_GRP0,
+  output  wire [2:0]      OUT_PAD_DS_GRP1,
+  output  wire [2:0]      OUT_PAD_DS_GRP2,
+  output  wire [2:0]      OUT_PAD_DS_GRP3,
+  output  wire [2:0]      OUT_PAD_DS_GRP4,
+  output  wire [2:0]      OUT_PAD_DS_GRP5,
+  output  wire [2:0]      OUT_PAD_DS_GRP6,
+  output  wire [2:0]      OUT_PAD_DS_GRP7,
+
   // LoopBack Signal
   output  wire            LOOP_BACK
 );
@@ -61,8 +79,10 @@ module AhaGarnetSoC (
   wire            cpu_poreset_n;
   wire            cpu_sysreset_n;
   wire            dap_reset_n;
-  wire            jtag_trst_n;
-  wire            jtag_poreset_n;
+  wire            soc_jtag_trst_n;
+  wire            soc_jtag_poreset_n;
+  wire            cgra_jtag_trst_n;
+  wire            cgra_jtag_poreset_n;
   wire            sram_reset_n;
   wire            tlx_reset_n;
   wire            tlx_rev_reset_n;
@@ -244,8 +264,8 @@ module AhaGarnetSoC (
     .CPU_PORESETn                 (cpu_poreset_n),
     .CPU_SYSRESETn                (cpu_sysreset_n),
     .DAP_RESETn                   (dap_reset_n),
-    .JTAG_TRSTn                   (jtag_trst_n),
-    .JTAG_PORESETn                (jtag_poreset_n),
+    .JTAG_TRSTn                   (soc_jtag_trst_n),
+    .JTAG_PORESETn                (soc_jtag_poreset_n),
     .SRAM_RESETn                  (sram_reset_n),
     .TLX_RESETn                   (tlx_reset_n),
     .CGRA_RESETn                  (cgra_reset_n),
@@ -263,7 +283,7 @@ module AhaGarnetSoC (
     .CPU_FCLK                     (cpu_fclk),
     .CPU_GCLK                     (cpu_gclk),
     .DAP_CLK                      (dap_clk),
-    .JTAG_TCK                     (JTAG_TCK),
+    .JTAG_TCK                     (SOC_JTAG_TCK),
     .SRAM_CLK                     (sram_clk),
     .TLX_CLK                      (tlx_clk),
     .CGRA_CLK                     (cgra_clk),
@@ -287,9 +307,9 @@ module AhaGarnetSoC (
     .DMA1_CLKEN                   (dma1_clk_en),
 
     // JTAG/DAP Interface
-    .JTAG_TDI                     (JTAG_TDI),
-    .JTAG_TMS                     (JTAG_TMS),
-    .JTAG_TDO                     (JTAG_TDO),
+    .JTAG_TDI                     (SOC_JTAG_TDI),
+    .JTAG_TMS                     (SOC_JTAG_TMS),
+    .JTAG_TDO                     (SOC_JTAG_TDO),
 
     // Trace Interface
     .TPIU_TRACE_DATA              (TPIU_TRACE_DATA),
@@ -440,10 +460,16 @@ module AhaGarnetSoC (
 
   // ==== Instantiate Garnet CGRA
   AhaGarnetIntegration u_garnet (
-    .CGRA_CLK                     (cgra_clk),
-    .CGRA_RESETn                  (cgra_reset_n),
+    .CLK                          (cgra_clk),
+    .RESETn                       (cgra_reset_n),
 
-    .CGRA_INT                     (cgra_int),
+    .INTERRUPT                    (cgra_int),
+
+    .JTAG_TCK                     (CGRA_JTAG_TCK),
+    .JTAG_TDI                     (CGRA_JTAG_TDI),
+    .JTAG_TDO                     (CGRA_JTAG_TDO),
+    .JTAG_TMS                     (CGRA_JTAG_TMS),
+    .JTAG_TRSTn                   (cgra_jtag_trst_n),
 
     .CGRA_DATA_AWID               (cgra_data_awid),
     .CGRA_DATA_AWADDR             (cgra_data_awaddr),
@@ -526,6 +552,7 @@ module AhaGarnetSoC (
     // Clocks and Resets
     .TLX_SIB_CLK                  (tlx_clk),
     .TLX_SIB_RESETn               (tlx_reset_n),
+    .TLX_FWD_CLK                  (TLX_FWD_CLK),
     .TLX_REV_CLK                  (TLX_REV_CLK),
     .TLX_REV_RESETn               (tlx_rev_reset_n),
 
@@ -595,10 +622,12 @@ module AhaGarnetSoC (
     // Master Clock and Power-On Reset
     .MASTER_CLK                   (MASTER_CLK),
     .PORESETn                     (PORESETn),
-    .JTAG_RESETn                  (JTAG_RESETn),
+    .SOC_JTAG_TRSTn               (SOC_JTAG_TRSTn),
+    .CGRA_JTAG_TRSTn              (CGRA_JTAG_TRSTn),
 
-    // JTAG Clock
-    .JTAG_TCK                     (JTAG_TCK),
+    // JTAG Clocks
+    .SOC_JTAG_TCK                 (SOC_JTAG_TCK),
+    .CGRA_JTAG_TCK                (CGRA_JTAG_TCK),
 
     // TLX Reverse Channel Clock
     .TLX_REV_CLK                  (TLX_REV_CLK),
@@ -624,8 +653,9 @@ module AhaGarnetSoC (
     .CPU_PORESETn                 (cpu_poreset_n),
     .CPU_SYSRESETn                (cpu_sysreset_n),
     .DAP_RESETn                   (dap_reset_n),
-    .JTAG_TRSTn                   (jtag_trst_n),
-    .JTAG_PORESETn                (jtag_poreset_n),
+    .SOC_JTAG_RESETn              (soc_jtag_trst_n),
+    .SOC_JTAG_PORESETn            (soc_jtag_poreset_n),
+    .CGRA_JTAG_RESETn             (cgra_jtag_trst_n),
     .SRAM_RESETn                  (sram_reset_n),
     .TLX_RESETn                   (tlx_reset_n),
     .TLX_REV_RESETn               (tlx_rev_reset_n),
@@ -671,6 +701,16 @@ module AhaGarnetSoC (
     .SYSRESETREQ                  (sysresetreq),
     .SLEEPHOLDACKn                (sleepholdack_n),
     .WDOG_RESET_REQ               (wdog_reset_req),
+
+    // Pad Strength Control
+    .OUT_PAD_DS_GRP0              (OUT_PAD_DS_GRP0),
+    .OUT_PAD_DS_GRP1              (OUT_PAD_DS_GRP1),
+    .OUT_PAD_DS_GRP2              (OUT_PAD_DS_GRP2),
+    .OUT_PAD_DS_GRP3              (OUT_PAD_DS_GRP3),
+    .OUT_PAD_DS_GRP4              (OUT_PAD_DS_GRP4),
+    .OUT_PAD_DS_GRP5              (OUT_PAD_DS_GRP5),
+    .OUT_PAD_DS_GRP6              (OUT_PAD_DS_GRP6),
+    .OUT_PAD_DS_GRP7              (OUT_PAD_DS_GRP7),
 
     // LoopBack
     .LOOP_BACK                    (LOOP_BACK)

@@ -1,6 +1,6 @@
 ARM_IP_PATH	:= $(abspath $(ARM_IP_DIR))
 AHA_IP_PATH := $(abspath $(AHA_IP_DIR))
-CUR_DIR 		:= $(abspath .)
+CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 # VCS Options
 LINT_OPT	:= +lint=PCWM,TFIPC
@@ -34,8 +34,8 @@ ALL_FILE_LISTS := $(foreach file,$(TO_GEN_FILE_LISTS),-f $(file))
 ALL_FILE_LISTS += $(foreach file,$(AUTO_GEN_FILE_LISTS),-f $(file))
 
 # Main target: use to compile SoC and Testbench
-compile: $(TO_GEN_FILE_LISTS) $(AUTO_GEN_FILE_LISTS)
-	vcs $(VCS_COMPILE_OPTS) $(ALL_FILE_LISTS)  $(TBENCH_FILE) | tee vcs_compile.log
+compile: $(TO_GEN_FILE_LISTS) $(AUTO_GEN_FILE_LISTS) pad_frame
+	vcs $(VCS_COMPILE_OPTS) $(ALL_FILE_LISTS)  $(TBENCH_FILE) -y pad_frame/genesis_verif | tee vcs_compile.log
 	cp -rf simv simv.daidir outputs/
 
 
@@ -53,3 +53,6 @@ file-list-tlx.vc:
 $(TO_GEN_FILE_LISTS): file-list-%.vc:
 	AHA_IP_DIR=$(AHA_IP_PATH) ARM_IP_DIR=$(ARM_IP_PATH) \
 	./vc_expand_paths.py file_list_templates/file-list-$*.vc.tmpl $@
+
+pad_frame:
+	$(MAKE) -C $(AHA_IP_DIR)/hardware/logical/AhaGarnetSoCPadFrame OUT_DIR=$(CUR_DIR)/pad_frame

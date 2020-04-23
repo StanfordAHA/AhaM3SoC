@@ -11,10 +11,12 @@ module AhaPlatformController (
   // Master Clock and Reset
   input   wire            MASTER_CLK,         // Master Clock
   input   wire            PORESETn,           // Global PowerOn Reset
-  input   wire            JTAG_RESETn,        // JTAG Reset
+  input   wire            SOC_JTAG_TRSTn,     // SOC JTAG Reset
+  input   wire            CGRA_JTAG_TRSTn,    // CGRA JTAG Reset
 
-  // JTAG Clock
-  input   wire            JTAG_TCK,           // JTAG Clock
+  // JTAG Clocks
+  input   wire            SOC_JTAG_TCK,       // SOC JTAG Clock
+  input   wire            CGRA_JTAG_TCK,      // CGRA JTAG Clock
 
   // TLX Reverse Clock
   input   wire            TLX_REV_CLK,
@@ -40,8 +42,9 @@ module AhaPlatformController (
   output  wire            CPU_PORESETn,
   output  wire            CPU_SYSRESETn,
   output  wire            DAP_RESETn,
-  output  wire            JTAG_TRSTn,
-  output  wire            JTAG_PORESETn,
+  output  wire            SOC_JTAG_RESETn,
+  output  wire            SOC_JTAG_PORESETn,
+  output  wire            CGRA_JTAG_RESETn,
   output  wire            SRAM_RESETn,
   output  wire            TLX_RESETn,
   output  wire            CGRA_RESETn,
@@ -88,6 +91,16 @@ module AhaPlatformController (
   input   wire            SLEEPHOLDACKn,
   input   wire            WDOG_RESET_REQ,
 
+  // Pad Strength Control
+  output  wire [2:0]      OUT_PAD_DS_GRP0,
+  output  wire [2:0]      OUT_PAD_DS_GRP1,
+  output  wire [2:0]      OUT_PAD_DS_GRP2,
+  output  wire [2:0]      OUT_PAD_DS_GRP3,
+  output  wire [2:0]      OUT_PAD_DS_GRP4,
+  output  wire [2:0]      OUT_PAD_DS_GRP5,
+  output  wire [2:0]      OUT_PAD_DS_GRP6,
+  output  wire [2:0]      OUT_PAD_DS_GRP7,
+
   // LoopBack
   output  wire            LOOP_BACK
 );
@@ -110,33 +123,48 @@ module AhaPlatformController (
   end
   assign CPU_PORESETn  = cpu_poreset_n_qq;
 
-  // JTAG PORESETn
-  reg jtag_poreset_n_q;
-  reg jtag_poreset_n_qq;
-  always @(posedge JTAG_TCK or negedge PORESETn) begin
+  // SOC JTAG PORESETn
+  reg soc_jtag_poreset_n_q;
+  reg soc_jtag_poreset_n_qq;
+  always @(posedge SOC_JTAG_TCK or negedge PORESETn) begin
     if(~PORESETn) begin
-      jtag_poreset_n_q   <= 1'b0;
-      jtag_poreset_n_qq  <= 1'b0;
+      soc_jtag_poreset_n_q   <= 1'b0;
+      soc_jtag_poreset_n_qq  <= 1'b0;
     end else begin
-      jtag_poreset_n_q   <= 1'b1;
-      jtag_poreset_n_qq  <= jtag_poreset_n_q;
+      soc_jtag_poreset_n_q   <= 1'b1;
+      soc_jtag_poreset_n_qq  <= soc_jtag_poreset_n_q;
     end
   end
-  assign JTAG_PORESETn  = jtag_poreset_n_qq;
+  assign SOC_JTAG_PORESETn  = soc_jtag_poreset_n_qq;
 
-  // ===== JTAG RESETn
-  reg jtag_trst_n_q;
-  reg jtag_trst_n_qq;
-  always @(posedge JTAG_TCK or negedge JTAG_RESETn) begin
-    if(~JTAG_RESETn) begin
-      jtag_trst_n_q   <= 1'b0;
-      jtag_trst_n_qq  <= 1'b0;
+  // ===== SOC JTAG RESETn
+  reg soc_jtag_trst_n_q;
+  reg soc_jtag_trst_n_qq;
+  always @(posedge SOC_JTAG_TCK or negedge SOC_JTAG_TRSTn) begin
+    if(~SOC_JTAG_TRSTn) begin
+      soc_jtag_trst_n_q   <= 1'b0;
+      soc_jtag_trst_n_qq  <= 1'b0;
     end else begin
-      jtag_trst_n_q   <= 1'b1;
-      jtag_trst_n_qq  <= jtag_trst_n_q;
+      soc_jtag_trst_n_q   <= 1'b1;
+      soc_jtag_trst_n_qq  <= soc_jtag_trst_n_q;
     end
   end
-  assign JTAG_TRSTn  = jtag_trst_n_qq;
+  assign SOC_JTAG_RESETn  = soc_jtag_trst_n_qq;
+
+  // ===== CGRA JTAG RESETn
+  wire cgra_reset_n = PORESETn & CGRA_JTAG_TRSTn;
+  reg cgra_jtag_trst_n_q;
+  reg cgra_jtag_trst_n_qq;
+  always @(posedge CGRA_JTAG_TCK or negedge cgra_reset_n) begin
+    if(~cgra_reset_n) begin
+      cgra_jtag_trst_n_q   <= 1'b0;
+      cgra_jtag_trst_n_qq  <= 1'b0;
+    end else begin
+      cgra_jtag_trst_n_q   <= 1'b1;
+      cgra_jtag_trst_n_qq  <= cgra_jtag_trst_n_q;
+    end
+  end
+  assign CGRA_JTAG_RESETn  = cgra_jtag_trst_n_qq;
 
   // ===== CPU System Reset
   reg   int_cpu_sysresetn_q;
@@ -233,6 +261,16 @@ module AhaPlatformController (
   assign DBGSYSPWRUPACK         = DBGSYSPWRUPREQ;
   assign SLEEPHOLDREQn          = 1'b1;
   assign PMU_WIC_EN_REQ         = 1'b0;
+
+  // Pad Strength Control
+  assign OUT_PAD_DS_GRP0        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP1        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP2        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP3        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP4        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP5        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP6        = {3{1'b0}};
+  assign OUT_PAD_DS_GRP7        = {3{1'b0}};
 
   // LoopBack
   assign LOOP_BACK              = MASTER_CLK;

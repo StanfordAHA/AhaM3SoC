@@ -11,11 +11,18 @@
 //------------------------------------------------------------------------------
 module AhaGarnetIntegration (
   // Clock and Reset
-  input   wire            CGRA_CLK,           // CGRA Clock
-  input   wire            CGRA_RESETn,        // CGRA PowerOn Reset
+  input   wire            CLK,                // CGRA Clock
+  input   wire            RESETn,             // CGRA PowerOn Reset
 
   // Interrupt Interface
-  output  wire            CGRA_INT,           // CGRA Interrupt Signal
+  output  wire            INTERRUPT,          // CGRA Interrupt Signal
+
+  // JTAG
+  input   wire            JTAG_TCK,
+  input   wire            JTAG_TDI,
+  output  wire            JTAG_TDO,
+  input   wire            JTAG_TMS,
+  input   wire            JTAG_TRSTn,
 
   // Data Interface
   input   wire [3 :0]     CGRA_DATA_AWID,
@@ -116,8 +123,8 @@ module AhaGarnetIntegration (
     wire                  slave_wvalid;
 
     AhaAxiToAxiLite #(.ID_WIDTH(4)) u_axi_to_lite (
-      .ACLK                           (CGRA_CLK),
-      .ARESETn                        (CGRA_RESETn),
+      .ACLK                           (CLK),
+      .ARESETn                        (RESETn),
 
       .AXI_AWID                       (CGRA_REG_AWID),
       .AXI_AWADDR                     (CGRA_REG_AWADDR),
@@ -184,8 +191,8 @@ module AhaGarnetIntegration (
     wire [63:0]           sif_rd_dat;
 
     AhaAxiToSimpleIf #(.ID_WIDTH(4), .CGRA_RD_WS(`CGRA_RD_WS)) u_axi_to_sif (
-      .ACLK                           (CGRA_CLK),
-      .ARESETn                        (CGRA_RESETn),
+      .ACLK                           (CLK),
+      .ARESETn                        (RESETn),
 
       .AWID                           (CGRA_DATA_AWID),
       .AWADDR                         (CGRA_DATA_AWADDR),
@@ -251,16 +258,16 @@ module AhaGarnetIntegration (
       .axi4_slave_wvalid              (slave_wvalid),
 
       .cgra_running_clk_out           (/*unused*/),
-      .clk_in                         (CGRA_CLK),
-      .reset_in                       (~CGRA_RESETn),
+      .clk_in                         (CLK),
+      .reset_in                       (~RESETn),
 
-      .interrupt                      (CGRA_INT),
+      .interrupt                      (INTERRUPT),
 
-      .jtag_tck                       (1'b0),
-      .jtag_tdi                       (1'b0),
-      .jtag_tdo                       (/*unused*/),
-      .jtag_tms                       (1'b0),
-      .jtag_trst_n                    (1'b1),
+      .jtag_tck                       (JTAG_TCK),
+      .jtag_tdi                       (JTAG_TDI),
+      .jtag_tdo                       (JTAG_TDO),
+      .jtag_tms                       (JTAG_TMS),
+      .jtag_trst_n                    (JTAG_TRSTn),
 
       .proc_packet_rd_addr            (sif_rd_addr[18:0]),
       .proc_packet_rd_data            (sif_rd_data),
@@ -321,10 +328,16 @@ module AhaGarnetIntegration (
                 (| CGRA_REG_ARPROT)   |
                 (| CGRA_REG_ARVALID)  |
                 (| CGRA_REG_RREADY)   |
-                (| CGRA_CLK)          |
-                (| CGRA_RESETn);
+                (| CLK)               |
+                (| RESETn)            |
+                (| JTAG_TCK)          |
+                (| JTAG_TDI)          |
+                (| JTAG_TMS)          |
+                (| JTAG_TRSTn);
 
-  assign CGRA_INT           = 1'b0;
+  assign INTERRUPT          = 1'b0;
+
+  assign JTAG_TDO           = 1'b0;
 
   assign CGRA_DATA_AWREADY  = 1'b1;
   assign CGRA_DATA_WREADY   = 1'b1;
