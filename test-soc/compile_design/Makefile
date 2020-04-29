@@ -4,7 +4,8 @@ CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 # VCS Options
 LINT_OPT	:= +lint=PCWM,TFIPC
-VCS_COMPILE_OPTS 	:= +v2k -noIncrComp -debug -full64 +libext+.v+.sv -sverilog -timescale=1ns/1ps $(LINT_OPT)
+VCS_COMPILE_OPTS 	:= -notice +v2k -noIncrComp -debug -full64 +libext+.v+.sv -sverilog -timescale=1ns/1ps $(LINT_OPT)
+#VCS_COMPILE_OPTS 	+= +define+VCD_ON
 
 # Whether or not to include Garnet CGRA
 ifeq ($(SOC_ONLY),True)
@@ -25,6 +26,8 @@ TBENCH_FILE 			:= tbench_files/Tbench.v
 TO_GEN_FILE_LISTS		:= file-list-tbench.vc file-list-aha.vc file-list-cm3.vc \
 											 file-list-cmsdk.vc file-list-arm_utils.vc file-list-garnet.vc
 AUTO_GEN_FILE_LISTS	:= file-list-nic.vc file-list-dma.vc file-list-tlx.vc
+GARNET_FILE_LISTS 	:= -f inputs/filelists/glb.list -f inputs/filelists/glc.list \
+												-f inputs/filelists/garnet.list
 
 # Top Design
 TOP_DESIGN 	:= $(AHA_IP_DIR)/hardware/logical/AhaGarnetSoC/verilog/AhaGarnetSoC.v
@@ -32,6 +35,7 @@ TOP_DESIGN 	:= $(AHA_IP_DIR)/hardware/logical/AhaGarnetSoC/verilog/AhaGarnetSoC.
 # All File Lists
 ALL_FILE_LISTS := $(foreach file,$(TO_GEN_FILE_LISTS),-f $(file))
 ALL_FILE_LISTS += $(foreach file,$(AUTO_GEN_FILE_LISTS),-f $(file))
+ALL_FILE_LISTS += $(GARNET_FILE_LISTS)
 
 # Main target: use to compile SoC and Testbench
 compile: $(TO_GEN_FILE_LISTS) $(AUTO_GEN_FILE_LISTS) pad_frame

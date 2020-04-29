@@ -1,16 +1,16 @@
 # =============================================================================
-# Compile Design
+# Run Test
 # =============================================================================
 # Author  : Gedeon Nyengele
 # Date    : April 5, 2020
 # =============================================================================
 
-name: compile_design
+name: garnet_rtl
 
 # -----------------------------------------------------------------------------
-# Inputs
+# Outputs
 # -----------------------------------------------------------------------------
-inputs:
+outputs:
   - filelists
 
 # -----------------------------------------------------------------------------
@@ -25,9 +25,7 @@ commands:
 # -----------------------------------------------------------------------------
 
 parameters:
-  ARM_IP_DIR: undefined
-  AHA_IP_DIR: undefined
-  CGRA_RD_WS: 1
-  soc_only: undefined
-  TLX_FWD_DATA_LO_WIDTH: undefined
-  TLX_REV_DATA_LO_WIDTH: undefined
+  interconnect_only: False
+  array_width: 4
+  array_height: 4
+  GARNET_HOME: undefined

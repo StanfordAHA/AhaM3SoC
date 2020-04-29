@@ -183,14 +183,16 @@ module AhaGarnetIntegration (
 
     // AXI to Simple CGRA Data Interface
     wire [31:0]           sif_wr_addr;
-    wire [7:0]            sif_wr_en;
+    wire                  sif_wr_en;
+    wire [7:0]            sif_wr_strb;
     wire [63:0]           sif_wr_data;
 
     wire [31:0]           sif_rd_addr;
     wire                  sif_rd_en;
-    wire [63:0]           sif_rd_dat;
+    wire [63:0]           sif_rd_data;
+    wire                  sif_rd_valid;
 
-    AhaAxiToSimpleIf #(.ID_WIDTH(4), .CGRA_RD_WS(`CGRA_RD_WS)) u_axi_to_sif (
+    AhaAxiToSif #(.ID_WIDTH(4)) u_axi_to_sif (
       .ACLK                           (CLK),
       .ARESETn                        (RESETn),
 
@@ -204,15 +206,18 @@ module AhaGarnetIntegration (
       .AWPROT                         (CGRA_DATA_AWPROT),
       .AWVALID                        (CGRA_DATA_AWVALID),
       .AWREADY                        (CGRA_DATA_AWREADY),
+
       .WDATA                          (CGRA_DATA_WDATA),
       .WSTRB                          (CGRA_DATA_WSTRB),
       .WLAST                          (CGRA_DATA_WLAST),
       .WVALID                         (CGRA_DATA_WVALID),
       .WREADY                         (CGRA_DATA_WREADY),
+
       .BID                            (CGRA_DATA_BID),
       .BRESP                          (CGRA_DATA_BRESP),
       .BVALID                         (CGRA_DATA_BVALID),
       .BREADY                         (CGRA_DATA_BREADY),
+
       .ARID                           (CGRA_DATA_ARID),
       .ARADDR                         (CGRA_DATA_ARADDR),
       .ARLEN                          (CGRA_DATA_ARLEN),
@@ -223,6 +228,7 @@ module AhaGarnetIntegration (
       .ARPROT                         (CGRA_DATA_ARPROT),
       .ARVALID                        (CGRA_DATA_ARVALID),
       .ARREADY                        (CGRA_DATA_ARREADY),
+
       .RID                            (CGRA_DATA_RID),
       .RDATA                          (CGRA_DATA_RDATA),
       .RRESP                          (CGRA_DATA_RRESP),
@@ -233,9 +239,12 @@ module AhaGarnetIntegration (
       .SIF_WR_ADDR                    (sif_wr_addr),
       .SIF_WR_EN                      (sif_wr_en),
       .SIF_WR_DATA                    (sif_wr_data),
+      .SIF_WR_STRB                    (sif_wr_strb),
+
       .SIF_RD_ADDR                    (sif_rd_addr),
       .SIF_RD_EN                      (sif_rd_en),
-      .SIF_RD_DATA                    (sif_rd_data)
+      .SIF_RD_DATA                    (sif_rd_data),
+      .SIF_RD_VALID                   (sif_rd_valid)
     );
 
     // CGRA Instantiation
@@ -269,15 +278,16 @@ module AhaGarnetIntegration (
       .jtag_tms                       (JTAG_TMS),
       .jtag_trst_n                    (JTAG_TRSTn),
 
-      .proc_packet_rd_addr            (sif_rd_addr[18:0]),
+      // sif_rd_addr and sif_wr_addr might be truncated
+      .proc_packet_rd_addr            (sif_rd_addr),
       .proc_packet_rd_data            (sif_rd_data),
-      .proc_packet_rd_data_valid      (/*unused*/),
+      .proc_packet_rd_data_valid      (sif_rd_valid),
       .proc_packet_rd_en              (sif_rd_en),
 
-      .proc_packet_wr_addr            (sif_wr_addr[18:0]),
+      .proc_packet_wr_addr            (sif_wr_addr),
       .proc_packet_wr_data            (sif_wr_data),
-      .proc_packet_wr_en              ((| sif_wr_en)),
-      .proc_packet_wr_strb            (sif_wr_en)
+      .proc_packet_wr_en              (sif_wr_en),
+      .proc_packet_wr_strb            (sif_wr_strb)
     );
   `else
   wire unused = (| CGRA_DATA_AWID)    |

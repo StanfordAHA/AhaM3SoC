@@ -27,6 +27,8 @@ def construct():
         'default_slaves_test',
         'interrupts_test',
         'tlx_test',
+        'cgra_reg_test',
+        'cgra_data_test',
 
         # CXDT Tests
         'discovery',
@@ -39,9 +41,9 @@ def construct():
     parameters = {
         'construct_file': __file__,
         'design_name': 'test-soc',
-        'soc_only'  : True,
+        'soc_only'  : False,
         'interconnect_only' : False,
-        'array_width': 4,
+        'array_width': 32,
         'array_height': 4,
         'ARM_IP_DIR': '/home/nyengele/Documents/AhaARMIP',
         'AHA_IP_DIR': '/home/nyengele/Documents/aha-soc-v2',
@@ -56,7 +58,7 @@ def construct():
 
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
-    garnet_rtl      = Step(parameters['GARNET_DIR'] + '/mflowgen/common/rtl')
+    garnet_rtl      = Step(this_dir + '/garnet_rtl')
     compile_design  = Step(this_dir + '/compile_design')
     build_test      = Step(this_dir + '/build_test')
     run_test        = Step(this_dir + '/run_test')
