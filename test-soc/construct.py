@@ -27,8 +27,6 @@ def construct():
         'default_slaves_test',
         'interrupts_test',
         'tlx_test',
-        'cgra_reg_test',
-        'cgra_data_test',
         'cgra_test',
 
         # CXDT Tests
