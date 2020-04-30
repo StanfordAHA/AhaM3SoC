@@ -29,6 +29,7 @@ def construct():
         'tlx_test',
         'cgra_reg_test',
         'cgra_data_test',
+        'cgra_test',
 
         # CXDT Tests
         'discovery',
@@ -43,7 +44,7 @@ def construct():
         'design_name': 'test-soc',
         'soc_only'  : False,
         'interconnect_only' : False,
-        'array_width': 32,
+        'array_width': 8,
         'array_height': 4,
         'ARM_IP_DIR': '/home/nyengele/Documents/AhaARMIP',
         'AHA_IP_DIR': '/home/nyengele/Documents/aha-soc-v2',

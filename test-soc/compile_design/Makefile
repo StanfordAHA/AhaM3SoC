@@ -5,7 +5,7 @@ CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 # VCS Options
 LINT_OPT	:= +lint=PCWM,TFIPC
 VCS_COMPILE_OPTS 	:= -notice +v2k -noIncrComp -debug -full64 +libext+.v+.sv -sverilog -timescale=1ns/1ps $(LINT_OPT)
-#VCS_COMPILE_OPTS 	+= +define+VCD_ON
+VCS_COMPILE_OPTS 	+= +define+VCD_ON
 
 # Whether or not to include Garnet CGRA
 ifeq ($(SOC_ONLY),True)

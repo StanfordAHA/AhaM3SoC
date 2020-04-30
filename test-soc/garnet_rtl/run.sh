@@ -37,7 +37,7 @@ done
 #                   Generate GLB File List                                    #
 ###############################################################################
 cd $GARNET_HOME/global_buffer
-make rdl
+make rtl
 cd rtl
 while read F
 do
