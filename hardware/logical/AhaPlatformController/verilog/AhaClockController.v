@@ -282,7 +282,7 @@ module AhaClockController (
     .Q      (CGRA_GCLK)
   );
 
-  // Generated Clocks for System Clock
+  // Generated Clocks from System Clock
   wire    sys_gen_clk_by_1;
   wire    sys_gen_clk_by_2;
   wire    sys_gen_clk_by_4;
