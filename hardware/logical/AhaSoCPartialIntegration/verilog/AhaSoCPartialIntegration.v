@@ -205,7 +205,24 @@ module AhaSoCPartialIntegration (
   input   wire [1:0]      TLX_RRESP,
   input   wire            TLX_RLAST,
   input   wire            TLX_RVALID,
-  output  wire            TLX_RREADY
+  output  wire            TLX_RREADY,
+
+  // Platform Controller
+  output  wire            PCTRL_HSEL,
+  output  wire [31:0]     PCTRL_HADDR,
+  output  wire  [1:0]     PCTRL_HTRANS,
+  output  wire            PCTRL_HWRITE,
+  output  wire  [2:0]     PCTRL_HSIZE,
+  output  wire  [2:0]     PCTRL_HBURST,
+  output  wire  [3:0]     PCTRL_HPROT,
+  output  wire  [3:0]     PCTRL_HMASTER,
+  output  wire [31:0]     PCTRL_HWDATA,
+  output  wire            PCTRL_HMASTLOCK,
+  output  wire            PCTRL_HREADYMUX,
+
+  input   wire [31:0]     PCTRL_HRDATA,
+  input   wire            PCTRL_HREADYOUT,
+  input   wire [1:0]      PCTRL_HRESP
 );
 
   // CPU Integration Wires
@@ -1312,7 +1329,23 @@ module AhaSoCPartialIntegration (
 
     .DMA1_PRDATA                            (dma1_prdata),
     .DMA1_PREADY                            (dma1_pready),
-    .DMA1_PSLVERR                           (dma1_pslverr)
+    .DMA1_PSLVERR                           (dma1_pslverr),
+
+    // Platform Controller
+    .PCTRL_HSEL                             (PCTRL_HSEL),
+    .PCTRL_HADDR                            (PCTRL_HADDR),
+    .PCTRL_HTRANS                           (PCTRL_HTRANS),
+    .PCTRL_HWRITE                           (PCTRL_HWRITE),
+    .PCTRL_HSIZE                            (PCTRL_HSIZE),
+    .PCTRL_HBURST                           (PCTRL_HBURST),
+    .PCTRL_HPROT                            (PCTRL_HPROT),
+    .PCTRL_HMASTER                          (PCTRL_HMASTER),
+    .PCTRL_HWDATA                           (PCTRL_HWDATA),
+    .PCTRL_HMASTLOCK                        (PCTRL_HMASTLOCK),
+    .PCTRL_HREADYMUX                        (PCTRL_HREADYMUX),
+    .PCTRL_HRDATA                           (PCTRL_HRDATA),
+    .PCTRL_HREADYOUT                        (PCTRL_HREADYOUT),
+    .PCTRL_HRESP                            (PCTRL_HRESP)
   );
 
 endmodule

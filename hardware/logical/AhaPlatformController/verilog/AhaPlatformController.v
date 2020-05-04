@@ -102,7 +102,24 @@ module AhaPlatformController (
   output  wire [2:0]      OUT_PAD_DS_GRP7,
 
   // LoopBack
-  output  wire            LOOP_BACK
+  output  wire            LOOP_BACK,
+
+  // Platform Control Regspace
+  input   wire            PCTRL_HSEL,
+  input   wire [31:0]     PCTRL_HADDR,
+  input   wire  [1:0]     PCTRL_HTRANS,
+  input   wire            PCTRL_HWRITE,
+  input   wire  [2:0]     PCTRL_HSIZE,
+  input   wire  [2:0]     PCTRL_HBURST,
+  input   wire  [3:0]     PCTRL_HPROT,
+  input   wire  [3:0]     PCTRL_HMASTER,
+  input   wire [31:0]     PCTRL_HWDATA,
+  input   wire            PCTRL_HMASTLOCK,
+  input   wire            PCTRL_HREADYMUX,
+
+  output  wire [31:0]     PCTRL_HRDATA,
+  output  wire            PCTRL_HREADYOUT,
+  output  wire [1:0]      PCTRL_HRESP
 );
 
 //-----------------------------------------------------------------------------
@@ -623,7 +640,23 @@ AhaClockController u_clock_controller (
     .LOCKUP                         (LOCKUP),
     .SYSRESETREQ                    (SYSRESETREQ),
     .SLEEPHOLDACKn                  (SLEEPHOLDACKn),
-    .WDOG_TIMEOUT_RESET_REQ         (WDOG_RESET_REQ)
+    .WDOG_TIMEOUT_RESET_REQ         (WDOG_RESET_REQ),
+
+    // Control Regspace
+    .PCTRL_HSEL                     (PCTRL_HSEL),
+    .PCTRL_HADDR                    (PCTRL_HADDR),
+    .PCTRL_HTRANS                   (PCTRL_HTRANS),
+    .PCTRL_HWRITE                   (PCTRL_HWRITE),
+    .PCTRL_HSIZE                    (PCTRL_HSIZE),
+    .PCTRL_HBURST                   (PCTRL_HBURST),
+    .PCTRL_HPROT                    (PCTRL_HPROT),
+    .PCTRL_HMASTER                  (PCTRL_HMASTER),
+    .PCTRL_HWDATA                   (PCTRL_HWDATA),
+    .PCTRL_HMASTLOCK                (PCTRL_HMASTLOCK),
+    .PCTRL_HREADYMUX                (PCTRL_HREADYMUX),
+    .PCTRL_HRDATA                   (PCTRL_HRDATA),
+    .PCTRL_HREADYOUT                (PCTRL_HREADYOUT),
+    .PCTRL_HRESP                    (PCTRL_HRESP)
   );
 
 //-----------------------------------------------------------------------------

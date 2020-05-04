@@ -109,7 +109,24 @@ module AhaPlatformCtrlEngine (
   input   wire                LOCKUP,
   input   wire                SYSRESETREQ,
   input   wire                SLEEPHOLDACKn,
-  input   wire                WDOG_TIMEOUT_RESET_REQ
+  input   wire                WDOG_TIMEOUT_RESET_REQ,
+
+  // Control Regspace
+  input   wire            PCTRL_HSEL,
+  input   wire [31:0]     PCTRL_HADDR,
+  input   wire  [1:0]     PCTRL_HTRANS,
+  input   wire            PCTRL_HWRITE,
+  input   wire  [2:0]     PCTRL_HSIZE,
+  input   wire  [2:0]     PCTRL_HBURST,
+  input   wire  [3:0]     PCTRL_HPROT,
+  input   wire  [3:0]     PCTRL_HMASTER,
+  input   wire [31:0]     PCTRL_HWDATA,
+  input   wire            PCTRL_HMASTLOCK,
+  input   wire            PCTRL_HREADYMUX,
+
+  output  wire [31:0]     PCTRL_HRDATA,
+  output  wire            PCTRL_HREADYOUT,
+  output  wire [1:0]      PCTRL_HRESP
 );
 
   // unused inputs
@@ -132,7 +149,18 @@ module AhaPlatformCtrlEngine (
                 SLEEPDEEP |
                 LOCKUP |
                 SLEEPHOLDACKn |
-                WDOG_TIMEOUT_RESET_REQ;
+                WDOG_TIMEOUT_RESET_REQ |
+                (| PCTRL_HSEL ) |
+                (| PCTRL_HADDR ) |
+                (| PCTRL_HTRANS ) |
+                (| PCTRL_HWRITE ) |
+                (| PCTRL_HSIZE ) |
+                (| PCTRL_HBURST ) |
+                (| PCTRL_HPROT ) |
+                (| PCTRL_HMASTER ) |
+                (| PCTRL_HWDATA ) |
+                (| PCTRL_HMASTLOCK ) |
+                (| PCTRL_HREADYMUX );
 
   // Assign Outputs
   // Pad Strength Control
@@ -209,5 +237,10 @@ module AhaPlatformCtrlEngine (
   assign SLEEPHOLDREQn        = 1'b1;
   assign PMU_WIC_EN_REQ       = 1'b0;
   assign SYSRESETREQ_LOCKUP   = SYSRESETREQ;
+
+  // Control Regspace
+  assign PCTRL_HRDATA         = 32'h0;
+  assign PCTRL_HREADYOUT      = 1'b1;
+  assign PCTRL_HRESP          = 2'b00;
 
 endmodule

@@ -258,6 +258,22 @@ module AhaGarnetSoC (
   wire            tlx_rvalid;
   wire            tlx_rready;
 
+  // Platform Control Wires
+  wire            pctrl_hsel;
+  wire [31:0]     pctrl_haddr;
+  wire  [1:0]     pctrl_htrans;
+  wire            pctrl_hwrite;
+  wire  [2:0]     pctrl_hsize;
+  wire  [2:0]     pctrl_hburst;
+  wire  [3:0]     pctrl_hprot;
+  wire  [3:0]     pctrl_hmaster;
+  wire [31:0]     pctrl_hwdata;
+  wire            pctrl_hmastlock;
+  wire            pctrl_hreadymux;
+  wire [31:0]     pctrl_hrdata;
+  wire            pctrl_hreadyout;
+  wire [1:0]      pctrl_hresp;
+
   // ==== Instantiate Partial SoC Integration
   AhaSoCPartialIntegration u_partial_soc (
     // Resets
@@ -455,7 +471,24 @@ module AhaGarnetSoC (
     .TLX_RRESP                    (tlx_rresp),
     .TLX_RLAST                    (tlx_rlast),
     .TLX_RVALID                   (tlx_rvalid),
-    .TLX_RREADY                   (tlx_rready)
+    .TLX_RREADY                   (tlx_rready),
+
+    // Platform Controller
+    .PCTRL_HSEL                   (pctrl_hsel),
+    .PCTRL_HADDR                  (pctrl_haddr),
+    .PCTRL_HTRANS                 (pctrl_htrans),
+    .PCTRL_HWRITE                 (pctrl_hwrite),
+    .PCTRL_HSIZE                  (pctrl_hsize),
+    .PCTRL_HBURST                 (pctrl_hburst),
+    .PCTRL_HPROT                  (pctrl_hprot),
+    .PCTRL_HMASTER                (pctrl_hmaster),
+    .PCTRL_HWDATA                 (pctrl_hwdata),
+    .PCTRL_HMASTLOCK              (pctrl_hmastlock),
+    .PCTRL_HREADYMUX              (pctrl_hreadymux),
+
+    .PCTRL_HRDATA                 (pctrl_hrdata),
+    .PCTRL_HREADYOUT              (pctrl_hreadyout),
+    .PCTRL_HRESP                  (pctrl_hresp)
   );
 
   // ==== Instantiate Garnet CGRA
@@ -713,7 +746,23 @@ module AhaGarnetSoC (
     .OUT_PAD_DS_GRP7              (OUT_PAD_DS_GRP7),
 
     // LoopBack
-    .LOOP_BACK                    (LOOP_BACK)
+    .LOOP_BACK                    (LOOP_BACK),
+
+    // Platform Control Regspace
+    .PCTRL_HSEL                   (pctrl_hsel),
+    .PCTRL_HADDR                  (pctrl_haddr),
+    .PCTRL_HTRANS                 (pctrl_htrans),
+    .PCTRL_HWRITE                 (pctrl_hwrite),
+    .PCTRL_HSIZE                  (pctrl_hsize),
+    .PCTRL_HBURST                 (pctrl_hburst),
+    .PCTRL_HPROT                  (pctrl_hprot),
+    .PCTRL_HMASTER                (pctrl_hmaster),
+    .PCTRL_HWDATA                 (pctrl_hwdata),
+    .PCTRL_HMASTLOCK              (pctrl_hmastlock),
+    .PCTRL_HREADYMUX              (pctrl_hreadymux),
+    .PCTRL_HRDATA                 (pctrl_hrdata),
+    .PCTRL_HREADYOUT              (pctrl_hreadyout),
+    .PCTRL_HRESP                  (pctrl_hresp)
   );
 
 endmodule
