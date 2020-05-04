@@ -622,11 +622,11 @@ module AhaGarnetSoC (
     // Master Clock and Power-On Reset
     .MASTER_CLK                   (MASTER_CLK),
     .PORESETn                     (PORESETn),
-    .SOC_JTAG_TRSTn               (SOC_JTAG_TRSTn),
+    .DP_JTAG_TRSTn                (SOC_JTAG_TRSTn),
     .CGRA_JTAG_TRSTn              (CGRA_JTAG_TRSTn),
 
     // JTAG Clocks
-    .SOC_JTAG_TCK                 (SOC_JTAG_TCK),
+    .DP_JTAG_TCK                  (SOC_JTAG_TCK),
     .CGRA_JTAG_TCK                (CGRA_JTAG_TCK),
 
     // TLX Reverse Channel Clock
@@ -653,8 +653,8 @@ module AhaGarnetSoC (
     .CPU_PORESETn                 (cpu_poreset_n),
     .CPU_SYSRESETn                (cpu_sysreset_n),
     .DAP_RESETn                   (dap_reset_n),
-    .SOC_JTAG_RESETn              (soc_jtag_trst_n),
-    .SOC_JTAG_PORESETn            (soc_jtag_poreset_n),
+    .DP_JTAG_RESETn               (soc_jtag_trst_n),
+    .DP_JTAG_PORESETn             (soc_jtag_poreset_n),
     .CGRA_JTAG_RESETn             (cgra_jtag_trst_n),
     .SRAM_RESETn                  (sram_reset_n),
     .TLX_RESETn                   (tlx_reset_n),

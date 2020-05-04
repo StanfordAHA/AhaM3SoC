@@ -44,9 +44,9 @@ def construct():
         'interconnect_only' : False,
         'array_width': 8,
         'array_height': 4,
-        'ARM_IP_DIR': '/sim/nyengele/aham3soc_armip',
-        'AHA_IP_DIR': '/sim/nyengele/aham3soc',
-        'GARNET_DIR': '/sim/nyengele/garnet',
+        'ARM_IP_DIR': '/home/nyengele/Documents/AhaARMIP',
+        'AHA_IP_DIR': '/home/nyengele/Documents/aha-soc-v2',
+        'GARNET_DIR': '/home/nyengele/Documents/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
     }

@@ -3,7 +3,7 @@ AHA_IP_PATH := $(abspath $(AHA_IP_DIR))
 CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 # VCS Options
-LINT_OPT	:= +lint=PCWM,TFIPC
+LINT_OPT	:= +lint=PCWM,TFIPC,all
 VCS_COMPILE_OPTS 	:= -notice +v2k -noIncrComp -debug -full64 +libext+.v+.sv -sverilog -timescale=1ns/1ps $(LINT_OPT)
 VCS_COMPILE_OPTS 	+= +define+VCD_ON
 

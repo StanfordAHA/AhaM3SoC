@@ -11,15 +11,15 @@ module AhaPlatformController (
   // Master Clock and Reset
   input   wire            MASTER_CLK,         // Master Clock
   input   wire            PORESETn,           // Global PowerOn Reset
-  input   wire            SOC_JTAG_TRSTn,     // SOC JTAG Reset
+  input   wire            DP_JTAG_TRSTn,      // Debug Port JTAG Reset
   input   wire            CGRA_JTAG_TRSTn,    // CGRA JTAG Reset
 
   // JTAG Clocks
-  input   wire            SOC_JTAG_TCK,       // SOC JTAG Clock
+  input   wire            DP_JTAG_TCK,        // Debug Port JTAG Clock
   input   wire            CGRA_JTAG_TCK,      // CGRA JTAG Clock
 
   // TLX Reverse Clock
-  input   wire            TLX_REV_CLK,
+  input   wire            TLX_REV_CLK,        // TLX Reverse Channel Clock
 
   // Generated Clocks
   output  wire            CPU_FCLK,
@@ -42,8 +42,8 @@ module AhaPlatformController (
   output  wire            CPU_PORESETn,
   output  wire            CPU_SYSRESETn,
   output  wire            DAP_RESETn,
-  output  wire            SOC_JTAG_RESETn,
-  output  wire            SOC_JTAG_PORESETn,
+  output  wire            DP_JTAG_RESETn,
+  output  wire            DP_JTAG_PORESETn,
   output  wire            CGRA_JTAG_RESETn,
   output  wire            SRAM_RESETn,
   output  wire            TLX_RESETn,
@@ -59,7 +59,7 @@ module AhaPlatformController (
   output  wire            NIC_RESETn,
   output  wire            TLX_REV_RESETn,
 
-  // Peripheral Clock Qualifiers
+  // NIC Clock Qualifiers for Peripheral Clocks
   output  wire            TIMER0_CLKEN,
   output  wire            TIMER1_CLKEN,
   output  wire            UART0_CLKEN,
@@ -105,174 +105,581 @@ module AhaPlatformController (
   output  wire            LOOP_BACK
 );
 
-  wire unused = PMU_WIC_EN_ACK | PMU_WAKEUP | SLEEP | SLEEPDEEP | LOCKUP |
-    SLEEPHOLDACKn | WDOG_RESET_REQ;
+//-----------------------------------------------------------------------------
+// Clock Control Wires
+//-----------------------------------------------------------------------------
+// System Clock
+wire  [2:0]     sys_clk_select_w;
+wire            sys_fclk_w;
 
-  // ===== PORESETn
-  // CPU PORESETn
-  reg cpu_poreset_n_q;
-  reg cpu_poreset_n_qq;
-  always @(posedge MASTER_CLK or negedge PORESETn) begin
-    if(~PORESETn) begin
-      cpu_poreset_n_q   <= 1'b0;
-      cpu_poreset_n_qq  <= 1'b0;
-    end else begin
-      cpu_poreset_n_q   <= 1'b1;
-      cpu_poreset_n_qq  <= cpu_poreset_n_q;
-    end
-  end
-  assign CPU_PORESETn  = cpu_poreset_n_qq;
+// CPU Clock (Synchronous to System Clock)
+wire            cpu_clk_gate_w;
+wire            cpu_gclk_w;
 
-  // SOC JTAG PORESETn
-  reg soc_jtag_poreset_n_q;
-  reg soc_jtag_poreset_n_qq;
-  always @(posedge SOC_JTAG_TCK or negedge PORESETn) begin
-    if(~PORESETn) begin
-      soc_jtag_poreset_n_q   <= 1'b0;
-      soc_jtag_poreset_n_qq  <= 1'b0;
-    end else begin
-      soc_jtag_poreset_n_q   <= 1'b1;
-      soc_jtag_poreset_n_qq  <= soc_jtag_poreset_n_q;
-    end
-  end
-  assign SOC_JTAG_PORESETn  = soc_jtag_poreset_n_qq;
+// DAP Clock (Synchronous to System Clock)
+wire            dap_clk_gate_w;
+wire            dap_gclk_w;
 
-  // ===== SOC JTAG RESETn
-  reg soc_jtag_trst_n_q;
-  reg soc_jtag_trst_n_qq;
-  always @(posedge SOC_JTAG_TCK or negedge SOC_JTAG_TRSTn) begin
-    if(~SOC_JTAG_TRSTn) begin
-      soc_jtag_trst_n_q   <= 1'b0;
-      soc_jtag_trst_n_qq  <= 1'b0;
-    end else begin
-      soc_jtag_trst_n_q   <= 1'b1;
-      soc_jtag_trst_n_qq  <= soc_jtag_trst_n_q;
-    end
-  end
-  assign SOC_JTAG_RESETn  = soc_jtag_trst_n_qq;
+// DMA0 Clock (Synchronous to System Clock)
+wire            dma0_clk_gate_w;
+wire            dma0_gclk_w;
 
-  // ===== CGRA JTAG RESETn
-  wire cgra_reset_n = PORESETn & CGRA_JTAG_TRSTn;
-  reg cgra_jtag_trst_n_q;
-  reg cgra_jtag_trst_n_qq;
-  always @(posedge CGRA_JTAG_TCK or negedge cgra_reset_n) begin
-    if(~cgra_reset_n) begin
-      cgra_jtag_trst_n_q   <= 1'b0;
-      cgra_jtag_trst_n_qq  <= 1'b0;
-    end else begin
-      cgra_jtag_trst_n_q   <= 1'b1;
-      cgra_jtag_trst_n_qq  <= cgra_jtag_trst_n_q;
-    end
-  end
-  assign CGRA_JTAG_RESETn  = cgra_jtag_trst_n_qq;
+// DMA0 Peripheral Clock (Derived from System Clock)
+wire [2:0]      dma0_pclk_select_w;
+wire            dma0_free_pclk_w;
+wire            dma0_gpclk_en_w;
 
-  // ===== CPU System Reset
-  reg   int_cpu_sysresetn_q;
-  reg   int_cpu_sysresetn_qq;
-  wire  cpu_reset_n;
-  always @ (posedge MASTER_CLK or negedge PORESETn) begin
-    if(~PORESETn) begin
-      int_cpu_sysresetn_q     <= 1'b0;
-      int_cpu_sysresetn_qq    <= 1'b0;
-    end else begin
-      int_cpu_sysresetn_q     <= ~SYSRESETREQ;
-      int_cpu_sysresetn_qq    <= int_cpu_sysresetn_q;
-    end
-  end
-  assign cpu_reset_n = int_cpu_sysresetn_q & int_cpu_sysresetn_qq;
-  assign CPU_SYSRESETn = cpu_reset_n;
+// DMA1 Clock (Synchronous to System Clock)
+wire            dma1_clk_gate_w;
+wire            dma1_gclk_w;
 
-  // ===== Debug Reset
-  reg int_dbg_resetn_q;
-  reg int_dbg_resetn_qq;
-  always @ (posedge MASTER_CLK or negedge PORESETn) begin
-    if(~PORESETn) begin
-      int_dbg_resetn_q     <= 1'b0;
-      int_dbg_resetn_qq    <= 1'b0;
-    end else begin
-      int_dbg_resetn_q     <= ~DBGRSTREQ;
-      int_dbg_resetn_qq    <= int_dbg_resetn_q;
-    end
-  end
-  assign DAP_RESETn = int_dbg_resetn_q & int_dbg_resetn_qq;
+// DMA1 Peripheral Clock (Derived from System Clock)
+wire [2:0]      dma1_pclk_select_w;
+wire            dma1_free_pclk_w;
+wire            dma1_gpclk_en_w;
 
-  // ===== TLX Reverse Channel Reset
-  reg tlx_rev_reset_n_q;
-  reg tlx_rev_reset_n_qq;
-  always @(posedge TLX_REV_CLK or negedge PORESETn) begin
-    if(~PORESETn) begin
-      tlx_rev_reset_n_q   <= 1'b0;
-      tlx_rev_reset_n_qq  <= 1'b0;
-    end else begin
-      tlx_rev_reset_n_q   <= 1'b1;
-      tlx_rev_reset_n_qq  <= tlx_rev_reset_n_q;
-    end
-  end
-  assign TLX_REV_RESETn  = tlx_rev_reset_n_qq;
+// SRAM Clock (Synchronous to System Clock)
+wire            sram_clk_gate_w;
+wire            sram_gclk_w;
 
-  // Synchronized Reset Assignments
-  assign SRAM_RESETn          = cpu_reset_n;
-  assign TLX_RESETn           = cpu_reset_n;
-  assign CGRA_RESETn          = cpu_reset_n;
-  assign DMA0_RESETn          = cpu_reset_n;
-  assign DMA1_RESETn          = cpu_reset_n;
-  assign PERIPH_RESETn        = cpu_reset_n;
-  assign TIMER0_RESETn        = cpu_reset_n;
-  assign TIMER1_RESETn        = cpu_reset_n;
-  assign UART0_RESETn         = cpu_reset_n;
-  assign UART1_RESETn         = cpu_reset_n;
-  assign WDOG_RESETn          = cpu_reset_n;
-  assign NIC_RESETn           = cpu_reset_n;
+// Interconnect (NIC) Clock (Synchronous to System Clock)
+wire            nic_clk_gate_w;
+wire            nic_gclk_w;
 
-  // Generated Clock Assignments
-  assign CPU_FCLK             = MASTER_CLK;
-  assign CPU_GCLK             = MASTER_CLK;
-  assign DAP_CLK              = MASTER_CLK;
-  assign SRAM_CLK             = MASTER_CLK;
-  assign TLX_CLK              = MASTER_CLK;
-  assign CGRA_CLK             = MASTER_CLK;
-  assign DMA0_CLK             = MASTER_CLK;
-  assign DMA1_CLK             = MASTER_CLK;
-  assign PERIPH_CLK           = MASTER_CLK;
-  assign TIMER0_CLK           = MASTER_CLK;
-  assign TIMER1_CLK           = MASTER_CLK;
-  assign UART0_CLK            = MASTER_CLK;
-  assign UART1_CLK            = MASTER_CLK;
-  assign WDOG_CLK             = MASTER_CLK;
-  assign NIC_CLK              = MASTER_CLK;
+// TLX FWD Clock
+wire            tlx_clk_gate_w;
+wire [2:0]      tlx_clk_select_w;
+wire            tlx_fclk_w;
+wire            tlx_gclk_w;
 
-  // Peripheral Clock Qualifiers
-  assign TIMER0_CLKEN         = 1'b1;
-  assign TIMER1_CLKEN         = 1'b1;
-  assign UART0_CLKEN          = 1'b1;
-  assign UART1_CLKEN          = 1'b1;
-  assign WDOG_CLKEN           = 1'b1;
-  assign DMA0_CLKEN           = 1'b1;
-  assign DMA1_CLKEN           = 1'b1;
+// CGRA Clock
+wire            cgra_clk_gate_w;
+wire [2:0]      cgra_clk_select_w;
+wire            cgra_fclk_w;
+wire            cgra_gclk_w;
 
-  // SysTick
-  assign CPU_CLK_CHANGED        = 1'b0;
-  assign SYS_TICK_NOT_10MS_MULT = 1'b0;
-  assign SYS_TICK_CALIB         = 24'h98967F;
+// TIMER0 Peripheral Clock (Derived from System Clock)
+wire            timer0_clk_gate_w;
+wire [2:0]      timer0_clk_select_w;
+wire            timer0_fclk_w;
+wire            timer0_gclk_w;
+wire            timer0_gclk_en_w;
 
-  // Control
-  assign DBGPWRUPACK            = DBGPWRUPREQ;
-  assign DBGRSTACK              = DBGRSTREQ;
-  assign DBGSYSPWRUPACK         = DBGSYSPWRUPREQ;
-  assign SLEEPHOLDREQn          = 1'b1;
-  assign PMU_WIC_EN_REQ         = 1'b0;
+// TIMER1 Peripheral Clock (Derived from System Clock)
+wire            timer1_clk_gate_w;
+wire [2:0]      timer1_clk_select_w;
+wire            timer1_fclk_w;
+wire            timer1_gclk_w;
+wire            timer1_gclk_en_w;
 
-  // Pad Strength Control
-  assign OUT_PAD_DS_GRP0        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP1        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP2        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP3        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP4        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP5        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP6        = {3{1'b0}};
-  assign OUT_PAD_DS_GRP7        = {3{1'b0}};
+// UART0 Peripheral Clock (Derived from System Clock)
+wire            uart0_clk_gate_w;
+wire [2:0]      uart0_clk_select_w;
+wire            uart0_fclk_w;
+wire            uart0_gclk_w;
+wire            uart0_gclk_en_w;
+
+// UART1 Peripheral Clock (Derived from System Clock)
+wire            uart1_clk_gate_w;
+wire [2:0]      uart1_clk_select_w;
+wire            uart1_fclk_w;
+wire            uart1_gclk_w;
+wire            uart1_gclk_en_w;
+
+// Watchdog Peripheral Clock (Derived from System Clock)
+wire            wdog_clk_gate_w;
+wire [2:0]      wdog_clk_select_w;
+wire            wdog_fclk_w;
+wire            wdog_gclk_w;
+wire            wdog_gclk_en_w;
+
+//-----------------------------------------------------------------------------
+// Reset Control Wires
+//-----------------------------------------------------------------------------
+// System Reset Request (this includes LOCKUP if enabled)
+wire            sysresetreq_w;
+
+// CPU
+wire            cpu_poresetn_w;
+wire            cpu_resetn_w;
+
+// DMA0 (SYS_FCLK Domain)
+wire            dma0_sys_reset_en_w;
+wire            dma0_reset_req_w;
+wire            dma0_reset_ack_w;
+wire            dma0_poresetn_w;
+wire            dma0_resetn_w;
+
+// DMA1 (SYS_FCLK Domain)
+wire            dma1_sys_reset_en_w;
+wire            dma1_reset_req_w;
+wire            dma1_reset_ack_w;
+wire            dma1_poresetn_w;
+wire            dma1_resetn_w;
+
+// SRAM (SYS_FCLK Domain)
+wire            sram_sys_reset_en_w;
+wire            sram_poresetn_w;
+wire            sram_resetn_w;
+
+// TLX
+wire            tlx_reset_req_w;
+wire            tlx_reset_ack_w;
+wire            tlx_rev_reset_req_w;
+wire            tlx_rev_reset_ack_w;
+wire            tlx_sys_reset_en_w;
+wire            tlx_poresetn_w;
+wire            tlx_resetn_w;
+wire            tlx_rev_resetn_w;
+
+// CGRA
+wire            cgra_reset_req_w;
+wire            cgra_reset_ack_w;
+wire            cgra_sys_reset_en_w;
+wire            cgra_poresetn_w;
+wire            cgra_resetn_w;
+
+// NIC
+wire            nic_sys_reset_en_w;
+wire            nic_reset_req_w;
+wire            nic_reset_ack_w;
+wire            nic_poresetn_w;
+wire            nic_resetn_w;
+
+// DAP
+wire            dap_reset_req_w;
+wire            dap_reset_ack_w;
+wire            dap_poresetn_w;
+wire            dap_resetn_w;
+
+// Timer0
+wire            timer0_reset_req_w;
+wire            timer0_reset_ack_w;
+wire            timer0_sys_reset_en_w;
+wire            timer0_poresetn_w;
+wire            timer0_resetn_w;
+
+// Timer1
+wire            timer1_reset_req_w;
+wire            timer1_reset_ack_w;
+wire            timer1_sys_reset_en_w;
+wire            timer1_poresetn_w;
+wire            timer1_resetn_w;
+
+// UART0
+wire            uart0_reset_req_w;
+wire            uart0_reset_ack_w;
+wire            uart0_sys_reset_en_w;
+wire            uart0_poresetn_w;
+wire            uart0_resetn_w;
+
+// UART1
+wire            uart1_reset_req_w;
+wire            uart1_reset_ack_w;
+wire            uart1_sys_reset_en_w;
+wire            uart1_poresetn_w;
+wire            uart1_resetn_w;
+
+// WDOG
+wire            wdog_reset_req_w;
+wire            wdog_reset_ack_w;
+wire            wdog_sys_reset_en_w;
+wire            wdog_poresetn_w;
+wire            wdog_resetn_w;
+
+// Platform Controller
+wire            platform_cntrl_poresetn_w;
+
+// JTAG DP
+wire            dp_jtag_poresetn_w;
+wire            dp_jtag_resetn_w;
+
+// CGRA JTAG
+wire            cgra_jtag_resetn_w;
+
+//-----------------------------------------------------------------------------
+// Clock Controller Integration
+//-----------------------------------------------------------------------------
+AhaClockController u_clock_controller (
+  // Master Interface
+  .MASTER_CLK                       (MASTER_CLK),
+  .PORESETn                         (PORESETn),
+
+  // System Clock
+  .SYS_CLK_SELECT                   (sys_clk_select_w),
+  .SYS_FCLK                         (sys_fclk_w),
+
+  // CPU Clock (Synchronous to System Clock)
+  .CPU_CLK_GATE                     (cpu_clk_gate_w),
+  .CPU_GCLK                         (cpu_gclk_w),
+
+  // DAP Clock (Synchronous to System Clock)
+  .DAP_CLK_GATE                     (dap_clk_gate_w),
+  .DAP_GCLK                         (dap_gclk_w),
+
+  // DMA0 Clock (Synchronous to System Clock)
+  .DMA0_CLK_GATE                    (dma0_clk_gate_w),
+  .DMA0_GCLK                        (dma0_gclk_w),
+
+  // DMA0 Peripheral Clock (Derived from System Clock)
+  .DMA0_PCLK_SELECT                 (dma0_pclk_select_w),
+  .DMA0_FREE_PCLK                   (dma0_free_pclk_w),
+  .DMA0_GPCLK_EN                    (dma0_gpclk_en_w),
+
+  // DMA1 Clock (Synchronous to System Clock)
+  .DMA1_CLK_GATE                    (dma1_clk_gate_w),
+  .DMA1_GCLK                        (dma1_gclk_w),
+
+  // DMA1 Peripheral Clock (Derived from System Clock)
+  .DMA1_PCLK_SELECT                 (dma1_pclk_select_w),
+  .DMA1_FREE_PCLK                   (dma1_free_pclk_w),
+  .DMA1_GPCLK_EN                    (dma1_gpclk_en_w),
+
+  // SRAM Clock (Synchronous to System Clock)
+  .SRAM_CLK_GATE                    (sram_clk_gate_w),
+  .SRAM_GCLK                        (sram_gclk_w),
+
+  // Interconnect (NIC) Clock (Synchronous to System Clock)
+  .NIC_CLK_GATE                     (nic_clk_gate_w),
+  .NIC_GCLK                         (nic_gclk_w),
+
+  // TLX FWD Clock
+  .TLX_CLK_GATE                     (tlx_clk_gate_w),
+  .TLX_CLK_SELECT                   (tlx_clk_select_w),
+  .TLX_FCLK                         (tlx_fclk_w),
+  .TLX_GCLK                         (tlx_gclk_w),
+
+  // CGRA Clock
+  .CGRA_CLK_GATE                    (cgra_clk_gate_w),
+  .CGRA_CLK_SELECT                  (cgra_clk_select_w),
+  .CGRA_FCLK                        (cgra_fclk_w),
+  .CGRA_GCLK                        (cgra_gclk_w),
+
+  // TIMER0 Peripheral Clock (Derived from System Clock)
+  .TIMER0_CLK_GATE                  (timer0_clk_gate_w),
+  .TIMER0_CLK_SELECT                (timer0_clk_select_w),
+  .TIMER0_FCLK                      (timer0_fclk_w),
+  .TIMER0_GCLK                      (timer0_gclk_w),
+  .TIMER0_GCLK_EN                   (timer0_gclk_en_w),
+
+  // TIMER1 Peripheral Clock (Derived from System Clock)
+  .TIMER1_CLK_GATE                  (timer1_clk_gate_w),
+  .TIMER1_CLK_SELECT                (timer1_clk_select_w),
+  .TIMER1_FCLK                      (timer1_fclk_w),
+  .TIMER1_GCLK                      (timer1_gclk_w),
+  .TIMER1_GCLK_EN                   (timer1_gclk_en_w),
+
+  // UART0 Peripheral Clock (Derived from System Clock)
+  .UART0_CLK_GATE                   (uart0_clk_gate_w),
+  .UART0_CLK_SELECT                 (uart0_clk_select_w),
+  .UART0_FCLK                       (uart0_fclk_w),
+  .UART0_GCLK                       (uart0_gclk_w),
+  .UART0_GCLK_EN                    (uart0_gclk_en_w),
+
+  // UART1 Peripheral Clock (Derived from System Clock)
+  .UART1_CLK_GATE                   (uart1_clk_gate_w),
+  .UART1_CLK_SELECT                 (uart1_clk_select_w),
+  .UART1_FCLK                       (uart1_fclk_w),
+  .UART1_GCLK                       (uart1_gclk_w),
+  .UART1_GCLK_EN                    (uart1_gclk_en_w),
+
+  // Watchdog Peripheral Clock (Derived from System Clock)
+  .WDOG_CLK_GATE                    (wdog_clk_gate_w),
+  .WDOG_CLK_SELECT                  (wdog_clk_select_w),
+  .WDOG_FCLK                        (wdog_fclk_w),
+  .WDOG_GCLK                        (wdog_gclk_w),
+  .WDOG_GCLK_EN                     (wdog_gclk_en_w)
+);
+
+//-----------------------------------------------------------------------------
+// Reset Controller Integration
+//-----------------------------------------------------------------------------
+  AhaResetController u_reset_controller (
+    // System Clock
+    .SYS_FCLK                       (sys_fclk_w),
+
+    // Power-On Reset
+    .PORESETn                       (PORESETn),
+
+    // System Reset Request (this includes LOCKUP if enabled)
+    .SYSRESETREQ                    (sysresetreq_w),
+
+    // CPU
+    .CPU_PORESETn                   (cpu_poresetn_w),
+    .CPU_RESETn                     (cpu_resetn_w),
+
+    // DMA0 (SYS_FCLK Domain)
+    .DMA0_SYS_RESET_EN              (dma0_sys_reset_en_w),
+    .DMA0_RESET_REQ                 (dma0_reset_req_w),
+    .DMA0_RESET_ACK                 (dma0_reset_ack_w),
+    .DMA0_PORESETn                  (dma0_poresetn_w),
+    .DMA0_RESETn                    (dma0_resetn_w),
+
+    // DMA1 (SYS_FCLK Domain)
+    .DMA1_SYS_RESET_EN              (dma1_sys_reset_en_w),
+    .DMA1_RESET_REQ                 (dma1_reset_req_w),
+    .DMA1_RESET_ACK                 (dma1_reset_ack_w),
+    .DMA1_PORESETn                  (dma1_poresetn_w),
+    .DMA1_RESETn                    (dma1_resetn_w),
+
+    // SRAM (SYS_FCLK Domain)
+    .SRAM_SYS_RESET_EN              (sram_sys_reset_en_w),
+    .SRAM_PORESETn                  (sram_poresetn_w),
+    .SRAM_RESETn                    (sram_resetn_w),
+
+    // TLX
+    .TLX_FCLK                       (tlx_fclk_w),
+    .TLX_REV_CLK                    (TLX_REV_CLK),
+    .TLX_RESET_REQ                  (tlx_reset_req_w),
+    .TLX_RESET_ACK                  (tlx_reset_ack_w),
+    .TLX_REV_RESET_REQ              (tlx_rev_reset_req_w),
+    .TLX_REV_RESET_ACK              (tlx_rev_reset_ack_w),
+    .TLX_SYS_RESET_EN               (tlx_sys_reset_en_w),
+    .TLX_PORESETn                   (tlx_poresetn_w),
+    .TLX_RESETn                     (tlx_resetn_w),
+    .TLX_REV_RESETn                 (tlx_rev_resetn_w),
+
+    // CGRA
+    .CGRA_FCLK                      (cgra_fclk_w),
+    .CGRA_RESET_REQ                 (cgra_reset_req_w),
+    .CGRA_RESET_ACK                 (cgra_reset_ack_w),
+    .CGRA_SYS_RESET_EN              (cgra_sys_reset_en_w),
+    .CGRA_PORESETn                  (cgra_poresetn_w),
+    .CGRA_RESETn                    (cgra_resetn_w),
+
+    // NIC
+    .NIC_SYS_RESET_EN               (nic_sys_reset_en_w),
+    .NIC_RESET_REQ                  (nic_reset_req_w),
+    .NIC_RESET_ACK                  (nic_reset_ack_w),
+    .NIC_PORESETn                   (nic_poresetn_w),
+    .NIC_RESETn                     (nic_resetn_w),
+
+    // DAP
+    .DAP_RESET_REQ                  (dap_reset_req_w),
+    .DAP_RESET_ACK                  (dap_reset_ack_w),
+    .DAP_PORESETn                   (dap_poresetn_w),
+    .DAP_RESETn                     (dap_resetn_w),
+
+    // Timer0
+    .TIMER0_FCLK                    (timer0_fclk_w),
+    .TIMER0_RESET_REQ               (timer0_reset_req_w),
+    .TIMER0_RESET_ACK               (timer0_reset_ack_w),
+    .TIMER0_SYS_RESET_EN            (timer0_sys_reset_en_w),
+    .TIMER0_PORESETn                (timer0_poresetn_w),
+    .TIMER0_RESETn                  (timer0_resetn_w),
+
+    // Timer1
+    .TIMER1_FCLK                    (timer1_fclk_w),
+    .TIMER1_RESET_REQ               (timer1_reset_req_w),
+    .TIMER1_RESET_ACK               (timer1_reset_ack_w),
+    .TIMER1_SYS_RESET_EN            (timer1_sys_reset_en_w),
+    .TIMER1_PORESETn                (timer1_poresetn_w),
+    .TIMER1_RESETn                  (timer1_resetn_w),
+
+    // UART0
+    .UART0_FCLK                     (uart0_fclk_w),
+    .UART0_RESET_REQ                (uart0_reset_req_w),
+    .UART0_RESET_ACK                (uart0_reset_ack_w),
+    .UART0_SYS_RESET_EN             (uart0_sys_reset_en_w),
+    .UART0_PORESETn                 (uart0_poresetn_w),
+    .UART0_RESETn                   (uart0_resetn_w),
+
+    // UART1
+    .UART1_FCLK                     (uart1_fclk_w),
+    .UART1_RESET_REQ                (uart1_reset_req_w),
+    .UART1_RESET_ACK                (uart1_reset_ack_w),
+    .UART1_SYS_RESET_EN             (uart1_sys_reset_en_w),
+    .UART1_PORESETn                 (uart1_poresetn_w),
+    .UART1_RESETn                   (uart1_resetn_w),
+
+    // WDOG
+    .WDOG_FCLK                      (wdog_fclk_w),
+    .WDOG_RESET_REQ                 (wdog_reset_req_w),
+    .WDOG_RESET_ACK                 (wdog_reset_ack_w),
+    .WDOG_SYS_RESET_EN              (wdog_sys_reset_en_w),
+    .WDOG_PORESETn                  (wdog_poresetn_w),
+    .WDOG_RESETn                    (wdog_resetn_w),
+
+    // Platform Controller
+    .PLATFORM_CNTRL_PORESETn        (platform_cntrl_poresetn_w),
+
+    // JTAG DP
+    .DP_JTAG_TCK                    (DP_JTAG_TCK),
+    .DP_JTAG_TRSTn                  (DP_JTAG_TRSTn),
+    .DP_JTAG_PORESETn               (dp_jtag_poresetn_w),
+    .DP_JTAG_RESETn                 (dp_jtag_resetn_w),
+
+    // CGRA JTAG
+    .CGRA_JTAG_TCK                  (CGRA_JTAG_TCK),
+    .CGRA_JTAG_TRSTn                (CGRA_JTAG_TRSTn),
+    .CGRA_JTAG_RESETn               (cgra_jtag_resetn_w)
+  );
+
+  assign dap_reset_req_w  = DBGRSTREQ;
+
+
+//-----------------------------------------------------------------------------
+// Control Register Space Integration
+//-----------------------------------------------------------------------------
+  AhaPlatformCtrlEngine u_ctrl_engine (
+    // Clocks and Resets
+    .CLK                            (sys_fclk_w),
+    .RESETn                         (platform_cntrl_poresetn_w),
+
+    // Pad Strength Control
+    .PAD_DS_GRP0                    (OUT_PAD_DS_GRP0),
+    .PAD_DS_GRP1                    (OUT_PAD_DS_GRP1),
+    .PAD_DS_GRP2                    (OUT_PAD_DS_GRP2),
+    .PAD_DS_GRP3                    (OUT_PAD_DS_GRP3),
+    .PAD_DS_GRP4                    (OUT_PAD_DS_GRP4),
+    .PAD_DS_GRP5                    (OUT_PAD_DS_GRP5),
+    .PAD_DS_GRP6                    (OUT_PAD_DS_GRP6),
+    .PAD_DS_GRP7                    (OUT_PAD_DS_GRP7),
+
+    // Clock Select Signals
+    .SYS_CLK_SELECT                 (sys_clk_select_w),
+    .DMA0_PCLK_SELECT               (dma0_pclk_select_w),
+    .DMA1_PCLK_SELECT               (dma1_pclk_select_w),
+    .TLX_CLK_SELECT                 (tlx_clk_select_w),
+    .CGRA_CLK_SELECT                (cgra_clk_select_w),
+    .TIMER0_CLK_SELECT              (timer0_clk_select_w),
+    .TIMER1_CLK_SELECT              (timer1_clk_select_w),
+    .UART0_CLK_SELECT               (uart0_clk_select_w),
+    .UART1_CLK_SELECT               (uart1_clk_select_w),
+    .WDOG_CLK_SELECT                (wdog_clk_select_w),
+
+    // Clock Gate Enable Signals
+    .CPU_CLK_GATE_EN                (cpu_clk_gate_w),
+    .DAP_CLK_GATE_EN                (dap_clk_gate_w),
+    .DMA0_CLK_GATE_EN               (dma0_clk_gate_w),
+    .DMA1_CLK_GATE_EN               (dma1_clk_gate_w),
+    .SRAM_CLK_GATE_EN               (sram_clk_gate_w),
+    .NIC_CLK_GATE_EN                (nic_clk_gate_w),
+    .TLX_CLK_GATE_EN                (tlx_clk_gate_w),
+    .CGRA_CLK_GATE_EN               (cgra_clk_gate_w),
+    .TIMER0_CLK_GATE_EN             (timer0_clk_gate_w),
+    .TIMER1_CLK_GATE_EN             (timer1_clk_gate_w),
+    .UART0_CLK_GATE_EN              (uart0_clk_gate_w),
+    .UART1_CLK_GATE_EN              (uart1_clk_gate_w),
+    .WDOG_CLK_GATE_EN               (wdog_clk_gate_w),
+
+    // Control for System Reset Propagation
+    .DMA0_SYS_RESET_EN              (dma0_sys_reset_en_w),
+    .DMA1_SYS_RESET_EN              (dma1_sys_reset_en_w),
+    .SRAM_SYS_RESET_EN              (sram_sys_reset_en_w),
+    .TLX_SYS_RESET_EN               (tlx_sys_reset_en_w),
+    .CGRA_SYS_RESET_EN              (cgra_sys_reset_en_w),
+    .NIC_SYS_RESET_EN               (nic_sys_reset_en_w),
+    .TIMER0_SYS_RESET_EN            (timer0_sys_reset_en_w),
+    .TIMER1_SYS_RESET_EN            (timer1_sys_reset_en_w),
+    .UART0_SYS_RESET_EN             (uart0_sys_reset_en_w),
+    .UART1_SYS_RESET_EN             (uart1_sys_reset_en_w),
+    .WDOG_SYS_RESET_EN              (wdog_sys_reset_en_w),
+
+    // Peripheral Reset Requests
+    .DMA0_RESET_REQ                 (dma0_reset_req_w),
+    .DMA1_RESET_REQ                 (dma1_reset_req_w),
+    .TLX_RESET_REQ                  (tlx_reset_req_w),
+    .TLX_REV_RESET_REQ              (tlx_rev_reset_req_w),
+    .CGRA_RESET_REQ                 (cgra_reset_req_w),
+    .NIC_RESET_REQ                  (nic_reset_req_w),
+    .TIMER0_RESET_REQ               (timer0_reset_req_w),
+    .TIMER1_RESET_REQ               (timer1_reset_req_w),
+    .UART0_RESET_REQ                (uart0_reset_req_w),
+    .UART1_RESET_REQ                (uart1_reset_req_w),
+    .WDOG_RESET_REQ                 (wdog_reset_req_w),
+
+    // Peripheral Reset Request Acknowledgements
+    .DMA0_RESET_ACK                 (dma0_reset_ack_w),
+    .DMA1_RESET_ACK                 (dma1_reset_ack_w),
+    .TLX_RESET_ACK                  (tlx_reset_ack_w),
+    .TLX_REV_RESET_ACK              (tlx_rev_reset_ack_w),
+    .CGRA_RESET_ACK                 (cgra_reset_ack_w),
+    .NIC_RESET_ACK                  (nic_reset_ack_w),
+    .TIMER0_RESET_ACK               (timer0_reset_ack_w),
+    .TIMER1_RESET_ACK               (timer1_reset_ack_w),
+    .UART0_RESET_ACK                (uart0_reset_ack_w),
+    .UART1_RESET_ACK                (uart1_reset_ack_w),
+    .WDOG_RESET_ACK                 (wdog_reset_ack_w),
+
+    // SysTick
+    .CPU_CLK_CHANGED                (CPU_CLK_CHANGED),
+    .SYS_TICK_NOT_10MS_MULT         (SYS_TICK_NOT_10MS_MULT),
+    .SYS_TICK_CALIB                 (SYS_TICK_CALIB),
+
+    // Debug and Power
+    .DBGPWRUPACK                    (DBGPWRUPACK),
+    .DBGSYSPWRUPACK                 (DBGSYSPWRUPACK),
+    .SLEEPHOLDREQn                  (SLEEPHOLDREQn),
+    .PMU_WIC_EN_REQ                 (PMU_WIC_EN_REQ),
+    .SYSRESETREQ_LOCKUP             (sysresetreq_w),
+
+    .PMU_WIC_EN_ACK                 (PMU_WIC_EN_ACK),
+    .PMU_WAKEUP                     (PMU_WAKEUP),
+    .DBGPWRUPREQ                    (DBGPWRUPREQ),
+    .DBGSYSPWRUPREQ                 (DBGSYSPWRUPREQ),
+    .SLEEP                          (SLEEP),
+    .SLEEPDEEP                      (SLEEPDEEP),
+    .LOCKUP                         (LOCKUP),
+    .SYSRESETREQ                    (SYSRESETREQ),
+    .SLEEPHOLDACKn                  (SLEEPHOLDACKn),
+    .WDOG_TIMEOUT_RESET_REQ         (WDOG_RESET_REQ)
+  );
+
+//-----------------------------------------------------------------------------
+// Output Assignments
+//-----------------------------------------------------------------------------
+  // Generated Clocks
+  assign CPU_FCLK               = sys_fclk_w;
+  assign CPU_GCLK               = cpu_gclk_w;
+  assign DAP_CLK                = dap_gclk_w;
+  assign SRAM_CLK               = sram_gclk_w;
+  assign TLX_CLK                = tlx_gclk_w;
+  assign CGRA_CLK               = cgra_gclk_w;
+  assign DMA0_CLK               = dma0_gclk_w;
+  assign DMA1_CLK               = dma1_gclk_w;
+  assign PERIPH_CLK             = nic_gclk_w;
+  assign TIMER0_CLK             = timer0_gclk_w;
+  assign TIMER1_CLK             = timer1_gclk_w;
+  assign UART0_CLK              = uart0_gclk_w;
+  assign UART1_CLK              = uart1_gclk_w;
+  assign WDOG_CLK               = wdog_gclk_w;
+  assign NIC_CLK                = nic_gclk_w;
+
+  // Synchronized resets
+  assign CPU_PORESETn           = cpu_poresetn_w;
+  assign CPU_SYSRESETn          = cpu_resetn_w;
+  assign DAP_RESETn             = dap_resetn_w;
+  assign DP_JTAG_RESETn         = dp_jtag_resetn_w;
+  assign DP_JTAG_PORESETn       = dp_jtag_poresetn_w;
+  assign CGRA_JTAG_RESETn       = cgra_jtag_resetn_w;
+  assign SRAM_RESETn            = sram_resetn_w;
+  assign TLX_RESETn             = tlx_resetn_w;
+  assign CGRA_RESETn            = cgra_resetn_w;
+  assign DMA0_RESETn            = dma0_resetn_w;
+  assign DMA1_RESETn            = dma1_resetn_w;
+  assign PERIPH_RESETn          = nic_resetn_w;
+  assign TIMER0_RESETn          = timer0_resetn_w;
+  assign TIMER1_RESETn          = timer1_resetn_w;
+  assign UART0_RESETn           = uart0_resetn_w;
+  assign UART1_RESETn           = uart1_resetn_w;
+  assign WDOG_RESETn            = wdog_resetn_w;
+  assign NIC_RESETn             = nic_resetn_w;
+  assign TLX_REV_RESETn         = tlx_rev_resetn_w;
+
+  // NIC Clock Qualifiers for Peripheral Clocks
+  assign TIMER0_CLKEN           = timer0_gclk_en_w;
+  assign TIMER1_CLKEN           = timer1_gclk_en_w;
+  assign UART0_CLKEN            = uart0_gclk_en_w;
+  assign UART1_CLKEN            = uart1_gclk_en_w;
+  assign WDOG_CLKEN             = wdog_gclk_en_w;
+  assign DMA0_CLKEN             = dma0_gpclk_en_w;
+  assign DMA1_CLKEN             = dma1_gpclk_en_w;
+
+  // Request ACKs
+  assign DBGRSTACK              = dap_reset_ack_w;
 
   // LoopBack
-  assign LOOP_BACK              = MASTER_CLK;
+  assign LOOP_BACK              = sys_fclk_w;
 
 endmodule

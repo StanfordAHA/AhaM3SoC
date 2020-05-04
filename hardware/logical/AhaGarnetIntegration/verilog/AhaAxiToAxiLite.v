@@ -59,9 +59,9 @@ module AhaAxiToAxiLite #(parameter ID_WIDTH = 4) (
   output  wire                    LITE_WVALID,
   input   wire                    LITE_WREADY,
 
-  output  wire  [1:0]             LITE_BRESP,
-  output  wire                    LITE_BVALID,
-  input   wire                    LITE_BREADY,
+  input   wire  [1:0]             LITE_BRESP,
+  input   wire                    LITE_BVALID,
+  output  wire                    LITE_BREADY,
 
   output  wire  [31:0]            LITE_ARADDR,
   output  wire                    LITE_ARVALID,
