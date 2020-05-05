@@ -1,0 +1,57 @@
+
+<div>
+<h1>ID Register</h1>
+
+<dl class="node-info">
+    <dt>Absolute Address:</dt><dd id="_AbsAddr" class="address"></dd>
+    <dt>Base Offset:</dt><dd class="address">0x0</dd>
+    <dt>Size:</dt><dd class="address">0x4</dd>
+</dl>
+<h2>Description</h2>
+<p>Identification register. Always reads as 0x5A5A5A5A</p>
+
+<h2>Contents</h2>
+<table border="1">
+    <tr>
+        <th>Bits</th>
+        <th>Identifier</th>
+        <th>Access</th>
+        <th>Reset</th>
+        <th>Decoded</th>
+        <th>Name</th>
+        <th></th>
+    </tr>
+    <tr id="ID_VALUE">
+        <td>[31:0]</td>
+        <td><a href="#ID_VALUE.desc">ID_VALUE</a></td>
+        <td>r</td>
+        <td>0x5a5a5a5a
+        </td>
+        <td>
+            <input id="_FieldValueTesterID_VALUE" class="field-value-tester"
+                type="text" autocomplete="off"
+                data-name="ID_VALUE" oninput="onDecodedFieldInput(this)"/>
+        </td>
+        <td>-</td>
+        <td>
+            <button type="button" id="_RadixButtonID_VALUE" class="radix-button"
+                title="Switch radix" aria-label="Switch radix"
+                data-name="ID_VALUE" onclick="onRadixSwitch(this)">H</button>
+            <a class="headerlink" href="#ID_VALUE" title="Permalink to this row"></a>
+        </td>
+    </tr>
+</table>
+<p>
+    <label>
+        Encoded Register Value:
+        <input id="_RegValueTester" type="text" autocomplete="off" oninput="onEncodedRegInput(this)"/>
+        <button type="button" class="reset-button" title="Reset register values" aria-label="Reset register values" onclick="onResetRegValue(this)"></button>
+    </label>
+</p>
+<hr/><h2>Field Descriptions</h2>
+
+<h3 id="ID_VALUE.desc">ID_VALUE
+    <a class="headerlink" href="#ID_VALUE.desc" title="Permalink to this headline"></a>
+</h3>
+<p>Read-Only Identification Register</p>
+</div>

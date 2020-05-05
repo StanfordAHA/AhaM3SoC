@@ -101,9 +101,6 @@ module AhaPlatformController (
   output  wire [2:0]      OUT_PAD_DS_GRP6,
   output  wire [2:0]      OUT_PAD_DS_GRP7,
 
-  // LoopBack
-  output  wire            LOOP_BACK,
-
   // Platform Control Regspace
   input   wire            PCTRL_HSEL,
   input   wire [31:0]     PCTRL_HADDR,
@@ -629,7 +626,7 @@ AhaClockController u_clock_controller (
     .DBGSYSPWRUPACK                 (DBGSYSPWRUPACK),
     .SLEEPHOLDREQn                  (SLEEPHOLDREQn),
     .PMU_WIC_EN_REQ                 (PMU_WIC_EN_REQ),
-    .SYSRESETREQ_LOCKUP             (sysresetreq_w),
+    .SYSRESETREQ_COMBINED           (sysresetreq_w),
 
     .PMU_WIC_EN_ACK                 (PMU_WIC_EN_ACK),
     .PMU_WAKEUP                     (PMU_WAKEUP),
@@ -711,8 +708,5 @@ AhaClockController u_clock_controller (
 
   // Request ACKs
   assign DBGRSTACK              = dap_reset_ack_w;
-
-  // LoopBack
-  assign LOOP_BACK              = sys_fclk_w;
 
 endmodule

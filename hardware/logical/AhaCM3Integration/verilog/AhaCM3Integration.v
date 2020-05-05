@@ -181,6 +181,7 @@ module AhaCM3Integration (
   wire                  wic_clear;
   wire [WIC_LINES-1:0]  wic_int;
   wire [WIC_LINES-1:0]  wic_mask;
+  wire [WIC_LINES-1:0]  wic_pend;
   wire                  wic_ds_ack_n;
   wire                  wic_ds_req_n;
   wire [239:0]          wic_mask_isr;
@@ -206,7 +207,7 @@ module AhaCM3Integration (
       // Clocks and Resets
       .PORESETn           (CPU_PORESETn),
       .SYSRESETn          (CPU_SYSRESETn),
-      .FCLK               (CPU_FCLK),
+      .FCLK               (CPU_GCLK),
       .HCLK               (CPU_GCLK),
       .DAPCLK             (DAP_CLK),
 
@@ -545,9 +546,9 @@ module AhaCM3Integration (
         .TRACE_LVL(TRACE_LVL),
         .CP_PRESENT(0)
       ) u_cm3_tpiu (
-        .CLK                  (CPU_FCLK),
+        .CLK                  (CPU_GCLK),
         .CLKEN                (trace_enabled),
-        .TRACECLKIN           (CPU_FCLK),
+        .TRACECLKIN           (CPU_GCLK),
         .RESETn               (CPU_PORESETn),
         .TRESETn              (CPU_PORESETn),
 
@@ -589,16 +590,16 @@ module AhaCM3Integration (
   );
 
   // ===== Interrupts (all interrupt sources are in synchronous clock domains)
-  assign cpu_int_isr_sync[0]        = TIMER0_INT;
-  assign cpu_int_isr_sync[1]        = TIMER1_INT;
-  assign cpu_int_isr_sync[2]        = UART0_TX_RX_INT;
-  assign cpu_int_isr_sync[3]        = UART1_TX_RX_INT;
-  assign cpu_int_isr_sync[4]        = UART0_TX_RX_O_INT | UART1_TX_RX_O_INT;
-  assign cpu_int_isr_sync[5]        = DMA0_INT[0];
-  assign cpu_int_isr_sync[6]        = DMA0_INT[1];
-  assign cpu_int_isr_sync[7]        = DMA1_INT[0];
-  assign cpu_int_isr_sync[8]        = DMA1_INT[1];
-  assign cpu_int_isr_sync[9]        = CGRA_INT;
+  assign cpu_int_isr_sync[0]        = wic_pend[3]   | TIMER0_INT;
+  assign cpu_int_isr_sync[1]        = wic_pend[4]   | TIMER1_INT;
+  assign cpu_int_isr_sync[2]        = wic_pend[5]   | UART0_TX_RX_INT;
+  assign cpu_int_isr_sync[3]        = wic_pend[6]   | UART1_TX_RX_INT;
+  assign cpu_int_isr_sync[4]        = wic_pend[7]   | UART0_TX_RX_O_INT | UART1_TX_RX_O_INT;
+  assign cpu_int_isr_sync[5]        = wic_pend[8]   | DMA0_INT[0];
+  assign cpu_int_isr_sync[6]        = wic_pend[9]   | DMA0_INT[1];
+  assign cpu_int_isr_sync[7]        = wic_pend[10]  | DMA1_INT[0];
+  assign cpu_int_isr_sync[8]        = wic_pend[11]  | DMA1_INT[1];
+  assign cpu_int_isr_sync[9]        = wic_pend[12]  | CGRA_INT;
   assign cpu_int_isr_sync[239:10]   = {(240-10){1'b0}};
 
   assign cpu_int_nmi_sync           = WDOG_INT;
@@ -615,7 +616,7 @@ module AhaCM3Integration (
     .WICENREQ     (PMU_WIC_EN_REQ),
     .WICDSACKn    (wic_ds_ack_n),
     .WICSENSE     (/*unused*/),
-    .WICPEND      (/*unused*/),
+    .WICPEND      (wic_pend),
     .WICDSREQn    (wic_ds_req_n),
     .WICENACK     (PMU_WIC_EN_ACK),
     .WAKEUP       (PMU_WAKEUP)

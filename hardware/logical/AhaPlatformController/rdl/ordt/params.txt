@@ -1,0 +1,36 @@
+//-----------------------------------------------------------------------------
+// Ordt
+//-----------------------------------------------------------------------------
+// Purpose: Ordt Parameter File
+//------------------------------------------------------------------------------
+//
+// Author   : Gedeon Nyengele
+// Date     : May 4, 2020
+//------------------------------------------------------------------------------
+
+// Global Parameters
+global {
+  min_data_size                   =  32
+  base_address                    = 0x00000000
+  allow_unordered_addresses       = false
+}
+
+// RDL Input Parameters
+input rdl {
+  process_component               = "AhaPlatformCtrlAddrMap"
+  resolve_reg_category            = true
+  restrict_defined_property_names = true
+  default_rw_hw_access            = false
+}
+
+// Output SystemVerilog
+output systemverilog {
+  leaf_address_size               = 12
+  root_decoder_interface          = parallel
+  secondary_decoder_interface     = none
+  suppress_no_reset_warnings      = false
+  generate_child_addrmaps         = true
+  use_async_resets                = true
+  nack_partial_writes             = false
+  write_enable_size               = 8
+}

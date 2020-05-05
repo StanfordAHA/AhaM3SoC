@@ -1,0 +1,489 @@
+//-----------------------------------------------------------------------------
+// SystemRDL v1.0
+//-----------------------------------------------------------------------------
+// Purpose: AhaM3SoC Platform Controller Address Map
+//------------------------------------------------------------------------------
+//
+// Author   : Gedeon Nyengele
+// Date     : May 4, 2020
+//------------------------------------------------------------------------------
+
+addrmap AhaPlatformCtrlAddrMap {
+
+  name  = "AhaPlatformCtrlAddrMap";
+  desc  = "AhaM3SoC Platform Controller Address Map";
+
+  default addressing  = regalign;
+  default regwidth    = 32;
+  default accesswidth = 32;
+  default alignment   = 4;
+
+  default littleendian;
+  default lsb0;
+
+  default sw          = rw;
+  default hw          = r;
+
+  // ------------------------------------------------------------------------
+  // Indentification Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "ID Register";
+    desc  = "Identification register. Always reads as 0x5A5A5A5A";
+
+    field {
+      desc  = "Read-Only Identification Register";
+
+      hw = na;
+      sw = r;
+
+    } ID_VALUE[31:0]  = 0x5A5A5A5A;
+
+  } ID_REG @ 0x0;
+
+  // ------------------------------------------------------------------------
+  // Pad Strength Control Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Pad Strength Control Register";
+    desc  = "Controls chip-level pad strength";
+
+    field {
+      desc  = "Control for pads in Group 0";
+    } GRP0 [2:0]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 1";
+    } GRP1 [5:3]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 2";
+    } GRP2 [8:6]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 3";
+    } GRP3 [11:9]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 4";
+    } GRP4 [14:12]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 5";
+    } GRP5 [17:15]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 6";
+    } GRP6 [20:18]  = 0x0;
+
+    field {
+      desc  = "Control for pads in Group 7";
+    } GRP7 [23:21]  = 0x0;
+
+  } PAD_STRENGTH_CTRL_REG @ 0x04;
+
+  // ------------------------------------------------------------------------
+  // Clock Select Registers
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "System Clock Selection Register";
+    desc  = "Select divided clock for system clock";
+
+    field {
+      desc  = "Clock Select";
+      swmod;
+    } SELECT [2:0] = 3'b001;
+
+  } SYS_CLK_SELECT_REG @ 0x08;
+
+  reg {
+    name  = "DMA0 Peripheral Clock Selection Register";
+    desc  = "Select Divided Clock for DMA0 Peripheral Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } DMA0_PCLK_SELECT_REG @ 0x14;
+
+  reg {
+    name  = "DMA1 Peripheral Clock Selection Register";
+    desc  = "Select Divided Clock for DMA1 Peripheral Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } DMA1_PCLK_SELECT_REG @ 0x18;
+
+  reg {
+    name  = "TLX FWD Clock Selection Register";
+    desc  = "Select Divided Clock for TLX FWD Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } TLX_FWD_CLK_SELECT_REG @ 0x20;
+
+  reg {
+    name  = "CGRA Clock Selection Register";
+    desc  = "Select Divided Clock for CGRA Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } CGRA_CLK_SELECT_REG @ 0x28;
+
+  reg {
+    name  = "TIMER0 Clock Selection Register";
+    desc  = "Select Divided Clock for TIMER0 Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } TIMER0_CLK_SELECT_REG @ 0x30;
+
+  reg {
+    name  = "TIMER1 Clock Selection Register";
+    desc  = "Select Divided Clock for TIMER1 Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } TIMER1_CLK_SELECT_REG @ 0x34;
+
+  reg {
+    name  = "UART0 Clock Selection Register";
+    desc  = "Select Divided Clock for UART0 Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b001;
+
+  } UART0_CLK_SELECT_REG @ 0x38;
+
+  reg {
+    name  = "UART1 Clock Selection Register";
+    desc  = "Select Divided Clock for UART1 Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } UART1_CLK_SELECT_REG @ 0x3C;
+
+  reg {
+    name  = "WDOG Clock Selection Register";
+    desc  = "Select Divided Clock for WDOG Clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [2:0] = 3'b101;
+
+  } WDOG_CLK_SELECT_REG @ 0x40;
+
+  // ------------------------------------------------------------------------
+  // Clock Gate Enable Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Clock Gate Enable Register";
+    desc  = "Enable Clock Gate for target component";
+
+    field {
+      desc  = "CPU Clock Gate";
+    } CPU [1:1] = 1'b1;
+
+    field {
+      desc  = "DAP Clock Gate";
+    } DAP [2:2] = 1'b1;
+
+    field {
+      desc  = "DMA0 Clock Gate";
+    } DMA0 [3:3] = 1'b1;
+
+    field {
+      desc  = "DMA1 Clock Gate";
+    } DMA1 [4:4] = 1'b1;
+
+    field {
+      desc  = "SRAM Clock Gate";
+    } SRAMx [5:5] = 1'b1;
+
+    field {
+      desc  = "TLX_FWD Clock Gate";
+    } TLX_FWD [6:6] = 1'b1;
+
+    field {
+      desc  = "GGRA Clock Gate";
+    } GGRA [8:8] = 1'b1;
+
+    field {
+      desc  = "NIC Clock Gate";
+    } NIC [9:9] = 1'b1;
+
+    field {
+      desc  = "TIMER0 Clock Gate";
+    } TIMER0 [10:10] = 1'b1;
+
+    field {
+      desc  = "TIMER1 Clock Gate";
+    } TIMER1 [11:11] = 1'b1;
+
+    field {
+      desc  = "UART0 Clock Gate";
+    } UART0 [12:12] = 1'b1;
+
+    field {
+      desc  = "UART1 Clock Gate";
+    } UART1 [13:13] = 1'b1;
+
+    field {
+      desc  = "WDOG Clock Gate";
+    } WDOG [14:14] = 1'b1;
+
+  } CLK_GATE_EN_REG @ 0x44;
+
+  // ------------------------------------------------------------------------
+  // System Reset Propagation Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "System Reset Propagation Register";
+    desc  = "Specifies whether or not SYSRESETREQ should reset the target component";
+
+    field {
+      desc  = "DMA0 Enable System Reset Propagation";
+    } DMA0 [3:3] = 1'b1;
+
+    field {
+      desc  = "DMA1 Enable System Reset Propagation";
+    } DMA1 [4:4] = 1'b1;
+
+    field {
+      desc  = "SRAM Enable System Reset Propagation";
+    } SRAMx [5:5] = 1'b1;
+
+    field {
+      desc  = "TLX_FWD Enable System Reset Propagation";
+    } TLX_FWD [6:6] = 1'b1;
+
+    field {
+      desc  = "GGRA Enable System Reset Propagation";
+    } GGRA [8:8] = 1'b1;
+
+    field {
+      desc  = "NIC Enable System Reset Propagation";
+    } NIC [9:9] = 1'b1;
+
+    field {
+      desc  = "TIMER0 Enable System Reset Propagation";
+    } TIMER0 [10:10] = 1'b1;
+
+    field {
+      desc  = "TIMER1 Enable System Reset Propagation";
+    } TIMER1 [11:11] = 1'b1;
+
+    field {
+      desc  = "UART0 Enable System Reset Propagation";
+    } UART0 [12:12] = 1'b1;
+
+    field {
+      desc  = "UART1 Enable System Reset Propagation";
+    } UART1 [13:13] = 1'b1;
+
+    field {
+      desc  = "WDOG Enable System Reset Propagation";
+    } WDOG [14:14] = 1'b1;
+
+  } SYS_RESET_PROP_REG @ 0x48;
+
+  // ------------------------------------------------------------------------
+  // Peripheral Reset Request Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Peripheral Reset Request Register";
+    desc  = "Request Reset for Peripherals";
+
+    field {
+      desc  = "DMA0 Enable Reset Request";
+    } DMA0 [3:3] = 1'b1;
+
+    field {
+      desc  = "DMA1 Enable Reset Request";
+    } DMA1 [4:4] = 1'b1;
+
+    field {
+      desc  = "TLX_FWD Enable Reset Request";
+    } TLX_FWD [6:6] = 1'b1;
+
+    field {
+      desc  = "TLX_REV Enable Reset Request";
+    } TLX_REV [7:7] = 1'b1;
+
+    field {
+      desc  = "GGRA Enable Reset Request";
+    } GGRA [8:8] = 1'b1;
+
+    field {
+      desc  = "NIC Enable Reset Request";
+    } NIC [9:9] = 1'b1;
+
+    field {
+      desc  = "TIMER0 Enable Reset Request";
+    } TIMER0 [10:10] = 1'b1;
+
+    field {
+      desc  = "TIMER1 Enable Reset Request";
+    } TIMER1 [11:11] = 1'b1;
+
+    field {
+      desc  = "UART0 Enable Reset Request";
+    } UART0 [12:12] = 1'b1;
+
+    field {
+      desc  = "UART1 Enable Reset Request";
+    } UART1 [13:13] = 1'b1;
+
+    field {
+      desc  = "WDOG Enable Reset Request";
+    } WDOG [14:14] = 1'b1;
+
+  } RESET_REQ_REG @ 0x4C;
+
+  // ------------------------------------------------------------------------
+  // Peripheral Reset Acknowledgement Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Peripheral Reset Request Register";
+    desc  = "Request Reset for Peripherals";
+
+    field {
+      desc  = "DMA0 Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } DMA0 [3:3] = 1'b0;
+
+    field {
+      desc  = "DMA1 Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } DMA1 [4:4] = 1'b0;
+
+    field {
+      desc  = "TLX_FWD Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } TLX_FWD [6:6] = 1'b0;
+
+    field {
+      desc  = "TLX_REV Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } TLX_REV [7:7] = 1'b0;
+
+    field {
+      desc  = "GGRA Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } GGRA [8:8] = 1'b0;
+
+    field {
+      desc  = "NIC Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } NIC [9:9] = 1'b0;
+
+    field {
+      desc  = "TIMER0 Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } TIMER0 [10:10] = 1'b0;
+
+    field {
+      desc  = "TIMER1 Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } TIMER1 [11:11] = 1'b0;
+
+    field {
+      desc  = "UART0 Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } UART0 [12:12] = 1'b0;
+
+    field {
+      desc  = "UART1 Enable Reset Ack";
+
+      hw = w;
+      sw = r;
+
+    } UART1 [13:13] = 1'b0;
+
+    field {
+      desc  = "WDOG Enable Reset Request";
+
+      hw = w;
+      sw = r;
+
+    } WDOG [14:14] = 1'b0;
+
+  } RESET_ACK_REG @ 0x50;
+
+
+  // ------------------------------------------------------------------------
+  // SysTick Configuration Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Systick Configuration Register";
+    desc  = "Systick Configuration Register";
+
+    field {
+      desc   = "SysTick Calibration Value";
+    } CALIB [23:0]  = 0x0;
+
+    field {
+      desc  = "Specifies whether SysTick is not a multiple of 10ms";
+    } NOT_10_MS [31:31] =  1'b1;
+
+  } SYS_TICK_CONFIG_REG @ 0x54;
+
+
+  // ------------------------------------------------------------------------
+  // System Reset Aggregation Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "System Reset Aggregation Register";
+    desc  = "Add more signals to system reset request";
+
+    field {
+      desc  = "Specifies whether LOCKUP should issue system reset request";
+    } LOCKUP_RESET_EN [0:0] = 1'b0;
+
+    field {
+      desc  = "Specifies whether WDOG timeout should issue system reset request";
+    } WDOG_TIMEOUT_RESET_EN [1:1] = 1'b0;
+
+  } SYS_RESET_AGGR_REG @ 0x58;
+
+};

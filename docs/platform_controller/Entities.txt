@@ -1,0 +1,34 @@
+Relative Offsets for Entities:
+0:    SYS
+1:    CPU
+2:    DAP
+3:    DMA0
+4:    DMA1
+5:    SRAM
+6:    TLX_FWD
+7:    TLV_REV
+8:    CGRA
+9:    NIC
+10:   TIMER0
+11:   TIMER1
+12:   UART0
+13:   UART1
+14:   WDOG
+
+
+                    Clock Select Addr
+0:    SYS           0x08
+1:    CPU           --
+2:    DAP           --
+3:    DMA0          0x14 (PCLK)
+4:    DMA1          0x18 (PCLK)
+5:    SRAM          --
+6:    TLX_FWD       0x20
+7:    TLV_REV       --
+8:    CGRA          0x28
+9:    NIC           --
+10:   TIMER0        0x30
+11:   TIMER1        0x34
+12:   UART0         0x38
+13:   UART1         0x3C
+14:   WDOG          0x40

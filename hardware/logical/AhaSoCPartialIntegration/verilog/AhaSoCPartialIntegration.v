@@ -207,6 +207,19 @@ module AhaSoCPartialIntegration (
   input   wire            TLX_RVALID,
   output  wire            TLX_RREADY,
 
+  output  wire [31:0]     TLX_HADDR,
+  output  wire [2:0]      TLX_HBURST,
+  output  wire [3:0]      TLX_HPROT,
+  output  wire [2:0]      TLX_HSIZE,
+  output  wire [1:0]      TLX_HTRANS,
+  output  wire [31:0]     TLX_HWDATA,
+  output  wire            TLX_HWRITE,
+  input   wire [31:0]     TLX_HRDATA,
+  input   wire            TLX_HREADYOUT,
+  input   wire            TLX_HRESP,
+  output  wire            TLX_HSELx,
+  output  wire            TLX_HREADY,
+
   // Platform Controller
   output  wire            PCTRL_HSEL,
   output  wire [31:0]     PCTRL_HADDR,
@@ -871,6 +884,20 @@ module AhaSoCPartialIntegration (
     .RLAST_master_TLX                       (TLX_RLAST),
     .RVALID_master_TLX                      (TLX_RVALID),
     .RREADY_master_TLX                      (TLX_RREADY),
+
+    // Instance: u_cd_tlx, Port: master_TLX_REG
+    .HADDR_master_TLX_REG                   (TLX_HADDR),
+    .HBURST_master_TLX_REG                  (TLX_HBURST),
+    .HPROT_master_TLX_REG                   (TLX_HPROT),
+    .HSIZE_master_TLX_REG                   (TLX_HSIZE),
+    .HTRANS_master_TLX_REG                  (TLX_HTRANS),
+    .HWDATA_master_TLX_REG                  (TLX_HWDATA),
+    .HWRITE_master_TLX_REG                  (TLX_HWRITE),
+    .HRDATA_master_TLX_REG                  (TLX_HRDATA),
+    .HREADYOUT_master_TLX_REG               (TLX_HREADYOUT),
+    .HRESP_master_TLX_REG                   (TLX_HRESP),
+    .HSELx_master_TLX_REG                   (TLX_HSELx),
+    .HREADY_master_TLX_REG                  (TLX_HREADY),
 
     //  Non-bus signals
 

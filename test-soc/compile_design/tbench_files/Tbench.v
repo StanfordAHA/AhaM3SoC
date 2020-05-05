@@ -79,16 +79,16 @@ module Tbench;
     .pad_ext_dump_start             (1'b0),
 
     .pad_PORESETn                   (po_reset_n),
-    .pad_SOC_JTAG_TRSTn             (nTRST),
+    .pad_DP_JTAG_TRSTn              (nTRST),
     .pad_CGRA_JTAG_TRSTn            (1'b1),
 
     .pad_MASTER_CLK                 (master_clk),
-    .pad_SOC_JTAG_TCK               (TCK),
+    .pad_DP_JTAG_TCK                (TCK),
     .pad_CGRA_JTAG_TCK              (1'b0),
 
-    .pad_SOC_JTAG_TDI               (TDI),
-    .pad_SOC_JTAG_TMS               (TMS),
-    .pad_SOC_JTAG_TDO               (TDO),
+    .pad_DP_JTAG_TDI                (TDI),
+    .pad_DP_JTAG_TMS                (TMS),
+    .pad_DP_JTAG_TDO                (TDO),
 
     .pad_CGRA_JTAG_TDI              (1'b0),
     .pad_CGRA_JTAG_TMS              (1'b0),
@@ -127,6 +127,7 @@ module Tbench;
     .pad_TLX_REV_FLOW_TDATA         (tlx_rev_flow_tdata),
 
     // LoopBack
+    .pad_LOOP_BACK_SELECT           (4'h0),
     .pad_LOOP_BACK                  ()
   );
 
@@ -193,7 +194,7 @@ module Tbench;
   //-----------------------------------------
   cmsdk_uart_capture_ard u_cmsdk_uart_capture_ard (
     .RESETn              (po_reset_n),    // Power on reset
-    .CLK                 (master_clk),      // Clock
+    .CLK                 (Tbench.u_soc.core.uart0_clk),      // Clock
     .RXD                 (uart0_txd),     // Received data
     .SIMULATIONEND       (),
     .DEBUG_TESTER_ENABLE (),

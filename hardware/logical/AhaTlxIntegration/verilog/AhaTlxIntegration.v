@@ -16,6 +16,20 @@ module AhaTlxIntegration (
 
   output  wire            TLX_FWD_CLK,    // TLX Forward Channel Clock
 
+  // RegSpace
+  input   wire [31:0]     TLX_HADDR,
+  input   wire [2:0]      TLX_HBURST,
+  input   wire [3:0]      TLX_HPROT,
+  input   wire [2:0]      TLX_HSIZE,
+  input   wire [1:0]      TLX_HTRANS,
+  input   wire [31:0]     TLX_HWDATA,
+  input   wire            TLX_HWRITE,
+  output  wire [31:0]     TLX_HRDATA,
+  output  wire            TLX_HREADYOUT,
+  output  wire            TLX_HRESP,
+  input   wire            TLX_HSELx,
+  input   wire            TLX_HREADY,
+
   // Slave Interface Block Signals
   input   wire [3:0]      TLX_AWID,
   input   wire [31:0]     TLX_AWADDR,
@@ -137,4 +151,21 @@ module AhaTlxIntegration (
   );
 
   assign TLX_FWD_CLK = TLX_SIB_CLK;
+
+  // ---------------------------------------------------------------------------
+  // TLX Training Control
+  // ---------------------------------------------------------------------------
+  wire unused =   (| TLX_HADDR ) |
+                  (| TLX_HBURST ) |
+                  (| TLX_HPROT ) |
+                  (| TLX_HSIZE ) |
+                  (| TLX_HTRANS ) |
+                  (| TLX_HWDATA ) |
+                  (| TLX_HWRITE ) |
+                  (| TLX_HSELx ) |
+                  (| TLX_HREADY );
+
+  assign TLX_HRDATA = {32{1'b0}};
+  assign TLX_HREADYOUT = 1'b1;
+  assign TLX_HRESP = 1'b0;
 endmodule
