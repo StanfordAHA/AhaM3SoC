@@ -119,7 +119,7 @@ module `mname` (
   wire [`$io->{width}-1`:0] `$io->{name}`_int;
 //;   }
 //; }
-  wire rte = 1'b0;
+  wire rte;
   wire [2:0] out_pad_ds_grp0;
   wire [2:0] out_pad_ds_grp1;
   wire [2:0] out_pad_ds_grp2;
@@ -131,12 +131,12 @@ module `mname` (
 
   wire out_pad_ds0 = out_pad_ds_grp0[0];
   wire out_pad_ds1 = out_pad_ds_grp0[1];
-  wire out_pad_ds2 = out_pad_ds_grp0[2];
+  wire out_pad_ds2 = out_pad_ds_grp0[1];
 
   // Corner cells
-  PCORNER corner_ll(.RTE(rte));
-  PCORNER corner_lr(.RTE(rte));
-  PCORNER corner_ul(.RTE(rte));
+  PCORNER corner_ll();
+  PCORNER corner_lr();
+  PCORNER corner_ul();
   // RTE stuff
   PCBRTE_V    IOPAD_bottom_RTE_DIG(.IRTE(1'b0), .RTE(rte));
   PCBRTE_H    IOPAD_left_RTE_DIG(.IRTE(1'b0), .RTE(rte));
@@ -196,7 +196,6 @@ module `mname` (
     .IE(1'b1),
     .OEN(1'b1),
 //;     } else {
-    .C(),
     .I(`$io->{name}`_int[`$i`]),
     .IE(1'b0),
     .OEN(1'b0),
@@ -208,7 +207,7 @@ module `mname` (
     .PD(1'b0),
     .ST(1'b0),
     .SL(1'b0),
-    .RTE(1'b0)
+    .RTE(0)
   );
 //;   }
 //; }
@@ -218,15 +217,15 @@ module `mname` (
 //; my $num_pads_top = scalar(@top_pads) + $num_vddpst_per_side + $num_vdd_per_side;
 //; my $num_pads_bottom = scalar(@bottom_pads) + $num_vddpst_per_side + $num_vdd_per_side;
 //; if ($include_core) {
-  AhaGarnetSoC core (
-    .OUT_PAD_DS_GRP0(out_pad_ds_grp0),
-    .OUT_PAD_DS_GRP1(out_pad_ds_grp1),
-    .OUT_PAD_DS_GRP2(out_pad_ds_grp2),
-    .OUT_PAD_DS_GRP3(out_pad_ds_grp3),
-    .OUT_PAD_DS_GRP4(out_pad_ds_grp4),
-    .OUT_PAD_DS_GRP5(out_pad_ds_grp5),
-    .OUT_PAD_DS_GRP6(out_pad_ds_grp6),
-    .OUT_PAD_DS_GRP7(out_pad_ds_grp7),
+AhaGarnetSoC core (
+  .OUT_PAD_DS_GRP0(out_pad_ds_grp0),
+  .OUT_PAD_DS_GRP1(out_pad_ds_grp1),
+  .OUT_PAD_DS_GRP2(out_pad_ds_grp2),
+  .OUT_PAD_DS_GRP3(out_pad_ds_grp3),
+  .OUT_PAD_DS_GRP4(out_pad_ds_grp4),
+  .OUT_PAD_DS_GRP5(out_pad_ds_grp5),
+  .OUT_PAD_DS_GRP6(out_pad_ds_grp6),
+  .OUT_PAD_DS_GRP7(out_pad_ds_grp7),
 
 //; my $cnt = 0;
 //; foreach my $io (@{$io_list}) {
@@ -234,23 +233,23 @@ module `mname` (
 //;   ++$cnt;
 //;   if ($cnt < $num_ios) {
 //;     if ($io->{direction} eq "inout") {
-    .`$io->{io_ctrl}`(`$io->{io_ctrl}`),
-    .`$io->{outport}`(`$io->{outport}`),
-    .`$io->{inport}`(`$io->{inport}`),
+  .`$io->{io_ctrl}`(`$io->{io_ctrl}`),
+  .`$io->{outport}`(`$io->{outport}`),
+  .`$io->{inport}`(`$io->{inport}`),
 //;     } else {
-    .`$io->{name}`(`$io->{name}`_int),
+  .`$io->{name}`(`$io->{name}`_int),
 //;     }
 //;   } else {
 //;     if ($io->{direction} eq "inout") {
-    .`$io->{io_ctrl}`(`$io->{io_ctrl}`)
-    .`$io->{outport}`(`$io->{outport}`)
-    .`$io->{inport}`(`$io->{inport}`)
+  .`$io->{io_ctrl}`(`$io->{io_ctrl}`)
+  .`$io->{outport}`(`$io->{outport}`)
+  .`$io->{inport}`(`$io->{inport}`)
 //;     } else {
-    .`$io->{name}`(`$io->{name}`_int)
+  .`$io->{name}`(`$io->{name}`_int)
 //;     }
 //;   }
 //; }
-  );
+);
 //; }
 
 //; #my @sides = ('top', 'bottom', 'left', 'right');
@@ -328,7 +327,7 @@ module `mname` (
 
 
 //; my $current_domain = 0;
-  wire rte_3 = 1'b0;
+  wire rte_3;
 
 //; foreach my $io (@{$butterphy_ios}) {
 //;   my $pad_domain = $io->{domain};
