@@ -102,6 +102,7 @@ module AhaPlatformCtrlEngine (
 
   input   wire                PMU_WIC_EN_ACK,
   input   wire                PMU_WAKEUP,
+  input   wire                INT_REQ,
   input   wire                DBGPWRUPREQ,
   input   wire                DBGSYSPWRUPREQ,
   input   wire                SLEEP,
@@ -287,6 +288,7 @@ AhaSysResetReqGen u_sys_reset_req_combined (
     .DBGSYSPWRUPREQ               (DBGSYSPWRUPREQ),
     .PMU_WIC_EN_ACK               (PMU_WIC_EN_ACK),
     .PMU_WAKEUP                   (PMU_WAKEUP),
+    .INT_REQ                      (INT_REQ),
     .SLEEP                        (SLEEP),
     .SLEEPDEEP                    (SLEEPDEEP),
     .SLEEPHOLDACKn                (SLEEPHOLDACKn),

@@ -81,6 +81,7 @@ module AhaPlatformController (
   output  wire            PMU_WIC_EN_REQ,
   input   wire            PMU_WIC_EN_ACK,
   input   wire            PMU_WAKEUP,
+  input   wire            INT_REQ,
   input   wire            DBGPWRUPREQ,
   input   wire            DBGRSTREQ,
   input   wire            DBGSYSPWRUPREQ,
@@ -630,6 +631,7 @@ AhaClockController u_clock_controller (
 
     .PMU_WIC_EN_ACK                 (PMU_WIC_EN_ACK),
     .PMU_WAKEUP                     (PMU_WAKEUP),
+    .INT_REQ                        (INT_REQ),
     .DBGPWRUPREQ                    (DBGPWRUPREQ),
     .DBGSYSPWRUPREQ                 (DBGSYSPWRUPREQ),
     .SLEEP                          (SLEEP),

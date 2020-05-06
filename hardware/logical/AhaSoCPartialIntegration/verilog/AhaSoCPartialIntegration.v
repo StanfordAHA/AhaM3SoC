@@ -80,6 +80,7 @@ module AhaSoCPartialIntegration (
   input   wire            PMU_WIC_EN_REQ,     // PMU Request to Enable WIC
   output  wire            PMU_WIC_EN_ACK,     // WIC Response to PMU Enable Request
   output  wire            PMU_WAKEUP,         // WIC Requests PMU to Wake Up Processor
+  output  wire            INT_REQ,            // An interrupt request is pending
   output  wire            DBGPWRUPREQ,        // Debug Power Up Request
   output  wire            DBGRSTREQ,          // Debug Reset Request
   output  wire            DBGSYSPWRUPREQ,     // Debug Request to Power Up CPU
@@ -945,6 +946,7 @@ module AhaSoCPartialIntegration (
     .PMU_WIC_EN_REQ                         (PMU_WIC_EN_REQ),
     .PMU_WIC_EN_ACK                         (PMU_WIC_EN_ACK),
     .PMU_WAKEUP                             (PMU_WAKEUP),
+    .INT_REQ                                (INT_REQ),
     .DBGPWRUPREQ                            (DBGPWRUPREQ),
     .DBGRSTREQ                              (DBGRSTREQ),
     .DBGSYSPWRUPREQ                         (DBGSYSPWRUPREQ),

@@ -137,6 +137,7 @@ module AhaGarnetSoC (
   wire            pmu_wic_en_req;
   wire            pmu_wic_en_ack;
   wire            pmu_wakeup;
+  wire            int_req;
   wire            dbgpwrupreq;
   wire            dbgrstreq;
   wire            dbgsyspwrupreq;
@@ -362,6 +363,7 @@ module AhaGarnetSoC (
     .PMU_WIC_EN_REQ               (pmu_wic_en_req),
     .PMU_WIC_EN_ACK               (pmu_wic_en_ack),
     .PMU_WAKEUP                   (pmu_wakeup),
+    .INT_REQ                      (int_req),
     .DBGPWRUPREQ                  (dbgpwrupreq),
     .DBGRSTREQ                    (dbgrstreq),
     .DBGSYSPWRUPREQ               (dbgsyspwrupreq),
@@ -774,6 +776,7 @@ module AhaGarnetSoC (
     .PMU_WIC_EN_REQ               (pmu_wic_en_req),
     .PMU_WIC_EN_ACK               (pmu_wic_en_ack),
     .PMU_WAKEUP                   (pmu_wakeup),
+    .INT_REQ                      (int_req),
     .DBGPWRUPREQ                  (dbgpwrupreq),
     .DBGRSTREQ                    (dbgrstreq),
     .DBGSYSPWRUPREQ               (dbgsyspwrupreq),

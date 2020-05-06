@@ -42,6 +42,7 @@ module AhaCM3Integration (
   input   wire            PMU_WIC_EN_REQ,     // PMU Request to Enable WIC
   output  wire            PMU_WIC_EN_ACK,     // WIC Response to PMU Enable Request
   output  wire            PMU_WAKEUP,         // WIC Requests PMU to Wake Up Processor
+  output  wire            INT_REQ,            // An interrupt has been request
   output  wire            DBGPWRUPREQ,        // Debug Power Up Request
   output  wire            DBGRSTREQ,          // Debug Reset Request
   output  wire            DBGSYSPWRUPREQ,     // Debug Request to Power Up CPU
@@ -626,5 +627,7 @@ module AhaCM3Integration (
   assign wic_mask = { wic_mask_isr[(NUM_IRQ-1):0], wic_mask_mon,
                       wic_mask_nmi, wic_mask_rx_ev
                     };
+  // used when SLEEP (not SLEEPDEEP) to wake up the processor
+  assign INT_REQ = (| wic_int);
 
 endmodule // AhaCM3Integration

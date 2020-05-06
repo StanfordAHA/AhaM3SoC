@@ -16,6 +16,7 @@ module AhaPowerMgmtUnit (
   input   wire          DBGSYSPWRUPREQ,
   input   wire          PMU_WIC_EN_ACK,
   input   wire          PMU_WAKEUP,
+  input   wire          INT_REQ,
   input   wire          SLEEP,
   input   wire          SLEEPDEEP,
   input   wire          SLEEPHOLDACKn,
@@ -87,7 +88,7 @@ module AhaPowerMgmtUnit (
 //------------------------------------------------------------------------------
 // Clock Gates
 //------------------------------------------------------------------------------
-  assign CPU_CLK_GATE_EN_out    =  ~(dbg_pwr_req_w | dbg_sys_pwr_req_w | ~PMU_WIC_EN_ACK | PMU_WAKEUP) &
+  assign CPU_CLK_GATE_EN_out    =  ~(dbg_pwr_req_w | dbg_sys_pwr_req_w | ~PMU_WIC_EN_ACK | PMU_WAKEUP | INT_REQ) &
                                     (SLEEP | SLEEPDEEP);
   assign DAP_CLK_GATE_EN_out    =  ~dbg_pwr_req_w & (DAP_CLK_GATE_EN_in | SLEEPDEEP);
   assign DMA0_CLK_GATE_EN_out   =   (DMA0_CLK_GATE_EN_in | SLEEPDEEP);

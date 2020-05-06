@@ -350,10 +350,11 @@ module AhaClockController (
     .Q      (TIMER0_GCLK)
   );
 
-  AhaClockGate u_timer0_gated_en (
+  AhaClockEnGate u_timer0_gated_en (
     .TE     (1'b0),
     .E      (~TIMER0_CLK_GATE),
-    .CP     (timer0_free_en_w),
+    .CP     (timer0_fclk_w),
+    .CE     (timer0_free_en_w),
     .Q      (TIMER0_GCLK_EN)
   );
 
@@ -392,10 +393,11 @@ module AhaClockController (
     .Q      (TIMER1_GCLK)
   );
 
-  AhaClockGate u_timer1_gated_en (
+  AhaClockEnGate u_timer1_gated_en (
     .TE     (1'b0),
-    .E      (~TIMER1_CLK_GATE),
-    .CP     (timer1_free_en_w),
+    .E      (~TIMER0_CLK_GATE),
+    .CP     (timer1_fclk_w),
+    .CE     (timer1_free_en_w),
     .Q      (TIMER1_GCLK_EN)
   );
 
@@ -434,10 +436,11 @@ module AhaClockController (
     .Q      (UART0_GCLK)
   );
 
-  AhaClockGate u_uart0_gated_en (
+  AhaClockEnGate u_uart0_gated_en (
     .TE     (1'b0),
     .E      (~UART0_CLK_GATE),
-    .CP     (uart0_free_en_w),
+    .CP     (uart0_fclk_w),
+    .CE     (uart0_free_en_w),
     .Q      (UART0_GCLK_EN)
   );
 
@@ -476,10 +479,11 @@ module AhaClockController (
     .Q      (UART1_GCLK)
   );
 
-  AhaClockGate u_uart1_gated_en (
+  AhaClockEnGate u_uart1_gated_en (
     .TE     (1'b0),
     .E      (~UART1_CLK_GATE),
-    .CP     (uart1_free_en_w),
+    .CP     (uart1_fclk_w),
+    .CE     (uart1_free_en_w),
     .Q      (UART1_GCLK_EN)
   );
 
@@ -518,10 +522,11 @@ module AhaClockController (
     .Q      (WDOG_GCLK)
   );
 
-  AhaClockGate u_wdog_gated_en (
+  AhaClockEnGate u_wdog_gated_en (
     .TE     (1'b0),
     .E      (~WDOG_CLK_GATE),
-    .CP     (wdog_free_en_w),
+    .CP     (wdog_fclk_w),
+    .CE     (wdog_free_en_w),
     .Q      (WDOG_GCLK_EN)
   );
 
@@ -553,10 +558,11 @@ module AhaClockController (
   assign DMA0_FREE_PCLK = dma0_free_pclk_w;
 
   // Generate DMA0 PCKLEN using DMA0_CLK_GATE and DMA0 Free-Running PCLK
-  AhaClockGate u_dma0_gated_pen (
+  AhaClockEnGate u_dma0_gated_en (
     .TE     (1'b0),
     .E      (~DMA0_CLK_GATE),
-    .CP     (dma0_free_pen_w),
+    .CP     (dma0_free_pclk_w),
+    .CE     (dma0_free_pen_w),
     .Q      (DMA0_GPCLK_EN)
   );
 
@@ -588,10 +594,11 @@ module AhaClockController (
   assign DMA1_FREE_PCLK = dma1_free_pclk_w;
 
   // Generate DMA1 PCKLEN using DMA1_CLK_GATE and DMA1 Free-Running PCLK
-  AhaClockGate u_dma1_gated_pen (
+  AhaClockEnGate u_dma1_gated_en (
     .TE     (1'b0),
     .E      (~DMA1_CLK_GATE),
-    .CP     (dma1_free_pen_w),
+    .CP     (dma1_free_pclk_w),
+    .CE     (dma1_free_pen_w),
     .Q      (DMA1_GPCLK_EN)
   );
 endmodule
