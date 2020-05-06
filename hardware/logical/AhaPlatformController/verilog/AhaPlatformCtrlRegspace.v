@@ -104,48 +104,50 @@ module AhaPlatformCtrlRegspace (
 //------------------------------------------------------------------------------
 // Simple Register Access Interface Wires
 //------------------------------------------------------------------------------
-  wire  [11:0]            regif_addr;
-  wire                    regif_read_en;
-  wire                    regif_write_en;
-  wire  [3:0]             regif_byte_strobe;
-  wire  [31:0]            regif_wdata;
-  wire  [31:0]            regif_rdata;
+  wire  [11:0]                regif_addr;
+  wire                        regif_read_en;
+  wire                        regif_write_en;
+  wire  [3:0]                 regif_byte_strobe;
+  wire  [31:0]                regif_wdata;
+  wire  [31:0]                regif_rdata;
+  wire                        regif_ack;
+  wire                        regif_nack;
 
 //------------------------------------------------------------------------------
 // Convert AHB to Simple Reg Access Interface
 //------------------------------------------------------------------------------
-  wire unused   = (| HBURST )     |
-                  (| HPROT )      |
-                  (| HMASTER )    |
-                  (| HMASTLOCK )  ;
 
-  cmsdk_ahb_eg_slave_interface #(.ADDRWIDTH(12)) u_ahb_converter (
-    .hclk                 (HCLK),
-    .hresetn              (HRESETn),
+  AhaAHBToParallel #(.ADDR_WIDTH(12)) u_ahb_to_parallel_if (
+    // AHB Interface
+    .HCLK                     (HCLK),
+    .HRESETn                  (HRESETn),
 
-    // AHB connection to master
-    .hsels                (HSEL),
-    .haddrs               (HADDR[11:0]),
-    .htranss              (HTRANS),
-    .hsizes               (HSIZE),
-    .hwrites              (HWRITE),
-    .hreadys              (HREADYMUX),
-    .hwdatas              (HWDATA),
+    .HSEL                     (HSEL),
+    .HADDR                    (HADDR),
+    .HTRANS                   (HTRANS),
+    .HWRITE                   (HWRITE),
+    .HSIZE                    (HSIZE),
+    .HBURST                   (HBURST),
+    .HPROT                    (HPROT),
+    .HMASTER                  (HMASTER),
+    .HWDATA                   (HWDATA),
+    .HMASTLOCK                (HMASTLOCK),
+    .HREADYMUX                (HREADYMUX),
 
-    .hreadyouts           (HREADYOUT),
-    .hresps               (HRESP[0]),
-    .hrdatas              (HRDATA),
+    .HRDATA                   (HRDATA),
+    .HREADYOUT                (HREADYOUT),
+    .HRESP                    (HRESP),
 
-    // Register interface
-    .addr                 (regif_addr),
-    .read_en              (regif_read_en),
-    .write_en             (regif_write_en),
-    .byte_strobe          (regif_byte_strobe),
-    .wdata                (regif_wdata),
-    .rdata                (regif_rdata)
+    // Parallel Interface
+    .PAR_ADDR                 (regif_addr),
+    .PAR_RD_EN                (regif_read_en),
+    .PAR_WR_EN                (regif_write_en),
+    .PAR_WR_STRB              (regif_byte_strobe),
+    .PAR_WR_DATA              (regif_wdata),
+    .PAR_RD_DATA              (regif_rdata),
+    .PAR_ACK                  (regif_ack),
+    .PAR_NACK                 (regif_nack)
   );
-
-  assign HRESP[1] = 1'b0;
 
 //------------------------------------------------------------------------------
 // Register Space Integration
@@ -230,8 +232,8 @@ module AhaPlatformCtrlRegspace (
     .l2h_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r       (L2H_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r),
     .l2h_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r (L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r),
     .d2h_dec_pio_read_data                          (regif_rdata),
-    .d2h_dec_pio_ack                                (),
-    .d2h_dec_pio_nack                               ()
+    .d2h_dec_pio_ack                                (regif_ack),
+    .d2h_dec_pio_nack                               (regif_nack)
   );
 
 
