@@ -329,7 +329,7 @@ addrmap AhaPlatformCtrlAddrMap {
 
     field {
       desc  = "NIC Enable Reset Request";
-    } NIC [9:9] = 1'b1;
+    } NIC [9:9] = 1'b0;
 
     field {
       desc  = "TIMER0 Enable Reset Request";

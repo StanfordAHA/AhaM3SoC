@@ -23,24 +23,19 @@ module AhaResetGen #(
   output  wire      Qn
 );
 
-  // Resets
+  // Synchronized Resets
   wire  poresetn_sync;
-
-  // Wire for Synchronized Request
   wire  req_sync;
 
-  // Wire for Reset Request Pulse
-  wire  req_pulse;
-
+  // Reset Cycles
   reg [NUM_CYCLES:0]  rst_cycles;
-  reg                 ack_r;
-  reg                 req_sync_r;
+  reg [NUM_CYCLES:0]  ack_cycles;
 
   // Power-On Reset Synchronization
   AhaResetSync u_poreset_sync (
-    .CLK      (CLK),
-    .Dn       (PORESETn),
-    .Qn       (poresetn_sync)
+    .CLK          (CLK),
+    .Dn           (PORESETn),
+    .Qn           (poresetn_sync)
   );
 
   // Synchronized Reset Request
@@ -51,40 +46,28 @@ module AhaResetGen #(
     .Q            (req_sync)
   );
 
-  // Reset Request Pulse
-  AhaSyncPulseGen u_req_pulse (
-    .CLK          (CLK),
-    .RESETn       (poresetn_sync),
-    .D            (req_sync),
-    .RISE_PULSE   (req_pulse),
-    .FALL_PULSE   ()
-  );
-
   // Reset Generation Logic
   integer i;
   always @(posedge CLK or negedge poresetn_sync) begin
     if(~poresetn_sync) rst_cycles <= {(NUM_CYCLES+1){1'b0}};
-    else if(req_pulse) rst_cycles <= {(NUM_CYCLES+1){1'b0}};
     else begin
-      rst_cycles[0] <= 1'b1;
+      rst_cycles[0] <= ~req_sync;
       for(i = 1; i <= NUM_CYCLES; i = i + 1)
         rst_cycles[i] <= rst_cycles[i-1];
     end
   end
 
-  // ACK Generation Logic
+  // ACK generation
   always @(posedge CLK or negedge poresetn_sync) begin
-    if(~poresetn_sync) begin
-      req_sync_r <= 1'b0;
-      ack_r <= 1'b0;
-    end
+    if(~poresetn_sync) ack_cycles <= {(NUM_CYCLES+1){1'b0}};
     else begin
-      req_sync_r <= req_sync;
-      ack_r <= req_sync_r & rst_cycles[NUM_CYCLES];
+      ack_cycles[0] <= req_sync;
+      for(i = 1; i <= NUM_CYCLES; i = i + 1)
+        ack_cycles[i] <= ack_cycles[i-1];
     end
   end
 
   // Output Assignments
-  assign ACK          = ack_r;
-  assign Qn           = rst_cycles[NUM_CYCLES];
+  assign ACK          = ack_cycles[NUM_CYCLES];
+  assign Qn           = (& rst_cycles);
 endmodule
