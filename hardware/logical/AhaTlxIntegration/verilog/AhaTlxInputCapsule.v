@@ -64,7 +64,8 @@ module AhaTlxInputCapsule (
                       2'b00   : next  = TRAINING;
                       default : next  = IDLE;
                     endcase
-        FINISH:     next = IDLE;
+        FINISH:     next  = IDLE;
+        default:    next  = IDLE;
       endcase
     end
 

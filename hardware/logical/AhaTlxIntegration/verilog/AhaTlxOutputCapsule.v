@@ -66,6 +66,7 @@ module AhaTlxOutputCapsule (
                       default : next  = IDLE;
                     endcase
         FINISH:     next = IDLE;
+        default:    next  = IDLE;
       endcase
     end
 
@@ -88,7 +89,7 @@ module AhaTlxOutputCapsule (
     always @(posedge CLK or negedge RESETn) begin
       if(~RESETn) count <= {32{1'b0}};
       else if(clear_pulse == 1'b1) count <= {32{1'b0}};
-      else if((state == TRAINING) & tr_tick) count <= count + 1'b1;      
+      else if((state == TRAINING) & tr_tick) count <= count + 1'b1;
     end
 
     // Done Signals
