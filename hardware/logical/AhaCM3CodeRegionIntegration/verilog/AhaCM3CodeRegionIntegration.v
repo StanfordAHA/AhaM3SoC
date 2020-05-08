@@ -76,6 +76,7 @@ module AhaCM3CodeRegionIntegration (
   input   wire  [1:0]     DMA1_INT,
   input   wire            CGRA_INT,
   input   wire            WDOG_INT,           // Watchdog interrupt used as NMI
+  input   wire            TLX_INT,
 
   // SysTick
   input   wire            SYS_TICK_NOT_10MS_MULT, // Does the sys-tick calibration value
@@ -174,6 +175,7 @@ module AhaCM3CodeRegionIntegration (
     .DMA1_INT             (DMA1_INT),
     .CGRA_INT             (CGRA_INT),
     .WDOG_INT             (WDOG_INT),
+    .TLX_INT              (TLX_INT),
 
     // SysTick
     .SYS_TICK_CALIB       (SYS_TICK_CALIB),

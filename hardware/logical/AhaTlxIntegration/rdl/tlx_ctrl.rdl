@@ -1,0 +1,618 @@
+//-----------------------------------------------------------------------------
+// SystemRDL v1.0
+//-----------------------------------------------------------------------------
+// Purpose: AhaM3SoC TLX Controller Address Map
+//------------------------------------------------------------------------------
+//
+// Author   : Gedeon Nyengele
+// Date     : May 7, 2020
+//------------------------------------------------------------------------------
+
+addrmap AhaTlxCtrlAddrMap {
+
+  name  = "AhaTlxCtrlAddrMap";
+  desc  = "AhaM3SoC Tlx Controller Address Map";
+
+  default addressing  = regalign;
+  default regwidth    = 32;
+  default accesswidth = 32;
+  default alignment   = 4;
+
+  default littleendian;
+  default lsb0;
+
+  default sw          = rw;
+  default hw          = r;
+
+  // ------------------------------------------------------------------------
+  // Indentification Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "ID Register";
+    desc  = "Identification register. Always reads as 0x5A5A5A5A";
+
+    field {
+      desc  = "Read-Only Identification Register";
+
+      hw = na;
+      sw = r;
+
+    } ID_VALUE[31:0]  = 0x5A5A5A5A;
+
+  } ID_REG @ 0x0;
+
+  // ------------------------------------------------------------------------
+  // Lane Enable Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane Enable Register";
+    desc  = "Contains bit-fields for enabling individual lanes";
+
+    field {
+      desc  = "Lane0  FWD Output";
+    } LANE0[0:0]  = 1'b0;
+
+    field {
+      desc  = "Lane1  FWD Output";
+    } LANE1[1:1]  = 1'b0;
+
+    field {
+      desc  = "Lane2  FWD Output";
+    } LANE2[2:2]  = 1'b0;
+
+    field {
+      desc  = "Lane3  FWD Input";
+    } LANE3[3:3]  = 1'b0;
+
+    field {
+      desc  = "Lane4  FWD Input";
+    } LANE4[4:4]  = 1'b0;
+
+    field {
+      desc  = "Lane5  REV Input";
+    } LANE5[5:5]  = 1'b0;
+
+    field {
+      desc  = "Lane6  REV Input";
+    } LANE6[6:6]  = 1'b0;
+
+    field {
+      desc  = "Lane7  REV Input";
+    } LANE7[7:7]  = 1'b0;
+
+    field {
+      desc  = "Lane8  REV Output";
+    } LANE8[8:8]  = 1'b0;
+
+    field {
+      desc  = "Lane9  REV Output";
+    } LANE9[9:9]  = 1'b0;
+
+  } LANE_ENABLE_REG @ 0x04;
+
+
+  // ------------------------------------------------------------------------
+  // Lane Interrupt Enable Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane Interrupt Enable Register";
+    desc  = "Contains bit-fields for enabling individual lane interrupts";
+
+    field {
+      desc  = "Lane0  FWD Output";
+    } LANE0[0:0]  = 1'b0;
+
+    field {
+      desc  = "Lane1  FWD Output";
+    } LANE1[1:1]  = 1'b0;
+
+    field {
+      desc  = "Lane2  FWD Output";
+    } LANE2[2:2]  = 1'b0;
+
+    field {
+      desc  = "Lane3  FWD Input";
+    } LANE3[3:3]  = 1'b0;
+
+    field {
+      desc  = "Lane4  FWD Input";
+    } LANE4[4:4]  = 1'b0;
+
+    field {
+      desc  = "Lane5  REV Input";
+    } LANE5[5:5]  = 1'b0;
+
+    field {
+      desc  = "Lane6  REV Input";
+    } LANE6[6:6]  = 1'b0;
+
+    field {
+      desc  = "Lane7  REV Input";
+    } LANE7[7:7]  = 1'b0;
+
+    field {
+      desc  = "Lane8  REV Output";
+    } LANE8[8:8]  = 1'b0;
+
+    field {
+      desc  = "Lane9  REV Output";
+    } LANE9[9:9]  = 1'b0;
+
+  } LANE_IE_REG @ 0x08;
+
+  // ------------------------------------------------------------------------
+  // Lane START Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane START Register";
+    desc  = "Contains bit-fields for starting training on individual lanes";
+
+    field {
+      desc  = "Lane0  FWD Output";
+      singlepulse;
+    } LANE0[0:0]  = 1'b0;
+
+    field {
+      desc  = "Lane1  FWD Output";
+      singlepulse;
+    } LANE1[1:1]  = 1'b0;
+
+    field {
+      desc  = "Lane2  FWD Output";
+      singlepulse;
+    } LANE2[2:2]  = 1'b0;
+
+    field {
+      desc  = "Lane3  FWD Input";
+      singlepulse;
+    } LANE3[3:3]  = 1'b0;
+
+    field {
+      desc  = "Lane4  FWD Input";
+      singlepulse;
+    } LANE4[4:4]  = 1'b0;
+
+    field {
+      desc  = "Lane5  REV Input";
+      singlepulse;
+    } LANE5[5:5]  = 1'b0;
+
+    field {
+      desc  = "Lane6  REV Input";
+      singlepulse;
+    } LANE6[6:6]  = 1'b0;
+
+    field {
+      desc  = "Lane7  REV Input";
+      singlepulse;
+    } LANE7[7:7]  = 1'b0;
+
+    field {
+      desc  = "Lane8  REV Output";
+      singlepulse;
+    } LANE8[8:8]  = 1'b0;
+
+    field {
+      desc  = "Lane9  REV Output";
+      singlepulse;
+    } LANE9[9:9]  = 1'b0;
+
+  } LANE_START_REG @ 0x0C;
+
+  // ------------------------------------------------------------------------
+  // Lane CLEAR Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane CLEAR Register";
+    desc  = "Contains bit-fields for stopping and clearing interrupts on individual lanes";
+
+    field {
+      desc  = "Lane0  FWD Output";
+      singlepulse;
+    } LANE0[0:0]  = 1'b0;
+
+    field {
+      desc  = "Lane1  FWD Output";
+      singlepulse;
+    } LANE1[1:1]  = 1'b0;
+
+    field {
+      desc  = "Lane2  FWD Output";
+      singlepulse;
+    } LANE2[2:2]  = 1'b0;
+
+    field {
+      desc  = "Lane3  FWD Input";
+      singlepulse;
+    } LANE3[3:3]  = 1'b0;
+
+    field {
+      desc  = "Lane4  FWD Input";
+      singlepulse;
+    } LANE4[4:4]  = 1'b0;
+
+    field {
+      desc  = "Lane5  REV Input";
+      singlepulse;
+    } LANE5[5:5]  = 1'b0;
+
+    field {
+      desc  = "Lane6  REV Input";
+      singlepulse;
+    } LANE6[6:6]  = 1'b0;
+
+    field {
+      desc  = "Lane7  REV Input";
+      singlepulse;
+    } LANE7[7:7]  = 1'b0;
+
+    field {
+      desc  = "Lane8  REV Output";
+      singlepulse;
+    } LANE8[8:8]  = 1'b0;
+
+    field {
+      desc  = "Lane9  REV Output";
+      singlepulse;
+    } LANE9[9:9]  = 1'b0;
+
+  } LANE_CLEAR_REG @ 0x10;
+
+  // ------------------------------------------------------------------------
+  // Lane Interrupt Status Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane Interrupt Status Register";
+    desc  = "Contains bit-fields for interrupt status on individual lanes";
+
+    field {
+      desc  = "Lane0  FWD Output";
+      sw  = r;
+      hw  = w;
+    } LANE0[0:0]  = 1'b0;
+
+    field {
+      desc  = "Lane1  FWD Output";
+      sw  = r;
+      hw  = w;
+    } LANE1[1:1]  = 1'b0;
+
+    field {
+      desc  = "Lane2  FWD Output";
+      sw  = r;
+      hw  = w;
+    } LANE2[2:2]  = 1'b0;
+
+    field {
+      desc  = "Lane3  FWD Input";
+      sw  = r;
+      hw  = w;
+    } LANE3[3:3]  = 1'b0;
+
+    field {
+      desc  = "Lane4  FWD Input";
+      sw  = r;
+      hw  = w;
+    } LANE4[4:4]  = 1'b0;
+
+    field {
+      desc  = "Lane5  REV Input";
+      sw  = r;
+      hw  = w;
+    } LANE5[5:5]  = 1'b0;
+
+    field {
+      desc  = "Lane6  REV Input";
+      sw  = r;
+      hw  = w;
+    } LANE6[6:6]  = 1'b0;
+
+    field {
+      desc  = "Lane7  REV Input";
+      sw  = r;
+      hw  = w;
+    } LANE7[7:7]  = 1'b0;
+
+    field {
+      desc  = "Lane8  REV Output";
+      sw  = r;
+      hw  = w;
+    } LANE8[8:8]  = 1'b0;
+
+    field {
+      desc  = "Lane9  REV Output";
+      sw  = r;
+      hw  = w;
+    } LANE9[9:9]  = 1'b0;
+
+  } LANE_INT_STATUS_REG @ 0x14;
+
+  // ------------------------------------------------------------------------
+  // Lane Status Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane Status Register";
+    desc  = "Contains bit-fields for training status on individual lanes";
+
+    field {
+      desc  = "Lane0  FWD Output";
+      sw  = r;
+      hw  = w;
+    } LANE0[0:0]  = 1'b0;
+
+    field {
+      desc  = "Lane1  FWD Output";
+      sw  = r;
+      hw  = w;
+    } LANE1[1:1]  = 1'b0;
+
+    field {
+      desc  = "Lane2  FWD Output";
+      sw  = r;
+      hw  = w;
+    } LANE2[2:2]  = 1'b0;
+
+    field {
+      desc  = "Lane3  FWD Input";
+      sw  = r;
+      hw  = w;
+    } LANE3[3:3]  = 1'b0;
+
+    field {
+      desc  = "Lane4  FWD Input";
+      sw  = r;
+      hw  = w;
+    } LANE4[4:4]  = 1'b0;
+
+    field {
+      desc  = "Lane5  REV Input";
+      sw  = r;
+      hw  = w;
+    } LANE5[5:5]  = 1'b0;
+
+    field {
+      desc  = "Lane6  REV Input";
+      sw  = r;
+      hw  = w;
+    } LANE6[6:6]  = 1'b0;
+
+    field {
+      desc  = "Lane7  REV Input";
+      sw  = r;
+      hw  = w;
+    } LANE7[7:7]  = 1'b0;
+
+    field {
+      desc  = "Lane8  REV Output";
+      sw  = r;
+      hw  = w;
+    } LANE8[8:8]  = 1'b0;
+
+    field {
+      desc  = "Lane9  REV Output";
+      sw  = r;
+      hw  = w;
+    } LANE9[9:9]  = 1'b0;
+
+  } LANE_STATUS_REG @ 0x18;
+
+  // ------------------------------------------------------------------------
+  // SEQUENCE Registers
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane0 Sequence Register";
+    desc  = "Lane0 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE0_SEQUENCE_REG @ 0x1C;
+
+  reg {
+    name  = "Lane1 Sequence Register";
+    desc  = "Lane1 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE1_SEQUENCE_REG @ 0x20;
+
+  reg {
+    name  = "Lane2 Sequence Register";
+    desc  = "Lane2 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE2_SEQUENCE_REG @ 0x24;
+
+  reg {
+    name  = "Lane3 Sequence Register";
+    desc  = "Lane3 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE3_SEQUENCE_REG @ 0x28;
+
+  reg {
+    name  = "Lane4 Sequence Register";
+    desc  = "Lane4 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE4_SEQUENCE_REG @ 0x2C;
+
+  reg {
+    name  = "Lane5 Sequence Register";
+    desc  = "Lane5 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE5_SEQUENCE_REG @ 0x30;
+
+  reg {
+    name  = "Lane6 Sequence Register";
+    desc  = "Lane6 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE6_SEQUENCE_REG @ 0x34;
+
+  reg {
+    name  = "Lane7 Sequence Register";
+    desc  = "Lane7 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE7_SEQUENCE_REG @ 0x38;
+
+  reg {
+    name  = "Lane8 Sequence Register";
+    desc  = "Lane8 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE8_SEQUENCE_REG @ 0x3C;
+
+  reg {
+    name  = "Lane9 Sequence Register";
+    desc  = "Lane9 Training Sequence";
+
+    field {} SEQUENCE[31:0] = 0x0;
+  } LANE9_SEQUENCE_REG @ 0x40;
+
+  // ------------------------------------------------------------------------
+  // LENGTH Registers
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane0 Length Register";
+    desc  = "Lane0 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE0_LENGTH_REG @ 0x44;
+
+  reg {
+    name  = "Lane1 Length Register";
+    desc  = "Lane1 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE1_LENGTH_REG @ 0x48;
+
+  reg {
+    name  = "Lane2 Length Register";
+    desc  = "Lane2 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE2_LENGTH_REG @ 0x4C;
+
+  reg {
+    name  = "Lane3 Length Register";
+    desc  = "Lane3 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE3_LENGTH_REG @ 0x50;
+
+  reg {
+    name  = "Lane4 Length Register";
+    desc  = "Lane4 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE4_LENGTH_REG @ 0x54;
+
+  reg {
+    name  = "Lane5 Length Register";
+    desc  = "Lane5 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE5_LENGTH_REG @ 0x58;
+
+  reg {
+    name  = "Lane6 Length Register";
+    desc  = "Lane6 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE6_LENGTH_REG @ 0x5C;
+
+  reg {
+    name  = "Lane7 Length Register";
+    desc  = "Lane7 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE7_LENGTH_REG @ 0x60;
+
+  reg {
+    name  = "Lane8 Length Register";
+    desc  = "Lane8 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE8_LENGTH_REG @ 0x64;
+
+  reg {
+    name  = "Lane9 Length Register";
+    desc  = "Lane9 Training Length";
+
+    field {} LENGTH[31:0] = 0x0;
+  } LANE9_LENGTH_REG @ 0x68;
+
+  // ------------------------------------------------------------------------
+  // Match Registers
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Lane0 Match Register";
+    desc  = "Lane0 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE0_MATCH_COUNT_REG @ 0x6C;
+
+  reg {
+    name  = "Lane1 Match Register";
+    desc  = "Lane1 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE1_MATCH_COUNT_REG @ 0x70;
+
+  reg {
+    name  = "Lane2 Match Register";
+    desc  = "Lane2 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE2_MATCH_COUNT_REG @ 0x74;
+
+  reg {
+    name  = "Lane3 Match Register";
+    desc  = "Lane3 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE3_MATCH_COUNT_REG @ 0x78;
+
+  reg {
+    name  = "Lane4 Match Register";
+    desc  = "Lane4 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE4_MATCH_COUNT_REG @ 0x7C;
+
+  reg {
+    name  = "Lane5 Match Register";
+    desc  = "Lane5 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE5_MATCH_COUNT_REG @ 0x80;
+
+  reg {
+    name  = "Lane6 Match Register";
+    desc  = "Lane6 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE6_MATCH_COUNT_REG @ 0x84;
+
+  reg {
+    name  = "Lane7 Match Register";
+    desc  = "Lane7 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE7_MATCH_COUNT_REG @ 0x88;
+
+  reg {
+    name  = "Lane8 Match Register";
+    desc  = "Lane8 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE8_MATCH_COUNT_REG @ 0x8C;
+
+  reg {
+    name  = "Lane9 Match Register";
+    desc  = "Lane9 Training Sequence Matches";
+
+    field {sw = r; hw = w;} MATCH_COUNT[31:0] = 0x0;
+  } LANE9_MATCH_COUNT_REG @ 0x90;
+
+};

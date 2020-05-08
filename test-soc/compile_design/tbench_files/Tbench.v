@@ -66,8 +66,12 @@ module Tbench;
   wire                                  tlx_rev_flow_tready;
   wire [2:0]                            tlx_rev_flow_tdata;
 
-  assign tlx_rev_payload_tdata_lo = tlx_rev_payload_tdata[(`TLX_REV_DATA_LO_WIDTH-1):0];
-  assign tlx_rev_payload_tdata_hi = tlx_rev_payload_tdata[79:`TLX_REV_DATA_LO_WIDTH];
+  wire tlx_rev_lane_0;
+  wire [79:0] tlx_rev_payload_tdata_w;
+
+  assign tlx_rev_payload_tdata_w  = {tlx_rev_payload_tdata[79:1], tlx_rev_lane_0};
+  assign tlx_rev_payload_tdata_lo = tlx_rev_payload_tdata_w[(`TLX_REV_DATA_LO_WIDTH-1):0];
+  assign tlx_rev_payload_tdata_hi = tlx_rev_payload_tdata_w[79:`TLX_REV_DATA_LO_WIDTH];
 
   GarnetSOC_pad_frame u_soc (
     .pad_jtag_intf_i_phy_tck        (1'b0),
@@ -208,6 +212,21 @@ module Tbench;
   );
 
   assign uart0_rxd = uart0_txd;
+
+  //-----------------------------------------
+  // TLX Traning Capture
+  //-----------------------------------------
+
+  AhaTlxTrainingMonitor u_tlx_capture (
+    .FWD_CLK            (tlx_fwd_clk),
+    .FWD_RESETn         (po_reset_n),
+    .REV_CLK            (master_clk),
+    .REV_RESETn         (po_reset_n),
+    .OE                 (Tbench.u_soc.core.u_tlx.u_aha_tlx_ctrl.l2h_LANE_ENABLE_REG_LANE0_r),
+    .FWD_DATA_IN        (tlx_fwd_payload_tdata[0]),
+    .REV_DATA_IN        (tlx_rev_payload_tdata[0]),
+    .REV_DATA_OUT       (tlx_rev_lane_0)
+  );
 
   //-----------------------------------------
   // VCD Dump

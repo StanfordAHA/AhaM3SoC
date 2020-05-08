@@ -86,6 +86,7 @@ module AhaCM3Integration (
   input   wire  [1:0]     DMA1_INT,
   input   wire            CGRA_INT,
   input   wire            WDOG_INT,           // Watchdog interrupt used as NMI
+  input   wire            TLX_INT,
 
   // SysTick
   input   wire            SYS_TICK_NOT_10MS_MULT, // Does the sys-tick calibration value
@@ -94,7 +95,7 @@ module AhaCM3Integration (
 );
 
   // ---------- Local Params --------------------------------------------------
-  localparam  NUM_IRQ     = 10;
+  localparam  NUM_IRQ     = 11;
   localparam  TRACE_LVL   = 1;
   localparam  DEBUG_LVL   = 3;
   localparam  WIC_LINES   = NUM_IRQ + 3;
@@ -601,7 +602,8 @@ module AhaCM3Integration (
   assign cpu_int_isr_sync[7]        = wic_pend[10]  | DMA1_INT[0];
   assign cpu_int_isr_sync[8]        = wic_pend[11]  | DMA1_INT[1];
   assign cpu_int_isr_sync[9]        = wic_pend[12]  | CGRA_INT;
-  assign cpu_int_isr_sync[239:10]   = {(240-10){1'b0}};
+  assign cpu_int_isr_sync[10]       = wic_pend[13]  | TLX_INT;
+  assign cpu_int_isr_sync[239:11]   = {(240-11){1'b0}};
 
   assign cpu_int_nmi_sync           = WDOG_INT;
 

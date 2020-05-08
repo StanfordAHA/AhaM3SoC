@@ -117,7 +117,7 @@ module AhaPlatformCtrlRegspace (
 // Convert AHB to Simple Reg Access Interface
 //------------------------------------------------------------------------------
 
-  AhaAHBToParallel #(.ADDR_WIDTH(12)) u_ahb_to_parallel_if (
+  AhaAHBToParallel #(.ADDR_WIDTH(12)) u_pctrl_ahb_to_parallel_if (
     // AHB Interface
     .HCLK                     (HCLK),
     .HRESETn                  (HRESETn),
@@ -152,7 +152,7 @@ module AhaPlatformCtrlRegspace (
 //------------------------------------------------------------------------------
 // Register Space Integration
 //------------------------------------------------------------------------------
-  AhaPlatformCtrlAddrMap_pio u_addr_map (
+  AhaPlatformCtrlAddrMap_pio u_pctrl_addr_map (
     .clk                                            (HCLK),
     .reset                                          (~HRESETn),
 

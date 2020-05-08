@@ -1,13 +1,13 @@
 //-----------------------------------------------------------------------------
 // Verilog 2001 (IEEE Std 1364-2001)
 //-----------------------------------------------------------------------------
-// Purpose: Output Capsule for TLX Training
+// Purpose: Output Lane for TLX Training
 //------------------------------------------------------------------------------
 //
 // Author   : Gedeon Nyengele
 // Date     : May 6, 2020
 //------------------------------------------------------------------------------
-module AhaTlxOutputCapsule (
+module AhaTlxOutputLane (
     input   wire            CLK,            // Clock
     input   wire            RESETn,         // Reset
 

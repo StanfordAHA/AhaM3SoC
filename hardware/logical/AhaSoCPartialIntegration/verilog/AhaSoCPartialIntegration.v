@@ -172,6 +172,8 @@ module AhaSoCPartialIntegration (
   output  wire            CGRA_REG_RREADY,
 
   // TLX
+  input   wire            TLX_INT,
+
   output  wire [3:0]      TLX_AWID,
   output  wire [31:0]     TLX_AWADDR,
   output  wire [7:0]      TLX_AWLEN,
@@ -979,6 +981,7 @@ module AhaSoCPartialIntegration (
     .DMA1_INT                               (dma1_int),
     .CGRA_INT                               (CGRA_INT),
     .WDOG_INT                               (wdog_int),
+    .TLX_INT                                (TLX_INT),
 
     // SysTick
     .SYS_TICK_NOT_10MS_MULT                 (SYS_TICK_NOT_10MS_MULT),

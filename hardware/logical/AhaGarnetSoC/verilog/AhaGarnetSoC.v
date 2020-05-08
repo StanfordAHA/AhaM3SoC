@@ -224,6 +224,7 @@ module AhaGarnetSoC (
   wire            cgra_reg_rready;
 
   // TLX Wires
+  wire            tlx_int;
   wire [3:0]      tlx_awid;
   wire [31:0]     tlx_awaddr;
   wire [7:0]      tlx_awlen;
@@ -455,6 +456,8 @@ module AhaGarnetSoC (
     .CGRA_REG_RREADY              (cgra_reg_rready),
 
     // TLX
+    .TLX_INT                      (tlx_int),
+    
     .TLX_AWID                     (tlx_awid),
     .TLX_AWADDR                   (tlx_awaddr),
     .TLX_AWLEN                    (tlx_awlen),
@@ -623,6 +626,9 @@ module AhaGarnetSoC (
     .TLX_FWD_CLK                  (TLX_FWD_CLK),
     .TLX_REV_CLK                  (TLX_REV_CLK),
     .TLX_REV_RESETn               (tlx_rev_reset_n),
+
+    // Interrupts
+    .TLX_INT                      (tlx_int),
 
     // RegSpace
     .TLX_HADDR                    (tlx_haddr),

@@ -16,6 +16,8 @@ module AhaTlxIntegration (
 
   output  wire            TLX_FWD_CLK,    // TLX Forward Channel Clock
 
+  output  wire            TLX_INT,        // TLX Interrupt
+
   // RegSpace
   input   wire [31:0]     TLX_HADDR,
   input   wire [2:0]      TLX_HBURST,
@@ -86,7 +88,98 @@ module AhaTlxIntegration (
   input   wire [2:0]      TLX_REV_FLOW_TDATA
 );
 
-  // SIB and Reverse DL Integration
+//------------------------------------------------------------------------------
+// Data Wires Muxed with Training
+//------------------------------------------------------------------------------
+  // FWD
+  //
+  // 5 Lanes spread as follows:
+  // - Lane0 (Output)   : TLX_FWD_PAYLOAD_TDATA[0]  -> Bottom Side of Chip (before RDL)
+  // - Lane1 (Output)   : TLX_FWD_PAYLOAD_TDATA[16] -> Left Side of Chip (before RDL)
+  // - Lane2 (Output)   : TLX_FWD_PAYLOAD_TDATA[39] -> Left Side of Chip (before RDL)
+  // - Lane3 (Input)    : TLX_FWD_PAYLOAD_TREADY    -> Left Side of Chip (before RDL)
+  // - Lane4 (Input)    : TLX_FWD_FLOW_TREADY       -> Left Side of Chip (before RDL)
+  wire [39:0]   tlx_fwd_payload_tdata_w;
+  wire [39:0]   tlx_fwd_payload_tdata_muxed;
+  wire          tlx_fwd_data_lane_0;
+  wire          tlx_fwd_data_lane_1;
+  wire          tlx_fwd_data_lane_2;
+
+  assign tlx_fwd_payload_tdata_muxed = {
+    tlx_fwd_data_lane_2,
+    tlx_fwd_payload_tdata_w[38:17],
+    tlx_fwd_data_lane_1,
+    tlx_fwd_payload_tdata_w[15:1],
+    tlx_fwd_data_lane_0
+  };
+
+  assign TLX_FWD_PAYLOAD_TDATA = tlx_fwd_payload_tdata_muxed;
+
+  // REV
+  // 5 Lanes spread as follows:
+  // - Lane0 (Input)   : TLX_REV_PAYLOAD_TDATA[0]   -> Right Side of Chip (before RDL)
+  // - Lane1 (Input)   : TLX_REV_PAYLOAD_TDATA[24]  -> Right Side of Chip (before RDL)
+  // - Lane2 (Input)   : TLX_REV_PAYLOAD_TDATA[64]  -> Bottom Side of Chip (before RDL)
+  // - Lane3 (Output)  : TLX_REV_PAYLOAD_TREADY     -> Right Side of Chip (before RDL)
+  // - Lane4 (Output)  : TLX_REV_FLOW_TREADY        -> Right Side of Chip (before RDL)
+  wire          tlx_rev_flow_tready_w;
+  wire          tlx_rev_payload_tready_w;
+  wire          tlx_rev_data_lane3;
+  wire          tlx_rev_data_lane4;
+
+  assign TLX_REV_PAYLOAD_TREADY = tlx_rev_data_lane3;
+  assign TLX_REV_FLOW_TREADY    = tlx_rev_data_lane4;
+
+//------------------------------------------------------------------------------
+// TLX Training Controller Integration
+//------------------------------------------------------------------------------
+  AhaTlxCtrl u_aha_tlx_ctrl (
+    // Clock and Reset
+    .TLX_SIB_CLK                              (TLX_SIB_CLK),
+    .TLX_SIB_RESETn                           (TLX_SIB_RESETn),
+    .TLX_REV_CLK                              (TLX_REV_CLK),
+    .TLX_REV_RESETn                           (TLX_REV_RESETn),
+
+    // RegSpace
+    .TLX_HADDR                                (TLX_HADDR),
+    .TLX_HBURST                               (TLX_HBURST),
+    .TLX_HPROT                                (TLX_HPROT),
+    .TLX_HSIZE                                (TLX_HSIZE),
+    .TLX_HTRANS                               (TLX_HTRANS),
+    .TLX_HWDATA                               (TLX_HWDATA),
+    .TLX_HWRITE                               (TLX_HWRITE),
+    .TLX_HRDATA                               (TLX_HRDATA),
+    .TLX_HREADYOUT                            (TLX_HREADYOUT),
+    .TLX_HRESP                                (TLX_HRESP),
+    .TLX_HSELx                                (TLX_HSELx),
+    .TLX_HREADY                               (TLX_HREADY),
+
+    // FWD Channel
+    .FWD_LANE0_IN                             (tlx_fwd_payload_tdata_w[0]),
+    .FWD_LANE0_OUT                            (tlx_fwd_data_lane_0),
+    .FWD_LANE1_IN                             (tlx_fwd_payload_tdata_w[16]),
+    .FWD_LANE1_OUT                            (tlx_fwd_data_lane_1),
+    .FWD_LANE2_IN                             (tlx_fwd_payload_tdata_w[39]),
+    .FWD_LANE2_OUT                            (tlx_fwd_data_lane_2),
+    .FWD_LANE3_IN                             (TLX_FWD_PAYLOAD_TREADY),
+    .FWD_LANE4_IN                             (TLX_FWD_FLOW_TREADY),
+
+    // REV Channel
+    .REV_LANE0_IN                             (TLX_REV_PAYLOAD_TDATA[0]),
+    .REV_LANE1_IN                             (TLX_REV_PAYLOAD_TDATA[24]),
+    .REV_LANE2_IN                             (TLX_REV_PAYLOAD_TDATA[64]),
+    .REV_LANE3_IN                             (tlx_rev_payload_tready_w),
+    .REV_LANE3_OUT                            (tlx_rev_data_lane3),
+    .REV_LANE4_IN                             (tlx_rev_flow_tready_w),
+    .REV_LANE4_OUT                            (tlx_rev_data_lane4),
+
+    // Interrupts
+    .TLX_INT                                  (TLX_INT)
+  );
+
+//------------------------------------------------------------------------------
+// TLX Slave Domain Integration
+//------------------------------------------------------------------------------
   nic400_slave_pwr_M1_m_tlx_tlx_AhaIntegration     u_slave_pwr_M1_m_tlx (
     // Interface between SIB and System Interconnect
     .awid_m1_m_s                              (TLX_AWID),
@@ -131,7 +224,7 @@ module AhaTlxIntegration (
 
     .tvalid_m1_m_tlx_fwd_ib_axi_stream        (TLX_FWD_PAYLOAD_TVALID),
     .tready_m1_m_tlx_fwd_ib_axi_stream        (TLX_FWD_PAYLOAD_TREADY),
-    .tdata_m1_m_tlx_fwd_ib_axi_stream         (TLX_FWD_PAYLOAD_TDATA),
+    .tdata_m1_m_tlx_fwd_ib_axi_stream         (tlx_fwd_payload_tdata_w),
 
     .tvalid_m1_m_tlx_fwd_ib_flow              (TLX_FWD_FLOW_TVALID),
     .tready_m1_m_tlx_fwd_ib_flow              (TLX_FWD_FLOW_TREADY),
@@ -142,30 +235,14 @@ module AhaTlxIntegration (
     .dl_rev_M1_m_tlxresetn                    (TLX_REV_RESETn),
 
     .tvalid_m1_m_tlx_pl_rev_to_dl_rev_data    (TLX_REV_PAYLOAD_TVALID),
-    .tready_m1_m_tlx_pl_rev_to_dl_rev_data    (TLX_REV_PAYLOAD_TREADY),
+    .tready_m1_m_tlx_pl_rev_to_dl_rev_data    (tlx_rev_payload_tready_w),
     .tdata_m1_m_tlx_pl_rev_to_dl_rev_data     (TLX_REV_PAYLOAD_TDATA),
 
     .tvalid_m1_m_tlx_pl_rev_to_dl_rev_flow    (TLX_REV_FLOW_TVALID),
-    .tready_m1_m_tlx_pl_rev_to_dl_rev_flow    (TLX_REV_FLOW_TREADY),
+    .tready_m1_m_tlx_pl_rev_to_dl_rev_flow    (tlx_rev_flow_tready_w),
     .tdata_m1_m_tlx_pl_rev_to_dl_rev_flow     (TLX_REV_FLOW_TDATA)
   );
 
   assign TLX_FWD_CLK = TLX_SIB_CLK;
 
-  // ---------------------------------------------------------------------------
-  // TLX Training Control
-  // ---------------------------------------------------------------------------
-  wire unused =   (| TLX_HADDR ) |
-                  (| TLX_HBURST ) |
-                  (| TLX_HPROT ) |
-                  (| TLX_HSIZE ) |
-                  (| TLX_HTRANS ) |
-                  (| TLX_HWDATA ) |
-                  (| TLX_HWRITE ) |
-                  (| TLX_HSELx ) |
-                  (| TLX_HREADY );
-
-  assign TLX_HRDATA = {32{1'b0}};
-  assign TLX_HREADYOUT = 1'b1;
-  assign TLX_HRESP = 1'b0;
 endmodule
