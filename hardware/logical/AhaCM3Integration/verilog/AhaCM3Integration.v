@@ -9,15 +9,15 @@
 //------------------------------------------------------------------------------
 module AhaCM3Integration (
   // Resets
-  input   wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_FCLK
-  input   wire            CPU_SYSRESETn,      // CPU soft reset synchronized to CPU_FCLK
+  input   wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_CLK
+  input   wire            CPU_SYSRESETn,      // CPU soft reset synchronized to CPU_CLK
   input   wire            DAP_RESETn,         // Debug system reset synchronized to DAP_CLK
   input   wire            JTAG_TRSTn,         // JTAG Reset synchronized to JTAG Test Clock
   input   wire            JTAG_PORESETn,      // JTAG Power on reset synchronized to JTAG_TCK
 
   // Clocks
-  input   wire            CPU_FCLK,           // CPU-domain free running clock
-  input   wire            CPU_GCLK,           // CPU-domain gated clock
+  input   wire            SYS_CLK,            // CPU-domain free running clock
+  input   wire            CPU_CLK,            // CPU-domain gated clock
   input   wire            DAP_CLK,            // DAP Clock
   input   wire            JTAG_TCK,           // JTAG test clock
 
@@ -90,7 +90,7 @@ module AhaCM3Integration (
 
   // SysTick
   input   wire            SYS_TICK_NOT_10MS_MULT, // Does the sys-tick calibration value
-                                              // provide exact multiple of 10ms from CPU_FCLK?
+                                              // provide exact multiple of 10ms from CPU_CLK?
   input   wire [23:0]     SYS_TICK_CALIB      // SysTick calibration value
 );
 
@@ -175,8 +175,8 @@ module AhaCM3Integration (
   wire [31:0]   tpiu_prdata;
 
   // ---------- Interrupts -----------------------------------------------------
-  wire [239:0]  cpu_int_isr_sync; // interrupt synced to CPU_FCLK
-  wire          cpu_int_nmi_sync; // NMI synced to CPU_FCLK
+  wire          cpu_int_nmi; // Not synched to CPU_CLK
+  wire [239:0]  cpu_int_isr; // Not synched to CPU_CLK
 
   // ---------- WIC ------------------------------------------------------------
   wire                  wic_load;
@@ -209,8 +209,8 @@ module AhaCM3Integration (
       // Clocks and Resets
       .PORESETn           (CPU_PORESETn),
       .SYSRESETn          (CPU_SYSRESETn),
-      .FCLK               (CPU_GCLK),
-      .HCLK               (CPU_GCLK),
+      .FCLK               (CPU_CLK),
+      .HCLK               (CPU_CLK),
       .DAPCLK             (DAP_CLK),
 
       .DAPRESETn          (DAP_RESETn),
@@ -291,8 +291,8 @@ module AhaCM3Integration (
       .TPIUBAUD           (tpiu_baud),
 
       // Interrupts
-      .INTISR             (cpu_int_isr_sync),
-      .INTNMI             (cpu_int_nmi_sync),
+      .INTISR             (cpu_int_isr),
+      .INTNMI             (cpu_int_nmi),
 
       // WIC Interface
       .WICDSREQn          (wic_ds_req_n),
@@ -404,7 +404,7 @@ module AhaCM3Integration (
 
   // ===== ICode and DCode Mux
   cm3_code_mux u_cm3_code_mux (
-    .HCLK               (CPU_GCLK),
+    .HCLK               (CPU_CLK),
     .HRESETn            (CPU_SYSRESETn),
 
     .HADDRI             (icode_haddr),
@@ -533,7 +533,7 @@ module AhaCM3Integration (
     // ===== ROM Table Integration
     AhaRomTable u_rom_table (
        // Inputs
-       .PCLK           (CPU_GCLK),
+       .PCLK           (CPU_CLK),
        .PRESETn        (CPU_PORESETn),
        .PSEL           (rom_tbl_psel),
        .PENABLE        (ppb_penable),
@@ -548,9 +548,9 @@ module AhaCM3Integration (
         .TRACE_LVL(TRACE_LVL),
         .CP_PRESENT(0)
       ) u_cm3_tpiu (
-        .CLK                  (CPU_GCLK),
+        .CLK                  (CPU_CLK),
         .CLKEN                (trace_enabled),
-        .TRACECLKIN           (CPU_GCLK),
+        .TRACECLKIN           (CPU_CLK),
         .RESETn               (CPU_PORESETn),
         .TRESETn              (CPU_PORESETn),
 
@@ -585,31 +585,31 @@ module AhaCM3Integration (
 
   // Trace Timestamp Generator
   AhaCounter #(.WIDTH(48)) u_counter(
-    .CLK      (CPU_GCLK),
+    .CLK      (CPU_CLK),
     .RESETn   (CPU_SYSRESETn),
     .EN       (trace_enabled & ~cpu_halted),
     .Q        (cpu_tsvalueb)
   );
 
   // ===== Interrupts (all interrupt sources are in synchronous clock domains)
-  assign cpu_int_isr_sync[0]        = wic_pend[3]   | TIMER0_INT;
-  assign cpu_int_isr_sync[1]        = wic_pend[4]   | TIMER1_INT;
-  assign cpu_int_isr_sync[2]        = wic_pend[5]   | UART0_TX_RX_INT;
-  assign cpu_int_isr_sync[3]        = wic_pend[6]   | UART1_TX_RX_INT;
-  assign cpu_int_isr_sync[4]        = wic_pend[7]   | UART0_TX_RX_O_INT | UART1_TX_RX_O_INT;
-  assign cpu_int_isr_sync[5]        = wic_pend[8]   | DMA0_INT[0];
-  assign cpu_int_isr_sync[6]        = wic_pend[9]   | DMA0_INT[1];
-  assign cpu_int_isr_sync[7]        = wic_pend[10]  | DMA1_INT[0];
-  assign cpu_int_isr_sync[8]        = wic_pend[11]  | DMA1_INT[1];
-  assign cpu_int_isr_sync[9]        = wic_pend[12]  | CGRA_INT;
-  assign cpu_int_isr_sync[10]       = wic_pend[13]  | TLX_INT;
-  assign cpu_int_isr_sync[239:11]   = {(240-11){1'b0}};
+  assign cpu_int_isr[0]        = wic_pend[3]   | TIMER0_INT;
+  assign cpu_int_isr[1]        = wic_pend[4]   | TIMER1_INT;
+  assign cpu_int_isr[2]        = wic_pend[5]   | UART0_TX_RX_INT;
+  assign cpu_int_isr[3]        = wic_pend[6]   | UART1_TX_RX_INT;
+  assign cpu_int_isr[4]        = wic_pend[7]   | UART0_TX_RX_O_INT | UART1_TX_RX_O_INT;
+  assign cpu_int_isr[5]        = wic_pend[8]   | DMA0_INT[0];
+  assign cpu_int_isr[6]        = wic_pend[9]   | DMA0_INT[1];
+  assign cpu_int_isr[7]        = wic_pend[10]  | DMA1_INT[0];
+  assign cpu_int_isr[8]        = wic_pend[11]  | DMA1_INT[1];
+  assign cpu_int_isr[9]        = wic_pend[12]  | CGRA_INT;
+  assign cpu_int_isr[10]       = wic_pend[13]  | TLX_INT;
+  assign cpu_int_isr[239:11]   = {(240-11){1'b0}};
 
-  assign cpu_int_nmi_sync           = WDOG_INT;
+  assign cpu_int_nmi           = WDOG_INT;
 
   // ===== WIC Integration
   cm3_wic #(.WIC_PRESENT(1), .WIC_LINES(WIC_LINES)) u_cm3_wic (
-    .FCLK         (CPU_FCLK),
+    .FCLK         (SYS_CLK),
     .RESETn       (CPU_SYSRESETn),
 
     .WICLOAD      (wic_load),
@@ -625,7 +625,7 @@ module AhaCM3Integration (
     .WAKEUP       (PMU_WAKEUP)
   );
 
-  assign wic_int = {cpu_int_isr_sync[(NUM_IRQ-1):0], 1'b0, cpu_int_nmi_sync, 1'b0};
+  assign wic_int = {cpu_int_isr[(NUM_IRQ-1):0], 1'b0, cpu_int_nmi, 1'b0};
   assign wic_mask = { wic_mask_isr[(NUM_IRQ-1):0], wic_mask_mon,
                       wic_mask_nmi, wic_mask_rx_ev
                     };

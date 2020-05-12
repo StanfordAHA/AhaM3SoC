@@ -222,7 +222,7 @@ module Tbench;
     .FWD_RESETn         (po_reset_n),
     .REV_CLK            (master_clk),
     .REV_RESETn         (po_reset_n),
-    .OE                 (Tbench.u_soc.core.u_tlx.u_aha_tlx_ctrl.l2h_LANE_ENABLE_REG_LANE0_r),
+    .OE                 (Tbench.u_soc.core.u_aha_tlx.u_aha_tlx_ctrl.l2h_LANE_ENABLE_REG_LANE0_r),
     .FWD_DATA_IN        (tlx_fwd_payload_tdata[0]),
     .REV_DATA_IN        (tlx_rev_payload_tdata[0]),
     .REV_DATA_OUT       (tlx_rev_lane_0)

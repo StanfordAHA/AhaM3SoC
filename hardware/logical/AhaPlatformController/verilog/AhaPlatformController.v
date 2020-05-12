@@ -22,15 +22,14 @@ module AhaPlatformController (
   input   wire            TLX_REV_CLK,        // TLX Reverse Channel Clock
 
   // Generated Clocks
-  output  wire            CPU_FCLK,
-  output  wire            CPU_GCLK,
+  output  wire            SYS_CLK,
+  output  wire            CPU_CLK,
   output  wire            DAP_CLK,
   output  wire            SRAM_CLK,
   output  wire            TLX_CLK,
   output  wire            CGRA_CLK,
   output  wire            DMA0_CLK,
   output  wire            DMA1_CLK,
-  output  wire            PERIPH_CLK,
   output  wire            TIMER0_CLK,
   output  wire            TIMER1_CLK,
   output  wire            UART0_CLK,
@@ -662,15 +661,14 @@ AhaClockController u_clock_controller (
 // Output Assignments
 //-----------------------------------------------------------------------------
   // Generated Clocks
-  assign CPU_FCLK               = sys_fclk_w;
-  assign CPU_GCLK               = cpu_gclk_w;
+  assign SYS_CLK                = sys_fclk_w;
+  assign CPU_CLK                = cpu_gclk_w;
   assign DAP_CLK                = dap_gclk_w;
   assign SRAM_CLK               = sram_gclk_w;
   assign TLX_CLK                = tlx_gclk_w;
   assign CGRA_CLK               = cgra_gclk_w;
   assign DMA0_CLK               = dma0_gclk_w;
   assign DMA1_CLK               = dma1_gclk_w;
-  assign PERIPH_CLK             = nic_gclk_w;
   assign TIMER0_CLK             = timer0_gclk_w;
   assign TIMER1_CLK             = timer1_gclk_w;
   assign UART0_CLK              = uart0_gclk_w;

@@ -99,15 +99,14 @@ module AhaGarnetSoC (
   wire            nic_reset_n;
 
   // Generated Clocks Wires
-  wire            cpu_fclk;
-  wire            cpu_gclk;
+  wire            sys_clk;
+  wire            cpu_clk;
   wire            dap_clk;
   wire            sram_clk;
   wire            tlx_clk;
   wire            cgra_clk;
   wire            dma0_clk;
   wire            dma1_clk;
-  wire            periph_clk;
   wire            timer0_clk;
   wire            timer1_clk;
   wire            uart0_clk;
@@ -293,7 +292,7 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   // Instantiate Partial SoC Integration
   //------------------------------------------------------------------------------
-  AhaSoCPartialIntegration u_partial_soc (
+  AhaSoCPartialIntegration u_aha_soc_partial (
     // Resets
     .CPU_PORESETn                 (cpu_poreset_n),
     .CPU_SYSRESETn                (cpu_sysreset_n),
@@ -314,8 +313,8 @@ module AhaGarnetSoC (
     .NIC_RESETn                   (nic_reset_n),
 
     // Clocks
-    .CPU_FCLK                     (cpu_fclk),
-    .CPU_GCLK                     (cpu_gclk),
+    .SYS_CLK                      (sys_clk),
+    .CPU_CLK                      (cpu_clk),
     .DAP_CLK                      (dap_clk),
     .JTAG_TCK                     (DP_JTAG_TCK),
     .SRAM_CLK                     (sram_clk),
@@ -323,7 +322,6 @@ module AhaGarnetSoC (
     .CGRA_CLK                     (cgra_clk),
     .DMA0_CLK                     (dma0_clk),
     .DMA1_CLK                     (dma1_clk),
-    .PERIPH_CLK                   (periph_clk),
     .TIMER0_CLK                   (timer0_clk),
     .TIMER1_CLK                   (timer1_clk),
     .UART0_CLK                    (uart0_clk),
@@ -457,7 +455,7 @@ module AhaGarnetSoC (
 
     // TLX
     .TLX_INT                      (tlx_int),
-    
+
     .TLX_AWID                     (tlx_awid),
     .TLX_AWADDR                   (tlx_awaddr),
     .TLX_AWLEN                    (tlx_awlen),
@@ -528,7 +526,7 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   // Instantiate Garnet CGRA
   //------------------------------------------------------------------------------
-  AhaGarnetIntegration u_garnet (
+  AhaGarnetIntegration u_aha_garnet (
     .CLK                          (cgra_clk),
     .RESETn                       (cgra_reset_n),
 
@@ -619,7 +617,7 @@ module AhaGarnetSoC (
   wire [39:0]   tlx_fwd_payload_tdata;
   wire [79:0]   tlx_rev_payload_tdata;
 
-  AhaTlxIntegration u_tlx (
+  AhaTlxIntegration u_aha_tlx (
     // Clocks and Resets
     .TLX_SIB_CLK                  (tlx_clk),
     .TLX_SIB_RESETn               (tlx_reset_n),
@@ -708,7 +706,7 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   // Instantiate Platform Controller
   //------------------------------------------------------------------------------
-  AhaPlatformController u_platform_ctrl (
+  AhaPlatformController u_aha_platform_ctrl (
     // Master Clock and Power-On Reset
     .MASTER_CLK                   (MASTER_CLK),
     .PORESETn                     (PORESETn),
@@ -723,15 +721,14 @@ module AhaGarnetSoC (
     .TLX_REV_CLK                  (TLX_REV_CLK),
 
     // Generated Clocks
-    .CPU_FCLK                     (cpu_fclk),
-    .CPU_GCLK                     (cpu_gclk),
+    .SYS_CLK                      (sys_clk),
+    .CPU_CLK                      (cpu_clk),
     .DAP_CLK                      (dap_clk),
     .SRAM_CLK                     (sram_clk),
     .TLX_CLK                      (tlx_clk),
     .CGRA_CLK                     (cgra_clk),
     .DMA0_CLK                     (dma0_clk),
     .DMA1_CLK                     (dma1_clk),
-    .PERIPH_CLK                   (periph_clk),
     .TIMER0_CLK                   (timer0_clk),
     .TIMER1_CLK                   (timer1_clk),
     .UART0_CLK                    (uart0_clk),
@@ -827,8 +824,8 @@ module AhaGarnetSoC (
     .SELECT                       (LOOP_BACK_SELECT),
 
     // Clocks
-    .SYS_CLK                      (cpu_fclk),
-    .CPU_CLK                      (cpu_gclk),
+    .SYS_CLK                      (sys_clk),
+    .CPU_CLK                      (cpu_clk),
     .DAP_CLK                      (dap_clk),
     .DP_JTAG_CLK                  (DP_JTAG_TCK),
     .UART0_CLK                    (uart0_clk),

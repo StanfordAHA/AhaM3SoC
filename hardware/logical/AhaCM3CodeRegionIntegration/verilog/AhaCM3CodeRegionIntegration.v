@@ -10,15 +10,15 @@
 //------------------------------------------------------------------------------
 module AhaCM3CodeRegionIntegration (
   // Resets
-  input   wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_FCLK
-  input   wire            CPU_SYSRESETn,      // CPU soft reset synchronized to CPU_FCLK
+  input   wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_CLK
+  input   wire            CPU_SYSRESETn,      // CPU soft reset synchronized to CPU_CLK
   input   wire            DAP_RESETn,         // Debug system reset synchronized to DAP_CLK
   input   wire            JTAG_TRSTn,         // JTAG Reset synchronized to JTAG Test Clock
   input   wire            JTAG_PORESETn,      // JTAG Power on reset synchronized to JTAG_TCK
 
   // Clocks
-  input   wire            CPU_FCLK,           // CPU-domain free running clock
-  input   wire            CPU_GCLK,           // CPU-domain gated clock
+  input   wire            SYS_CLK ,           // CPU-domain free running clock
+  input   wire            CPU_CLK,           // CPU-domain gated clock
   input   wire            DAP_CLK,            // DAP Clock
   input   wire            JTAG_TCK,           // JTAG test clock
 
@@ -80,7 +80,7 @@ module AhaCM3CodeRegionIntegration (
 
   // SysTick
   input   wire            SYS_TICK_NOT_10MS_MULT, // Does the sys-tick calibration value
-                                              // provide exact multiple of 10ms from CPU_FCLK?
+                                              // provide exact multiple of 10ms from CPU_CLK?
   input   wire [23:0]     SYS_TICK_CALIB      // SysTick calibration value
 );
 
@@ -105,8 +105,8 @@ module AhaCM3CodeRegionIntegration (
     .JTAG_PORESETn        (JTAG_PORESETn),
 
     // Clocks
-    .CPU_FCLK             (CPU_FCLK),
-    .CPU_GCLK             (CPU_GCLK),
+    .SYS_CLK              (SYS_CLK),
+    .CPU_CLK              (CPU_CLK),
     .DAP_CLK              (DAP_CLK),
     .JTAG_TCK             (JTAG_TCK),
 
@@ -184,7 +184,7 @@ module AhaCM3CodeRegionIntegration (
 
   // ===== Code Region SRAM Instantiation
   AhaAhbCodeRegion u_code_region (
-    .HCLK                 (CPU_GCLK),
+    .HCLK                 (CPU_CLK),
     .HRESETn              (CPU_SYSRESETn),
     .HSEL                 (1'b1),
     .HREADY               (1'b1),
