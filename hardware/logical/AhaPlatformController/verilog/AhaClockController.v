@@ -1,28 +1,12 @@
 //-----------------------------------------------------------------------------
 // Verilog 2001 (IEEE Std 1364-2001)
 //-----------------------------------------------------------------------------
-// Purpose: Platform Clock Controller
+// Purpose: Platform Clock Controller (Mock)
 //-----------------------------------------------------------------------------
 //
 // Author   : Gedeon Nyengele
 // Date     : Apr 17, 2020
 //-----------------------------------------------------------------------------
-//
-// In terms of Frequency, there are () clock domains:
-// - System Clock Domain: shared by CPU, DMAs, SRAMs, and NIC
-// - CGRA Clock Domain
-// - FWD TLX Clock Domain
-// - Timer0 Clock Domain
-// - Timer1 Clock Domain
-// - UART0 Clock Domain
-// - UART1 Clock Domain
-// - Watchdog Clock Domain
-//
-// * DMA peripheral interface can be run at a lower freq using PCLKEN signals
-// * System Clock is derived from Master Clock
-// * Peripheral Clocks are derived from System Clock
-// * Output free-running clocks can be used for external reset synchronization
-// ----------------------------------------------------------------------------
 module AhaClockController (
   // Master Interface
   input   wire            MASTER_CLK,
@@ -114,6 +98,53 @@ module AhaClockController (
   output  wire            WDOG_GCLK_EN
 );
 
+  // Unused Wires
+  wire  unused =  (| SYS_CLK_SELECT)    |
+                  (| CPU_CLK_GATE)      |
+                  (| DAP_CLK_GATE)      |
+                  (| DMA0_CLK_GATE)     |
+                  (| DMA1_CLK_GATE)     |
+                  (| DMA0_PCLK_SELECT)  |
+                  (| DMA1_PCLK_SELECT)  |
+                  (| SRAM_CLK_GATE)     |
+                  (| NIC_CLK_GATE)      |
+                  (| TLX_CLK_GATE)      |
+                  (| TLX_CLK_SELECT)    |
+                  (| CGRA_CLK_GATE)     |
+                  (| CGRA_CLK_SELECT)   |
+                  (| TIMER0_CLK_GATE)   |
+                  (| TIMER0_CLK_SELECT) |
+                  (| TIMER1_CLK_GATE)   |
+                  (| TIMER1_CLK_SELECT) |
+                  (| UART0_CLK_GATE)    |
+                  (| UART0_CLK_SELECT)  |
+                  (| UART1_CLK_GATE)    |
+                  (| UART1_CLK_SELECT)  |
+                  (| WDOG_CLK_GATE)     |
+                  (| WDOG_CLK_SELECT)   ;
+
+//-----------------------------------------------------------------------------
+// Reset Sync
+//-----------------------------------------------------------------------------
+wire      poresetn_master_clk;
+wire      poresetn_sys_clk;
+
+AhaResetSync u_sync_master_clk (
+  .CLK    (MASTER_CLK),
+  .Dn     (PORESETn),
+  .Qn     (poresetn_master_clk)
+);
+
+AhaResetSync u_sync_sys_clk (
+  .CLK    (SYS_FCLK),
+  .Dn     (PORESETn),
+  .Qn     (poresetn_sys_clk)
+);
+
+//-----------------------------------------------------------------------------
+// Clock Sources
+//-----------------------------------------------------------------------------
+
   // Generated Clocks From Master Clock
   wire    gen_clk_by_1;
   wire    gen_clk_by_2;
@@ -122,9 +153,9 @@ module AhaClockController (
   wire    gen_clk_by_16;
   wire    gen_clk_by_32;
 
-  AhaClockDivider u_clk_div (
+  AhaClockDivider u_clk_divider (
     .CLK_IN           (MASTER_CLK),
-    .RESETn           (PORESETn),
+    .RESETn           (poresetn_master_clk),
 
     .CLK_by_1         (gen_clk_by_1),
     .CLK_by_1_EN      (),
@@ -140,465 +171,91 @@ module AhaClockController (
     .CLK_by_32_EN     ()
   );
 
-  // Generate System Clock From Master Clock
-  wire    sys_fclk_w;
+//-----------------------------------------------------------------------------
+// Clock Enable Sources
+//-----------------------------------------------------------------------------
 
-  AhaClockSelector u_clk_selector_sys_clk (
-    .CLK_by_1         (gen_clk_by_1),
-    .CLK_by_1_EN      (1'b0),
-    .CLK_by_2         (gen_clk_by_2),
-    .CLK_by_2_EN      (1'b0),
-    .CLK_by_4         (gen_clk_by_4),
-    .CLK_by_4_EN      (1'b0),
-    .CLK_by_8         (gen_clk_by_8),
-    .CLK_by_8_EN      (1'b0),
-    .CLK_by_16        (gen_clk_by_16),
-    .CLK_by_16_EN     (1'b0),
-    .CLK_by_32        (gen_clk_by_32),
-    .CLK_by_32_EN     (1'b0),
+  wire    sys_clk_en_by_2;
+  wire    sys_clk_en_by_4;
+  wire    sys_clk_en_by_8;
+  wire    sys_clk_en_by_16;
+  wire    sys_clk_en_by_32;
 
-    .RESETn           (PORESETn),
-    .SELECT           (SYS_CLK_SELECT),
+  AhaEnGenerator u_clk_en_generator (
+    .CLK              (SYS_FCLK),
+    .RESETn           (poresetn_sys_clk),
 
-    .CLK_OUT          (sys_fclk_w),
-    .CLK_EN_OUT       ()
+    .By2CLKEN         (sys_clk_en_by_2),
+    .By4CLKEN         (sys_clk_en_by_4),
+    .By8CLKEN         (sys_clk_en_by_8),
+    .By16CLKEN        (sys_clk_en_by_16),
+    .By32CLKEN        (sys_clk_en_by_32)
   );
 
-  assign SYS_FCLK = sys_fclk_w;
-
-  // Generate CPU Gated Clock from System Clock
-  AhaClockGate u_cpu_gclk (
-    .TE     (1'b0),
-    .E      (~CPU_CLK_GATE),
-    .CP     (sys_fclk_w),
-    .Q      (CPU_GCLK)
-  );
-
-  // Generate DAP Gated Clock from System Clock
-  AhaClockGate u_dap_gclk (
-    .TE     (1'b0),
-    .E      (~DAP_CLK_GATE),
-    .CP     (sys_fclk_w),
-    .Q      (DAP_GCLK)
-  );
-
-  // Generate DMA0 Gated Clock from System Clock
-  AhaClockGate u_dma0_gclk (
-    .TE     (1'b0),
-    .E      (~DMA0_CLK_GATE),
-    .CP     (sys_fclk_w),
-    .Q      (DMA0_GCLK)
-  );
-
-  // Generate DMA1 Gated Clock from System Clock
-  AhaClockGate u_dma1_gclk (
-    .TE     (1'b0),
-    .E      (~DMA1_CLK_GATE),
-    .CP     (sys_fclk_w),
-    .Q      (DMA1_GCLK)
-  );
-
-  // Generate SRAM Gated Clock from System Clock
-  AhaClockGate u_sram_gclk (
-    .TE     (1'b0),
-    .E      (~SRAM_CLK_GATE),
-    .CP     (sys_fclk_w),
-    .Q      (SRAM_GCLK)
-  );
-
-  // Generate NIC Gated Clock from System Clock
-  AhaClockGate u_nic_gclk (
-    .TE     (1'b0),
-    .E      (~NIC_CLK_GATE),
-    .CP     (sys_fclk_w),
-    .Q      (NIC_GCLK)
-  );
-
-  // Generate TLX Free-Running Clock from Master Clock
-  wire    tlx_fclk_w;
-
-  AhaClockSelector u_clk_selector_tlx_clk (
-    .CLK_by_1         (gen_clk_by_1),
-    .CLK_by_1_EN      (1'b0),
-    .CLK_by_2         (gen_clk_by_2),
-    .CLK_by_2_EN      (1'b0),
-    .CLK_by_4         (gen_clk_by_4),
-    .CLK_by_4_EN      (1'b0),
-    .CLK_by_8         (gen_clk_by_8),
-    .CLK_by_8_EN      (1'b0),
-    .CLK_by_16        (gen_clk_by_16),
-    .CLK_by_16_EN     (1'b0),
-    .CLK_by_32        (gen_clk_by_32),
-    .CLK_by_32_EN     (1'b0),
-
-    .RESETn           (PORESETn),
-    .SELECT           (TLX_CLK_SELECT),
-
-    .CLK_OUT          (tlx_fclk_w),
-    .CLK_EN_OUT       ()
-  );
-
-  assign TLX_FCLK = tlx_fclk_w;
-
-  // Generate TLX Gated Clock from TLX Free-Running Clock
-  AhaClockGate u_tlx_gclk (
-    .TE     (1'b0),
-    .E      (~TLX_CLK_GATE),
-    .CP     (tlx_fclk_w),
-    .Q      (TLX_GCLK)
-  );
-
-  // Generate CGRA Free-Running Clock from Master Clock
-  wire    cgra_fclk_w;
-
-  AhaClockSelector u_clk_selector_cgra_clk (
-    .CLK_by_1         (gen_clk_by_1),
-    .CLK_by_1_EN      (1'b0),
-    .CLK_by_2         (gen_clk_by_2),
-    .CLK_by_2_EN      (1'b0),
-    .CLK_by_4         (gen_clk_by_4),
-    .CLK_by_4_EN      (1'b0),
-    .CLK_by_8         (gen_clk_by_8),
-    .CLK_by_8_EN      (1'b0),
-    .CLK_by_16        (gen_clk_by_16),
-    .CLK_by_16_EN     (1'b0),
-    .CLK_by_32        (gen_clk_by_32),
-    .CLK_by_32_EN     (1'b0),
-
-    .RESETn           (PORESETn),
-    .SELECT           (CGRA_CLK_SELECT),
-
-    .CLK_OUT          (cgra_fclk_w),
-    .CLK_EN_OUT       ()
-  );
-
-  assign CGRA_FCLK = cgra_fclk_w;
-
-  // Generate CGRA Gated Clock from CGRA Free-Running Clock
-  AhaClockGate u_cgra_gclk (
-    .TE     (1'b0),
-    .E      (~CGRA_CLK_GATE),
-    .CP     (cgra_fclk_w),
-    .Q      (CGRA_GCLK)
-  );
-
-  // Generated Clocks from System Clock
-  wire    sys_gen_clk_by_1;
-  wire    sys_gen_clk_by_2;
-  wire    sys_gen_clk_by_4;
-  wire    sys_gen_clk_by_8;
-  wire    sys_gen_clk_by_16;
-  wire    sys_gen_clk_by_32;
-
-  wire    sys_gen_clk_en_by_1;
-  wire    sys_gen_clk_en_by_2;
-  wire    sys_gen_clk_en_by_4;
-  wire    sys_gen_clk_en_by_8;
-  wire    sys_gen_clk_en_by_16;
-  wire    sys_gen_clk_en_by_32;
-
-  AhaClockDivider u_clk_div_from_sysclk (
-    .CLK_IN           (sys_fclk_w),
-    .RESETn           (PORESETn),
-
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32)
-  );
-
-  // Generate Timer0 Free-Running Clock from System Clock
-  wire    timer0_fclk_w;
-  wire    timer0_free_en_w;
-
-  AhaClockSelector u_clk_selector_timer0_clk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (TIMER0_CLK_SELECT),
-
-    .CLK_OUT          (timer0_fclk_w),
-    .CLK_EN_OUT       (timer0_free_en_w)
-  );
-
-  assign TIMER0_FCLK = timer0_fclk_w;
-
-  // Generate Timer0 Gated Clock from Timer0 Free-Running Clock
-  AhaClockGate u_timer0_gclk (
-    .TE     (1'b0),
-    .E      (~TIMER0_CLK_GATE),
-    .CP     (timer0_fclk_w),
-    .Q      (TIMER0_GCLK)
-  );
-
-  AhaClockEnGate u_timer0_gated_en (
-    .TE     (1'b0),
-    .E      (~TIMER0_CLK_GATE),
-    .CP     (timer0_fclk_w),
-    .CE     (timer0_free_en_w),
-    .Q      (TIMER0_GCLK_EN)
-  );
-
-  // Generate Timer1 Free-Running Clock from System Clock
-  wire    timer1_fclk_w;
-  wire    timer1_free_en_w;
-
-  AhaClockSelector u_clk_selector_timer1_clk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (TIMER1_CLK_SELECT),
-
-    .CLK_OUT          (timer1_fclk_w),
-    .CLK_EN_OUT       (timer1_free_en_w)
-  );
-
-  assign TIMER1_FCLK = timer1_fclk_w;
-
-  // Generate Timer1 Gated Clock from Timer1 Free-Running Clock
-  AhaClockGate u_timer1_gclk (
-    .TE     (1'b0),
-    .E      (~TIMER1_CLK_GATE),
-    .CP     (timer1_fclk_w),
-    .Q      (TIMER1_GCLK)
-  );
-
-  AhaClockEnGate u_timer1_gated_en (
-    .TE     (1'b0),
-    .E      (~TIMER0_CLK_GATE),
-    .CP     (timer1_fclk_w),
-    .CE     (timer1_free_en_w),
-    .Q      (TIMER1_GCLK_EN)
-  );
-
-  // Generate UART0 Free-Running Clock from System Clock
-  wire    uart0_fclk_w;
-  wire    uart0_free_en_w;
-
-  AhaClockSelector u_clk_selector_uart0_clk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (UART0_CLK_SELECT),
-
-    .CLK_OUT          (uart0_fclk_w),
-    .CLK_EN_OUT       (uart0_free_en_w)
-  );
-
-  assign UART0_FCLK = uart0_fclk_w;
-
-  // Generate UART0 Gated Clock from UART0 Free-Running Clock
-  AhaClockGate u_uart0_gclk (
-    .TE     (1'b0),
-    .E      (~UART0_CLK_GATE),
-    .CP     (uart0_fclk_w),
-    .Q      (UART0_GCLK)
-  );
-
-  AhaClockEnGate u_uart0_gated_en (
-    .TE     (1'b0),
-    .E      (~UART0_CLK_GATE),
-    .CP     (uart0_fclk_w),
-    .CE     (uart0_free_en_w),
-    .Q      (UART0_GCLK_EN)
-  );
-
-  // Generate UART1 Free-Running Clock from System Clock
-  wire    uart1_fclk_w;
-  wire    uart1_free_en_w;
-
-  AhaClockSelector u_clk_selector_uart1_clk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (UART1_CLK_SELECT),
-
-    .CLK_OUT          (uart1_fclk_w),
-    .CLK_EN_OUT       (uart1_free_en_w)
-  );
-
-  assign UART1_FCLK = uart1_fclk_w;
-
-  // Generate UART1 Gated Clock from UART1 Free-Running Clock
-  AhaClockGate u_uart1_gclk (
-    .TE     (1'b0),
-    .E      (~UART1_CLK_GATE),
-    .CP     (uart1_fclk_w),
-    .Q      (UART1_GCLK)
-  );
-
-  AhaClockEnGate u_uart1_gated_en (
-    .TE     (1'b0),
-    .E      (~UART1_CLK_GATE),
-    .CP     (uart1_fclk_w),
-    .CE     (uart1_free_en_w),
-    .Q      (UART1_GCLK_EN)
-  );
-
-  // Generate WDOG Free-Running Clock from System Clock
-  wire    wdog_fclk_w;
-  wire    wdog_free_en_w;
-
-  AhaClockSelector u_clk_selector_wdog_clk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (WDOG_CLK_SELECT),
-
-    .CLK_OUT          (wdog_fclk_w),
-    .CLK_EN_OUT       (wdog_free_en_w)
-  );
-
-  assign WDOG_FCLK = wdog_fclk_w;
-
-  // Generate WDOG Gated Clock from WDOG Free-Running Clock
-  AhaClockGate u_wdog_gclk (
-    .TE     (1'b0),
-    .E      (~WDOG_CLK_GATE),
-    .CP     (wdog_fclk_w),
-    .Q      (WDOG_GCLK)
-  );
-
-  AhaClockEnGate u_wdog_gated_en (
-    .TE     (1'b0),
-    .E      (~WDOG_CLK_GATE),
-    .CP     (wdog_fclk_w),
-    .CE     (wdog_free_en_w),
-    .Q      (WDOG_GCLK_EN)
-  );
-
-  // Generate DMA0 Free-Running PCLK from System Clock
-  wire    dma0_free_pclk_w;
-  wire    dma0_free_pen_w;
-
-  AhaClockSelector u_clk_selector_dma0_pclk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (DMA0_PCLK_SELECT),
-
-    .CLK_OUT          (dma0_free_pclk_w),
-    .CLK_EN_OUT       (dma0_free_pen_w)
-  );
-
-  assign DMA0_FREE_PCLK = dma0_free_pclk_w;
-
-  // Generate DMA0 PCKLEN using DMA0_CLK_GATE and DMA0 Free-Running PCLK
-  AhaClockEnGate u_dma0_gated_en (
-    .TE     (1'b0),
-    .E      (~DMA0_CLK_GATE),
-    .CP     (dma0_free_pclk_w),
-    .CE     (dma0_free_pen_w),
-    .Q      (DMA0_GPCLK_EN)
-  );
-
-  // Generate DMA1 Free-Running PCLK from System Clock
-  wire    dma1_free_pclk_w;
-  wire    dma1_free_pen_w;
-
-  AhaClockSelector u_clk_selector_dma1_pclk (
-    .CLK_by_1         (sys_gen_clk_by_1),
-    .CLK_by_1_EN      (sys_gen_clk_en_by_1),
-    .CLK_by_2         (sys_gen_clk_by_2),
-    .CLK_by_2_EN      (sys_gen_clk_en_by_2),
-    .CLK_by_4         (sys_gen_clk_by_4),
-    .CLK_by_4_EN      (sys_gen_clk_en_by_4),
-    .CLK_by_8         (sys_gen_clk_by_8),
-    .CLK_by_8_EN      (sys_gen_clk_en_by_8),
-    .CLK_by_16        (sys_gen_clk_by_16),
-    .CLK_by_16_EN     (sys_gen_clk_en_by_16),
-    .CLK_by_32        (sys_gen_clk_by_32),
-    .CLK_by_32_EN     (sys_gen_clk_en_by_32),
-
-    .RESETn           (PORESETn),
-    .SELECT           (DMA1_PCLK_SELECT),
-
-    .CLK_OUT          (dma1_free_pclk_w),
-    .CLK_EN_OUT       (dma1_free_pen_w)
-  );
-
-  assign DMA1_FREE_PCLK = dma1_free_pclk_w;
-
-  // Generate DMA1 PCKLEN using DMA1_CLK_GATE and DMA1 Free-Running PCLK
-  AhaClockEnGate u_dma1_gated_en (
-    .TE     (1'b0),
-    .E      (~DMA1_CLK_GATE),
-    .CP     (dma1_free_pclk_w),
-    .CE     (dma1_free_pen_w),
-    .Q      (DMA1_GPCLK_EN)
-  );
+//-----------------------------------------------------------------------------
+// System Clocks
+//-----------------------------------------------------------------------------
+
+  // System Clock
+  assign SYS_FCLK        = gen_clk_by_2;
+
+  // CPU Gated Clock
+  assign CPU_GCLK       = gen_clk_by_2;
+
+  // DAP Gated Clock
+  assign DAP_GCLK       = gen_clk_by_2;
+
+  // DMA0 Gated Clock
+  assign DMA0_GCLK      = gen_clk_by_2;
+
+  // DMA1 Gated Clock
+  assign DMA1_GCLK      = gen_clk_by_2;
+
+  // DMA0 PCLK
+  assign DMA0_FREE_PCLK = gen_clk_by_4;
+  assign DMA0_GPCLK_EN  = sys_clk_en_by_2;
+
+  // DMA1 PCLK
+  assign DMA1_FREE_PCLK = gen_clk_by_4;
+  assign DMA1_GPCLK_EN  = sys_clk_en_by_2;
+
+  // SRAM Gated Clock
+  assign SRAM_GCLK      = gen_clk_by_2;
+
+  // NIC Gated Clock
+  assign NIC_GCLK       = gen_clk_by_2;
+
+  // TLX FWD Gated Clock
+  assign TLX_FCLK       = gen_clk_by_2;
+  assign TLX_GCLK       = gen_clk_by_2;
+
+  // CGRA Gated Clock
+  assign CGRA_FCLK      = gen_clk_by_1;
+  assign CGRA_GCLK      = gen_clk_by_1;
+
+  // Timer0 Clock
+  assign TIMER0_FCLK    = gen_clk_by_4;
+  assign TIMER0_GCLK    = gen_clk_by_4;
+  assign TIMER0_GCLK_EN = sys_clk_en_by_2;
+
+  // Timer1 Clock
+  assign TIMER1_FCLK    = gen_clk_by_4;
+  assign TIMER1_GCLK    = gen_clk_by_4;
+  assign TIMER1_GCLK_EN = sys_clk_en_by_2;
+
+  // Uart0 Clock
+  assign UART0_FCLK     = gen_clk_by_4;
+  assign UART0_GCLK     = gen_clk_by_4;
+  assign UART0_GCLK_EN  = sys_clk_en_by_2;
+
+  // Uart1 Clock
+  assign UART1_FCLK     = gen_clk_by_4;
+  assign UART1_GCLK     = gen_clk_by_4;
+  assign UART1_GCLK_EN  = sys_clk_en_by_2;
+
+  // WDOG Clock
+  assign WDOG_FCLK      = gen_clk_by_4;
+  assign WDOG_GCLK      = gen_clk_by_4;
+  assign WDOG_GCLK_EN   = sys_clk_en_by_2;
+
 endmodule
