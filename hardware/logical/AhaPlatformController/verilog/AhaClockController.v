@@ -147,11 +147,6 @@ AhaResetSync u_sync_sys_clk (
 
   // Generated Clocks From Master Clock
   wire    gen_clk_by_1;
-  wire    gen_clk_by_2;
-  wire    gen_clk_by_4;
-  wire    gen_clk_by_8;
-  wire    gen_clk_by_16;
-  wire    gen_clk_by_32;
 
   AhaClockDivider u_clk_divider (
     .CLK_IN           (MASTER_CLK),
@@ -159,37 +154,16 @@ AhaResetSync u_sync_sys_clk (
 
     .CLK_by_1         (gen_clk_by_1),
     .CLK_by_1_EN      (),
-    .CLK_by_2         (gen_clk_by_2),
+    .CLK_by_2         (),
     .CLK_by_2_EN      (),
-    .CLK_by_4         (gen_clk_by_4),
+    .CLK_by_4         (),
     .CLK_by_4_EN      (),
-    .CLK_by_8         (gen_clk_by_8),
+    .CLK_by_8         (),
     .CLK_by_8_EN      (),
-    .CLK_by_16        (gen_clk_by_16),
+    .CLK_by_16        (),
     .CLK_by_16_EN     (),
-    .CLK_by_32        (gen_clk_by_32),
+    .CLK_by_32        (),
     .CLK_by_32_EN     ()
-  );
-
-//-----------------------------------------------------------------------------
-// Clock Enable Sources
-//-----------------------------------------------------------------------------
-
-  wire    sys_clk_en_by_2;
-  wire    sys_clk_en_by_4;
-  wire    sys_clk_en_by_8;
-  wire    sys_clk_en_by_16;
-  wire    sys_clk_en_by_32;
-
-  AhaEnGenerator u_clk_en_generator (
-    .CLK              (SYS_FCLK),
-    .RESETn           (poresetn_sys_clk),
-
-    .By2CLKEN         (sys_clk_en_by_2),
-    .By4CLKEN         (sys_clk_en_by_4),
-    .By8CLKEN         (sys_clk_en_by_8),
-    .By16CLKEN        (sys_clk_en_by_16),
-    .By32CLKEN        (sys_clk_en_by_32)
   );
 
 //-----------------------------------------------------------------------------
@@ -197,65 +171,65 @@ AhaResetSync u_sync_sys_clk (
 //-----------------------------------------------------------------------------
 
   // System Clock
-  assign SYS_FCLK        = gen_clk_by_2;
+  assign SYS_FCLK        = gen_clk_by_1;
 
   // CPU Gated Clock
-  assign CPU_GCLK       = gen_clk_by_2;
+  assign CPU_GCLK       = SYS_FCLK;
 
   // DAP Gated Clock
-  assign DAP_GCLK       = gen_clk_by_2;
+  assign DAP_GCLK       = SYS_FCLK;
 
   // DMA0 Gated Clock
-  assign DMA0_GCLK      = gen_clk_by_2;
+  assign DMA0_GCLK      = SYS_FCLK;
 
   // DMA1 Gated Clock
-  assign DMA1_GCLK      = gen_clk_by_2;
+  assign DMA1_GCLK      = SYS_FCLK;
 
   // DMA0 PCLK
-  assign DMA0_FREE_PCLK = gen_clk_by_4;
-  assign DMA0_GPCLK_EN  = sys_clk_en_by_2;
+  assign DMA0_FREE_PCLK = SYS_FCLK;
+  assign DMA0_GPCLK_EN  = 1'b1;
 
   // DMA1 PCLK
-  assign DMA1_FREE_PCLK = gen_clk_by_4;
-  assign DMA1_GPCLK_EN  = sys_clk_en_by_2;
+  assign DMA1_FREE_PCLK = SYS_FCLK;
+  assign DMA1_GPCLK_EN  = 1'b1;
 
   // SRAM Gated Clock
-  assign SRAM_GCLK      = gen_clk_by_2;
+  assign SRAM_GCLK      = SYS_FCLK;
 
   // NIC Gated Clock
-  assign NIC_GCLK       = gen_clk_by_2;
+  assign NIC_GCLK       = SYS_FCLK;
 
   // TLX FWD Gated Clock
-  assign TLX_FCLK       = gen_clk_by_2;
-  assign TLX_GCLK       = gen_clk_by_2;
+  assign TLX_FCLK       = SYS_FCLK;
+  assign TLX_GCLK       = SYS_FCLK;
 
   // CGRA Gated Clock
-  assign CGRA_FCLK      = gen_clk_by_1;
-  assign CGRA_GCLK      = gen_clk_by_1;
+  assign CGRA_FCLK      = SYS_FCLK;
+  assign CGRA_GCLK      = SYS_FCLK;
 
   // Timer0 Clock
-  assign TIMER0_FCLK    = gen_clk_by_4;
-  assign TIMER0_GCLK    = gen_clk_by_4;
-  assign TIMER0_GCLK_EN = sys_clk_en_by_2;
+  assign TIMER0_FCLK    = SYS_FCLK;
+  assign TIMER0_GCLK    = SYS_FCLK;
+  assign TIMER0_GCLK_EN = 1'b1;
 
   // Timer1 Clock
-  assign TIMER1_FCLK    = gen_clk_by_4;
-  assign TIMER1_GCLK    = gen_clk_by_4;
-  assign TIMER1_GCLK_EN = sys_clk_en_by_2;
+  assign TIMER1_FCLK    = SYS_FCLK;
+  assign TIMER1_GCLK    = SYS_FCLK;
+  assign TIMER1_GCLK_EN = 1'b1;
 
   // Uart0 Clock
-  assign UART0_FCLK     = gen_clk_by_4;
-  assign UART0_GCLK     = gen_clk_by_4;
-  assign UART0_GCLK_EN  = sys_clk_en_by_2;
+  assign UART0_FCLK     = SYS_FCLK;
+  assign UART0_GCLK     = SYS_FCLK;
+  assign UART0_GCLK_EN  = 1'b1;
 
   // Uart1 Clock
-  assign UART1_FCLK     = gen_clk_by_4;
-  assign UART1_GCLK     = gen_clk_by_4;
-  assign UART1_GCLK_EN  = sys_clk_en_by_2;
+  assign UART1_FCLK     = SYS_FCLK;
+  assign UART1_GCLK     = SYS_FCLK;
+  assign UART1_GCLK_EN  = 1'b1;
 
   // WDOG Clock
-  assign WDOG_FCLK      = gen_clk_by_4;
-  assign WDOG_GCLK      = gen_clk_by_4;
-  assign WDOG_GCLK_EN   = sys_clk_en_by_2;
+  assign WDOG_FCLK      = SYS_FCLK;
+  assign WDOG_GCLK      = SYS_FCLK;
+  assign WDOG_GCLK_EN   = 1'b1;
 
 endmodule
