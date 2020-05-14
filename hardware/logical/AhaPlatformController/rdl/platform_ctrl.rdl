@@ -486,4 +486,16 @@ addrmap AhaPlatformCtrlAddrMap {
 
   } SYS_RESET_AGGR_REG @ 0x58;
 
+  // ------------------------------------------------------------------------
+  // Master Clock Select Register
+  //-------------------------------------------------------------------------
+  reg {
+    name  = "Master Clock Selection Register";
+    desc  = "Select source for master clock";
+
+    field {
+      desc  = "Clock Select";
+    } SELECT [0:0] = 1'b0;
+
+  } MASTER_CLK_SELECT @ 0x5C;
 };

@@ -15,6 +15,7 @@ module AhaGarnetSoC (
 
   // Clocks
   input   wire            MASTER_CLK,         // Main Clock
+  input   wire            ALT_MASTER_CLK,     // Alternate master clock
   input   wire            DP_JTAG_TCK,        // Coresight JTAG Clock
   input   wire            CGRA_JTAG_TCK,      // CGRA JTAG Clock
 
@@ -707,8 +708,9 @@ module AhaGarnetSoC (
   // Instantiate Platform Controller
   //------------------------------------------------------------------------------
   AhaPlatformController u_aha_platform_ctrl (
-    // Master Clock and Power-On Reset
+    // Master Clocks and Power-On Reset
     .MASTER_CLK                   (MASTER_CLK),
+    .ALT_MASTER_CLK               (ALT_MASTER_CLK),
     .PORESETn                     (PORESETn),
     .DP_JTAG_TRSTn                (DP_JTAG_TRSTn),
     .CGRA_JTAG_TRSTn              (CGRA_JTAG_TRSTn),

@@ -23,6 +23,7 @@ module AhaPlatformCtrlEngine (
   output  wire  [2:0]         PAD_DS_GRP7,
 
   // Clock Select Signals
+  output  wire                MASTER_CLK_SELECT,
   output  wire  [2:0]         SYS_CLK_SELECT,
   output  wire  [2:0]         DMA0_PCLK_SELECT,
   output  wire  [2:0]         DMA1_PCLK_SELECT,
@@ -246,7 +247,8 @@ module AhaPlatformCtrlEngine (
     .L2H_SYS_TICK_CONFIG_REG_CALIB_r                (SYS_TICK_CALIB),
     .L2H_SYS_TICK_CONFIG_REG_NOT_10_MS_r            (SYS_TICK_NOT_10MS_MULT),
     .L2H_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r       (l2h_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r),
-    .L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r (l2h_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r)
+    .L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r (l2h_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r),
+    .L2H_MASTER_CLK_SELECT_SELECT_r                 (MASTER_CLK_SELECT)
   );
 
 //------------------------------------------------------------------------------

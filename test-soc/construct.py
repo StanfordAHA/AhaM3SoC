@@ -28,6 +28,7 @@ def construct():
         'interrupts_test',
         'tlx_test',
         'cgra_test',
+        'master_clock_test',
 
         # CXDT Tests
         'discovery',
@@ -42,7 +43,7 @@ def construct():
         'design_name': 'test-soc',
         'soc_only'  : False,
         'interconnect_only' : False,
-        'array_width': 8,
+        'array_width': 4,
         'array_height': 4,
         'ARM_IP_DIR': '/home/nyengele/Documents/AhaARMIP',
         'AHA_IP_DIR': '/home/nyengele/Documents/aha-soc-v2',

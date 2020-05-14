@@ -10,6 +10,7 @@
 module AhaPlatformController (
   // Master Clock and Reset
   input   wire            MASTER_CLK,         // Master Clock
+  input   wire            ALT_MASTER_CLK,     // Alternate Master Clock
   input   wire            PORESETn,           // Global PowerOn Reset
   input   wire            DP_JTAG_TRSTn,      // Debug Port JTAG Reset
   input   wire            CGRA_JTAG_TRSTn,    // CGRA JTAG Reset
@@ -122,6 +123,9 @@ module AhaPlatformController (
 //-----------------------------------------------------------------------------
 // Clock Control Wires
 //-----------------------------------------------------------------------------
+// Master Clock Select
+wire            master_clk_select_w;
+
 // System Clock
 wire  [2:0]     sys_clk_select_w;
 wire            sys_fclk_w;
@@ -317,7 +321,11 @@ wire            cgra_jtag_resetn_w;
 AhaClockController u_clock_controller (
   // Master Interface
   .MASTER_CLK                       (MASTER_CLK),
+  .ALT_MASTER_CLK                   (ALT_MASTER_CLK),
   .PORESETn                         (PORESETn),
+
+  // Master Clock Select
+  .MASTER_CLK_SELECT                (master_clk_select_w),
 
   // System Clock
   .SYS_CLK_SELECT                   (sys_clk_select_w),
@@ -551,6 +559,7 @@ AhaClockController u_clock_controller (
     .PAD_DS_GRP7                    (OUT_PAD_DS_GRP7),
 
     // Clock Select Signals
+    .MASTER_CLK_SELECT              (master_clk_select_w),
     .SYS_CLK_SELECT                 (sys_clk_select_w),
     .DMA0_PCLK_SELECT               (dma0_pclk_select_w),
     .DMA1_PCLK_SELECT               (dma1_pclk_select_w),

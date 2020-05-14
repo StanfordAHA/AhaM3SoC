@@ -98,7 +98,8 @@ module AhaPlatformCtrlRegspace (
   output  wire [23:0]         L2H_SYS_TICK_CONFIG_REG_CALIB_r,
   output  wire                L2H_SYS_TICK_CONFIG_REG_NOT_10_MS_r,
   output  wire                L2H_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r,
-  output  wire                L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r
+  output  wire                L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r,
+  output  wire                L2H_MASTER_CLK_SELECT_SELECT_r
 );
 
 //------------------------------------------------------------------------------
@@ -231,6 +232,7 @@ module AhaPlatformCtrlRegspace (
     .l2h_SYS_TICK_CONFIG_REG_NOT_10_MS_r            (L2H_SYS_TICK_CONFIG_REG_NOT_10_MS_r),
     .l2h_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r       (L2H_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r),
     .l2h_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r (L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r),
+    .l2h_MASTER_CLK_SELECT_SELECT_r                 (L2H_MASTER_CLK_SELECT_SELECT_r),
     .d2h_dec_pio_read_data                          (regif_rdata),
     .d2h_dec_pio_ack                                (regif_ack),
     .d2h_dec_pio_nack                               (regif_nack)

@@ -26,7 +26,11 @@
 module AhaClockController (
   // Master Interface
   input   wire            MASTER_CLK,
+  input   wire            ALT_MASTER_CLK,     // Alternate Master Clock
   input   wire            PORESETn,
+
+  // Master Clock Select
+  input   wire            MASTER_CLK_SELECT,
 
   // System Clock
   input   wire [2:0]      SYS_CLK_SELECT,
@@ -114,6 +118,19 @@ module AhaClockController (
   output  wire            WDOG_GCLK_EN
 );
 
+  // Master Clock Select
+  wire  master_clk_w;
+
+  AhaClockSwitch2 u_master_clock_switch (
+    .MASTER_CLK0      (MASTER_CLK),
+    .MASTER_CLK1      (ALT_MASTER_CLK),
+    .PORESETn         (PORESETn),
+
+    .SELECT           (MASTER_CLK_SELECT),
+
+    .CLK_OUT          (master_clk_w)
+  );
+
   // Generated Clocks From Master Clock
   wire    gen_clk_by_1;
   wire    gen_clk_by_2;
@@ -123,7 +140,7 @@ module AhaClockController (
   wire    gen_clk_by_32;
 
   AhaClockDivider u_clk_div (
-    .CLK_IN           (MASTER_CLK),
+    .CLK_IN           (master_clk_w),
     .RESETn           (PORESETn),
 
     .CLK_by_1         (gen_clk_by_1),
