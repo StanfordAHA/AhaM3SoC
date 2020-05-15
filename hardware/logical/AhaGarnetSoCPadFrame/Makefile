@@ -17,6 +17,18 @@ TOP_NAME		= GarnetSOC_pad_frame
 ##############################################################################
 # MODIFICATION: OPTIONAL
 #-----------------------------------------------------------------------------
+# Name of Top Design Entry
+#
+##############################################################################
+ifdef include_core
+  INCLUDE_CORE		= $(include_core)
+else
+  INCLUDE_CORE          = 1
+endif
+
+##############################################################################
+# MODIFICATION: OPTIONAL
+#-----------------------------------------------------------------------------
 # Output Directory
 #
 ##############################################################################
@@ -46,5 +58,5 @@ all: genesis
 genesis:
 	mkdir -p $(TARG_DIR) ; \
 	cd $(TARG_DIR) ; \
-	Genesis2.pl -parse -generate -top $(TOP_NAME) -input $(CUR_DIR)/$(INPUT_FILE) ; \
+	Genesis2.pl -parse -generate -top $(TOP_NAME) -input $(CUR_DIR)/$(INPUT_FILE) -parameter $(TOP_NAME).include_core=$(INCLUDE_CORE); \
 	cd $(CUR_DIR)

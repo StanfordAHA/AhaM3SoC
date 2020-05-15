@@ -52,7 +52,7 @@
 //; my @vdd_offsets_bottom = (350, 4430);
 //; my $pad_width = 33.024;
 //; my $print_offset = 1;
-//; my $include_core = 1;
+//; my $include_core = parameter(Name=>'include_core', val=>1, doc=>'include soc core or pads only');
 
 //; my $butterphy_ios = $self->force_param(BUTTERPHY_IO_LIST =>
 //;  [
