@@ -243,6 +243,6 @@ module AhaTlxIntegration (
     .tdata_m1_m_tlx_pl_rev_to_dl_rev_flow     (TLX_REV_FLOW_TDATA)
   );
 
-  assign TLX_FWD_CLK = TLX_SIB_CLK;
+  assign TLX_FWD_CLK = ~TLX_SIB_CLK;
 
 endmodule
