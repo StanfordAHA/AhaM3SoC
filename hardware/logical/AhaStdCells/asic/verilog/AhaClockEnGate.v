@@ -8,6 +8,7 @@
 // Date     : Apr 17, 2020
 //------------------------------------------------------------------------------
 module AhaClockEnGate (
+    input   wire  PORESETn,
     input   wire  TE,
     input   wire  E,
     input   wire  CP,       // clock associated with the clock enable signal
@@ -15,14 +16,21 @@ module AhaClockEnGate (
     output  wire  Q
 );
     // Internal Wires and Regs
+    wire reset_n;
     wire  en;
     reg   en_r;
 
     assign en = TE | E;
 
-    // Logic
-    always @(CP or en) begin
-      if(CP == 1'b0) en_r <= en;
+    AhaResetSync u_rst_sync (
+      .CLK    (CP),
+      .Dn     (PORESETn),
+      .Qn     (reset_n)
+    );
+
+    always @(posedge CP or negedge reset_n) begin
+      if(~reset_n) en_r <= 1'b0;
+      else en_r <= en;
     end
 
     // Output

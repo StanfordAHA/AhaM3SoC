@@ -392,11 +392,12 @@ module AhaClockController (
   );
 
   AhaClockEnGate u_timer0_gated_en (
-    .TE     (1'b0),
-    .E      (~TIMER0_CLK_GATE),
-    .CP     (timer0_fclk_w),
-    .CE     (timer0_free_en_w),
-    .Q      (TIMER0_GCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~TIMER0_CLK_GATE),
+    .CP         (timer0_fclk_w),
+    .CE         (timer0_free_en_w),
+    .Q          (TIMER0_GCLK_EN)
   );
 
   // Generate Timer1 Free-Running Clock from System Clock
@@ -441,11 +442,12 @@ module AhaClockController (
   );
 
   AhaClockEnGate u_timer1_gated_en (
-    .TE     (1'b0),
-    .E      (~TIMER0_CLK_GATE),
-    .CP     (timer1_fclk_w),
-    .CE     (timer1_free_en_w),
-    .Q      (TIMER1_GCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~TIMER0_CLK_GATE),
+    .CP         (timer1_fclk_w),
+    .CE         (timer1_free_en_w),
+    .Q          (TIMER1_GCLK_EN)
   );
 
   // Generate UART0 Free-Running Clock from System Clock
@@ -490,11 +492,12 @@ module AhaClockController (
   );
 
   AhaClockEnGate u_uart0_gated_en (
-    .TE     (1'b0),
-    .E      (~UART0_CLK_GATE),
-    .CP     (uart0_fclk_w),
-    .CE     (uart0_free_en_w),
-    .Q      (UART0_GCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~UART0_CLK_GATE),
+    .CP         (uart0_fclk_w),
+    .CE         (uart0_free_en_w),
+    .Q          (UART0_GCLK_EN)
   );
 
   // Generate UART1 Free-Running Clock from System Clock
@@ -539,11 +542,12 @@ module AhaClockController (
   );
 
   AhaClockEnGate u_uart1_gated_en (
-    .TE     (1'b0),
-    .E      (~UART1_CLK_GATE),
-    .CP     (uart1_fclk_w),
-    .CE     (uart1_free_en_w),
-    .Q      (UART1_GCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~UART1_CLK_GATE),
+    .CP         (uart1_fclk_w),
+    .CE         (uart1_free_en_w),
+    .Q          (UART1_GCLK_EN)
   );
 
   // Generate WDOG Free-Running Clock from System Clock
@@ -588,11 +592,12 @@ module AhaClockController (
   );
 
   AhaClockEnGate u_wdog_gated_en (
-    .TE     (1'b0),
-    .E      (~WDOG_CLK_GATE),
-    .CP     (wdog_fclk_w),
-    .CE     (wdog_free_en_w),
-    .Q      (WDOG_GCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~WDOG_CLK_GATE),
+    .CP         (wdog_fclk_w),
+    .CE         (wdog_free_en_w),
+    .Q          (WDOG_GCLK_EN)
   );
 
   // Generate DMA0 Free-Running PCLK from System Clock
@@ -624,11 +629,12 @@ module AhaClockController (
 
   // Generate DMA0 PCKLEN using DMA0_CLK_GATE and DMA0 Free-Running PCLK
   AhaClockEnGate u_dma0_gated_en (
-    .TE     (1'b0),
-    .E      (~DMA0_CLK_GATE),
-    .CP     (dma0_free_pclk_w),
-    .CE     (dma0_free_pen_w),
-    .Q      (DMA0_GPCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~DMA0_CLK_GATE),
+    .CP         (dma0_free_pclk_w),
+    .CE         (dma0_free_pen_w),
+    .Q          (DMA0_GPCLK_EN)
   );
 
   // Generate DMA1 Free-Running PCLK from System Clock
@@ -660,10 +666,11 @@ module AhaClockController (
 
   // Generate DMA1 PCKLEN using DMA1_CLK_GATE and DMA1 Free-Running PCLK
   AhaClockEnGate u_dma1_gated_en (
-    .TE     (1'b0),
-    .E      (~DMA1_CLK_GATE),
-    .CP     (dma1_free_pclk_w),
-    .CE     (dma1_free_pen_w),
-    .Q      (DMA1_GPCLK_EN)
+    .PORESETn   (PORESETn),
+    .TE         (1'b0),
+    .E          (~DMA1_CLK_GATE),
+    .CP         (dma1_free_pclk_w),
+    .CE         (dma1_free_pen_w),
+    .Q          (DMA1_GPCLK_EN)
   );
 endmodule
