@@ -181,7 +181,13 @@ module AhaClockController (
     .CLK_EN_OUT       ()
   );
 
-  assign SYS_FCLK = sys_fclk_w;
+  // Generate SYSTEM_CLK
+  AhaClockGate u_sys_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (sys_fclk_w),
+    .Q      (SYS_FCLK)
+  );
 
   // Generate CPU Gated Clock from System Clock
   AhaClockGate u_cpu_gclk (
@@ -255,7 +261,13 @@ module AhaClockController (
     .CLK_EN_OUT       ()
   );
 
-  assign TLX_FCLK = tlx_fclk_w;
+  // TLX Free Running Clock
+  AhaClockGate u_tlx_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (tlx_fclk_w),
+    .Q      (TLX_FCLK)
+  );
 
   // Generate TLX Gated Clock from TLX Free-Running Clock
   AhaClockGate u_tlx_gclk (
@@ -289,7 +301,13 @@ module AhaClockController (
     .CLK_EN_OUT       ()
   );
 
-  assign CGRA_FCLK = cgra_fclk_w;
+  // Generate CGRA Free Running Clock
+  AhaClockGate u_cgra_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (cgra_fclk_w),
+    .Q      (CGRA_FCLK)
+  );
 
   // Generate CGRA Gated Clock from CGRA Free-Running Clock
   AhaClockGate u_cgra_gclk (
@@ -315,7 +333,7 @@ module AhaClockController (
   wire    sys_gen_clk_en_by_32;
 
   AhaClockDivider u_clk_div_from_sysclk (
-    .CLK_IN           (sys_fclk_w),
+    .CLK_IN           (SYS_FCLK),
     .RESETn           (PORESETn),
 
     .CLK_by_1         (sys_gen_clk_by_1),
@@ -357,7 +375,13 @@ module AhaClockController (
     .CLK_EN_OUT       (timer0_free_en_w)
   );
 
-  assign TIMER0_FCLK = timer0_fclk_w;
+  // Timer0 Free-running Clock
+  AhaClockGate u_timer0_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (timer0_fclk_w),
+    .Q      (TIMER0_FCLK)
+  );
 
   // Generate Timer0 Gated Clock from Timer0 Free-Running Clock
   AhaClockGate u_timer0_gclk (
@@ -400,7 +424,13 @@ module AhaClockController (
     .CLK_EN_OUT       (timer1_free_en_w)
   );
 
-  assign TIMER1_FCLK = timer1_fclk_w;
+  // Timer1 Free-running Clock
+  AhaClockGate u_timer1_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (timer1_fclk_w),
+    .Q      (TIMER1_FCLK)
+  );
 
   // Generate Timer1 Gated Clock from Timer1 Free-Running Clock
   AhaClockGate u_timer1_gclk (
@@ -443,7 +473,13 @@ module AhaClockController (
     .CLK_EN_OUT       (uart0_free_en_w)
   );
 
-  assign UART0_FCLK = uart0_fclk_w;
+  // UART0 Free-running clock
+  AhaClockGate u_uart0_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (uart0_fclk_w),
+    .Q      (UART0_FCLK)
+  );
 
   // Generate UART0 Gated Clock from UART0 Free-Running Clock
   AhaClockGate u_uart0_gclk (
@@ -486,7 +522,13 @@ module AhaClockController (
     .CLK_EN_OUT       (uart1_free_en_w)
   );
 
-  assign UART1_FCLK = uart1_fclk_w;
+  // UART1 Free-running clock
+  AhaClockGate u_uart1_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (uart1_fclk_w),
+    .Q      (UART1_FCLK)
+  );
 
   // Generate UART1 Gated Clock from UART1 Free-Running Clock
   AhaClockGate u_uart1_gclk (
@@ -529,7 +571,13 @@ module AhaClockController (
     .CLK_EN_OUT       (wdog_free_en_w)
   );
 
-  assign WDOG_FCLK = wdog_fclk_w;
+  // WGOG Free-running clock
+  AhaClockGate u_wdog_fclk (
+    .TE     (1'b0),
+    .E      (1'b1),
+    .CP     (wdog_fclk_w),
+    .Q      (WDOG_FCLK)
+  );
 
   // Generate WDOG Gated Clock from WDOG Free-Running Clock
   AhaClockGate u_wdog_gclk (
