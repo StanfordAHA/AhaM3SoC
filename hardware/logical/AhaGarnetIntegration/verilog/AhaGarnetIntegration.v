@@ -279,12 +279,12 @@ module AhaGarnetIntegration (
       .jtag_trst_n                    (JTAG_TRSTn),
 
       // sif_rd_addr and sif_wr_addr might be truncated
-      .proc_packet_rd_addr            (sif_rd_addr),
+      .proc_packet_rd_addr            (sif_rd_addr[21:0]),
       .proc_packet_rd_data            (sif_rd_data),
       .proc_packet_rd_data_valid      (sif_rd_valid),
       .proc_packet_rd_en              (sif_rd_en),
 
-      .proc_packet_wr_addr            (sif_wr_addr),
+      .proc_packet_wr_addr            (sif_wr_addr[21:0]),
       .proc_packet_wr_data            (sif_wr_data),
       .proc_packet_wr_en              (sif_wr_en),
       .proc_packet_wr_strb            (sif_wr_strb)
