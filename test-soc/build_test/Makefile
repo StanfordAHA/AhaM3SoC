@@ -32,9 +32,11 @@ non_cxdt:
 	cd $(TEST_DIR) ; \
 	$(MAKE) clean ; \
 	rm -rf bootcode
+	rm -rf $(CXDT_DIR)/bin-$(TESTNAME)
 
 cxdt:
 	cd $(CXDT_DIR) ; \
 	$(MAKE) clean_image BIN_TAG=$(TESTNAME)  TESTNAME=$(TESTNAME); \
 	$(MAKE) image TOOLCHAIN=gcc TESTNAME=$(TESTNAME) CXDT=1 CPU=NONE BIN_TAG=$(TESTNAME)
 	cp $(CXDT_DIR)/bin-$(TESTNAME)/$(TEST_NAME)-CXDT-1-CPU-NONE/CXDT.bin outputs/
+	rm -rf $(CXDT_DIR)/bin-$(TESTNAME)
