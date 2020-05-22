@@ -31,13 +31,13 @@ module AhaClockSwitch2 (
 
   // Reset Synchronizers
   AhaResetSync master_clk0_poreset_sync (
-    .CLK    (~MASTER_CLK0),
+    .CLK    (MASTER_CLK0),
     .Dn     (PORESETn),
     .Qn     (master_clk0_reset_n)
   );
 
   AhaResetSync master_clk1_poreset_sync (
-    .CLK    (~MASTER_CLK1),
+    .CLK    (MASTER_CLK1),
     .Dn     (PORESETn),
     .Qn     (master_clk1_reset_n)
   );

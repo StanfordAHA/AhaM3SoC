@@ -36,7 +36,7 @@ module AhaClockSwitch (
 
   // synchronize reset de-assertion
   AhaResetSync u_rst_sync (
-    .CLK    (~CLK_IN),
+    .CLK    (CLK_IN),
     .Dn     (RESETn),
     .Qn     (reset_n_w)
   );
@@ -54,7 +54,7 @@ module AhaClockSwitch (
   assign select_clk = SELECT == SELECT_VAL;
 
   assign CLK_OUT      = CLK_IN & clk_en_r;
-  assign CLK_EN_OUT   = CLK_EN_IN & clk_en_r;  
+  assign CLK_EN_OUT   = CLK_EN_IN & clk_en_r;
   assign EN = clk_en_r;
 
 endmodule
