@@ -14,8 +14,6 @@ module AhaTlxIntegration (
   input   wire            TLX_REV_CLK,    // REV Channel Clock
   input   wire            TLX_REV_RESETn, // TLX Reset sync'ed to TLX_REV_CLK
 
-  output  wire            TLX_FWD_CLK,    // TLX Forward Channel Clock
-
   output  wire            TLX_INT,        // TLX Interrupt
 
   // RegSpace
@@ -242,7 +240,5 @@ module AhaTlxIntegration (
     .tready_m1_m_tlx_pl_rev_to_dl_rev_flow    (tlx_rev_flow_tready_w),
     .tdata_m1_m_tlx_pl_rev_to_dl_rev_flow     (TLX_REV_FLOW_TDATA)
   );
-
-  assign TLX_FWD_CLK = ~TLX_SIB_CLK;
 
 endmodule

@@ -622,7 +622,6 @@ module AhaGarnetSoC (
     // Clocks and Resets
     .TLX_SIB_CLK                  (tlx_clk),
     .TLX_SIB_RESETn               (tlx_reset_n),
-    .TLX_FWD_CLK                  (TLX_FWD_CLK),
     .TLX_REV_CLK                  (TLX_REV_CLK),
     .TLX_REV_RESETn               (tlx_rev_reset_n),
 
@@ -698,6 +697,8 @@ module AhaGarnetSoC (
     .TLX_REV_FLOW_TREADY          (TLX_REV_FLOW_TREADY),
     .TLX_REV_FLOW_TDATA           (TLX_REV_FLOW_TDATA)
   );
+
+  assign TLX_FWD_CLK  = tlx_clk;
 
   assign TLX_FWD_PAYLOAD_TDATA_LO = tlx_fwd_payload_tdata[`TLX_FWD_DATA_LO_WIDTH-1:0];
   assign TLX_FWD_PAYLOAD_TDATA_HI = tlx_fwd_payload_tdata[39:`TLX_FWD_DATA_LO_WIDTH];
