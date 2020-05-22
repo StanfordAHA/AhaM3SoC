@@ -36,7 +36,7 @@ module AhaClockSwitch (
 
   // synchronize reset de-assertion
   AhaResetSync u_rst_sync (
-    .CLK    (CLK_IN),
+    .CLK    (~CLK_IN),
     .Dn     (RESETn),
     .Qn     (reset_n_w)
   );
