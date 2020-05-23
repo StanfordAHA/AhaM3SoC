@@ -370,7 +370,7 @@ AhaGarnetSoC core (
 //;   push(@top_pads, $pad_name);
   `$pad_type` `$pad_name` (
 //; if($pad_type eq "PDB2ANA_V") {
-    .RTE(rte_`$pad_domain`)
+    .RTE(rte_`$pad_domain`),
 //; } elsif($pad_type eq "PDDWUWSWCDG_V"){
     .RTE(rte_`$pad_domain`),
 //; }
