@@ -56,8 +56,8 @@
 
 //; my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
 //;  [
-//;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
 //;    {name => 'ext_clkp'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
 //;    {name => 'CVDD'                   , domain=> 1, is_power => 1, connect => 1, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
@@ -68,8 +68,8 @@
 //;    {name => 'ext_Vcal'               , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'inout' },
 //;    {name => 'ext_mdll_clk_refp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_mdll_clk_refn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_mdll_clk_monp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_mdll_clk_monn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_monp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_rx_inp'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
 //;    {name => 'ext_rx_inn'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
 //;    {name => 'ext_rx_inp_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
