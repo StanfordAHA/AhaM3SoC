@@ -104,12 +104,12 @@
 module `mname` (
 //; my $mcnt = 0;
 //; foreach my $io (@{$dragonphy_ios}) {
-//;   if($io->{connect} == 0) {
+//;   if($io->{is_power} == 0) {
+//;     if($io->{type} eq 'analog') {
     `$io->{direction}` `$io->{name}`,
-//;   } elsif($io->{pad} eq 'NONE') {
-    `$io->{direction}` `$io->{name}`,
-//;   } elsif($io->{is_power} == 0) {
+//;     } else {
     `$io->{direction}` pad_`$io->{name}`,
+//;     }
 //;   }
 //; }
 //; foreach my $io (@{$io_list}) {
@@ -394,7 +394,7 @@ AhaGarnetSoC core (
     .PS(1'b0),
     .ST(1'b0)
 //; } elsif ($io->{connect} == 1) {
-    .PAD(pad_`$signal_name`)
+    .AIO(`$signal_name`)
 //; }
   );
 
