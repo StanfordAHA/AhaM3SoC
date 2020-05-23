@@ -22,7 +22,6 @@ module AhaClockSelector (
   input   wire          CLK_by_32,      // CLK/32
   input   wire          CLK_by_32_EN,   // Clock Enable Toggle Divider
 
-  input   wire          RESETn,         // Reset
   input   wire [2:0]    SELECT,         // Clock Selector
 
   // Outputs
@@ -52,117 +51,111 @@ module AhaClockSelector (
   wire  by_32_en_w;
 
   // By_1 Clock
-  AhaClockSwitch u_clk_by_1 (
-    .CLK_IN           (CLK_by_1),
-    .CLK_EN_IN        (CLK_by_1_EN),
+  AhaClockSwitch u_by1_clk_switch (
+    .CLK              (CLK_by_1),
+    .CLK_EN           (CLK_by_1_EN),
 
     .ALT_CLK_EN1      (by_2_en_w),
     .ALT_CLK_EN2      (by_4_en_w),
     .ALT_CLK_EN3      (by_8_en_w),
     .ALT_CLK_EN4      (by_16_en_w),
     .ALT_CLK_EN5      (by_32_en_w),
-    .SELECT           (SELECT),
+    .SELECT_REQ       (SELECT),
     .SELECT_VAL       (3'b000),
-    .RESETn           (RESETn),
 
     .CLK_OUT          (clk_by_1_gfree_w),
     .CLK_EN_OUT       (clk_by_1_en_gfree_w),
-    .EN               (by_1_en_w)
+    .SELECT_ACK       (by_1_en_w)
   );
 
   // By_2 Clock
-  AhaClockSwitch u_clk_by_2 (
-    .CLK_IN           (CLK_by_2),
-    .CLK_EN_IN        (CLK_by_2_EN),
+  AhaClockSwitch u_by2_clk_switch (
+    .CLK              (CLK_by_2),
+    .CLK_EN           (CLK_by_2_EN),
 
     .ALT_CLK_EN1      (by_1_en_w),
     .ALT_CLK_EN2      (by_4_en_w),
     .ALT_CLK_EN3      (by_8_en_w),
     .ALT_CLK_EN4      (by_16_en_w),
     .ALT_CLK_EN5      (by_32_en_w),
-    .SELECT           (SELECT),
+    .SELECT_REQ       (SELECT),
     .SELECT_VAL       (3'b001),
-    .RESETn           (RESETn),
 
     .CLK_OUT          (clk_by_2_gfree_w),
     .CLK_EN_OUT       (clk_by_2_en_gfree_w),
-    .EN               (by_2_en_w)
+    .SELECT_ACK       (by_2_en_w)
   );
 
   // By_4 Clock
-  AhaClockSwitch u_clk_by_4 (
-    .CLK_IN           (CLK_by_4),
-    .CLK_EN_IN        (CLK_by_4_EN),
+  AhaClockSwitch u_by4_clk_switch (
+    .CLK              (CLK_by_4),
+    .CLK_EN           (CLK_by_4_EN),
 
     .ALT_CLK_EN1      (by_1_en_w),
     .ALT_CLK_EN2      (by_2_en_w),
     .ALT_CLK_EN3      (by_8_en_w),
     .ALT_CLK_EN4      (by_16_en_w),
     .ALT_CLK_EN5      (by_32_en_w),
-    .SELECT           (SELECT),
+    .SELECT_REQ       (SELECT),
     .SELECT_VAL       (3'b010),
-    .RESETn           (RESETn),
 
     .CLK_OUT          (clk_by_4_gfree_w),
     .CLK_EN_OUT       (clk_by_4_en_gfree_w),
-    .EN               (by_4_en_w)
+    .SELECT_ACK       (by_4_en_w)
   );
 
   // By_8 Clock
-  AhaClockSwitch u_clk_by_8 (
-    .CLK_IN           (CLK_by_8),
-    .CLK_EN_IN        (CLK_by_8_EN),
+  AhaClockSwitch u_by8_clk_switch (
+    .CLK              (CLK_by_8),
+    .CLK_EN           (CLK_by_8_EN),
 
     .ALT_CLK_EN1      (by_1_en_w),
     .ALT_CLK_EN2      (by_2_en_w),
     .ALT_CLK_EN3      (by_4_en_w),
     .ALT_CLK_EN4      (by_16_en_w),
     .ALT_CLK_EN5      (by_32_en_w),
-    .SELECT           (SELECT),
+    .SELECT_REQ       (SELECT),
     .SELECT_VAL       (3'b011),
-    .RESETn           (RESETn),
 
     .CLK_OUT          (clk_by_8_gfree_w),
     .CLK_EN_OUT       (clk_by_8_en_gfree_w),
-    .EN               (by_8_en_w)
+    .SELECT_ACK       (by_8_en_w)
   );
 
   // By_16 Clock
-  AhaClockSwitch u_clk_by_16 (
-    .CLK_IN           (CLK_by_16),
-    .CLK_EN_IN        (CLK_by_16_EN),
+  AhaClockSwitch u_by16_clk_switch (
+    .CLK              (CLK_by_16),
+    .CLK_EN           (CLK_by_16_EN),
 
     .ALT_CLK_EN1      (by_1_en_w),
     .ALT_CLK_EN2      (by_2_en_w),
     .ALT_CLK_EN3      (by_4_en_w),
     .ALT_CLK_EN4      (by_8_en_w),
     .ALT_CLK_EN5      (by_32_en_w),
-    .SELECT           (SELECT),
+    .SELECT_REQ       (SELECT),
     .SELECT_VAL       (3'b100),
-    .RESETn           (RESETn),
 
     .CLK_OUT          (clk_by_16_gfree_w),
     .CLK_EN_OUT       (clk_by_16_en_gfree_w),
-    .EN               (by_16_en_w)
+    .SELECT_ACK       (by_16_en_w)
   );
 
   // By_32 Clock
-  AhaClockSwitch  u_clk_by_32 (
-    .CLK_IN           (CLK_by_32),
-    .CLK_EN_IN        (CLK_by_32_EN),
+  AhaClockSwitch  u_by32_clk_switch (
+    .CLK              (CLK_by_32),
+    .CLK_EN           (CLK_by_32_EN),
 
     .ALT_CLK_EN1      (by_1_en_w),
     .ALT_CLK_EN2      (by_2_en_w),
     .ALT_CLK_EN3      (by_4_en_w),
     .ALT_CLK_EN4      (by_8_en_w),
     .ALT_CLK_EN5      (by_16_en_w),
-    .SELECT           (SELECT),
+    .SELECT_REQ       (SELECT),
     .SELECT_VAL       (3'b101),
-    .RESETn           (RESETn),
 
     .CLK_OUT          (clk_by_32_gfree_w),
     .CLK_EN_OUT       (clk_by_32_en_gfree_w),
-    .EN               (by_32_en_w)
+    .SELECT_ACK       (by_32_en_w)
   );
 
   assign CLK_OUT =      clk_by_1_gfree_w |

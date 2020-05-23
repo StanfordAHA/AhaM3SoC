@@ -124,7 +124,6 @@ module AhaClockController (
   AhaClockSwitch2 u_master_clock_switch (
     .MASTER_CLK0      (MASTER_CLK),
     .MASTER_CLK1      (ALT_MASTER_CLK),
-    .PORESETn         (PORESETn),
 
     .SELECT           (MASTER_CLK_SELECT),
 
@@ -174,7 +173,6 @@ module AhaClockController (
     .CLK_by_32        (gen_clk_by_32),
     .CLK_by_32_EN     (1'b0),
 
-    .RESETn           (PORESETn),
     .SELECT           (SYS_CLK_SELECT),
 
     .CLK_OUT          (sys_fclk_w),
@@ -254,7 +252,6 @@ module AhaClockController (
     .CLK_by_32        (gen_clk_by_32),
     .CLK_by_32_EN     (1'b0),
 
-    .RESETn           (PORESETn),
     .SELECT           (TLX_CLK_SELECT),
 
     .CLK_OUT          (tlx_fclk_w),
@@ -294,7 +291,6 @@ module AhaClockController (
     .CLK_by_32        (gen_clk_by_32),
     .CLK_by_32_EN     (1'b0),
 
-    .RESETn           (PORESETn),
     .SELECT           (CGRA_CLK_SELECT),
 
     .CLK_OUT          (cgra_fclk_w),
@@ -368,7 +364,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (TIMER0_CLK_SELECT),
 
     .CLK_OUT          (timer0_fclk_w),
@@ -418,7 +413,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (TIMER1_CLK_SELECT),
 
     .CLK_OUT          (timer1_fclk_w),
@@ -468,7 +462,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (UART0_CLK_SELECT),
 
     .CLK_OUT          (uart0_fclk_w),
@@ -518,7 +511,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (UART1_CLK_SELECT),
 
     .CLK_OUT          (uart1_fclk_w),
@@ -568,7 +560,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (WDOG_CLK_SELECT),
 
     .CLK_OUT          (wdog_fclk_w),
@@ -618,7 +609,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (DMA0_PCLK_SELECT),
 
     .CLK_OUT          (dma0_free_pclk_w),
@@ -655,7 +645,6 @@ module AhaClockController (
     .CLK_by_32        (sys_gen_clk_by_32),
     .CLK_by_32_EN     (sys_gen_clk_en_by_32),
 
-    .RESETn           (PORESETn),
     .SELECT           (DMA1_PCLK_SELECT),
 
     .CLK_OUT          (dma1_free_pclk_w),
