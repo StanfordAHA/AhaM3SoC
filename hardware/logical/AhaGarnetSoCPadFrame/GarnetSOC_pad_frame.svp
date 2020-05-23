@@ -87,15 +87,6 @@
 //;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;  ]);
 
-input ext_rx_inp
-input ext_rx_inn
-input ext_rx_inp_test
-input ext_rx_inn_test
-
-output clk_out_p
-output clk_out_n
-output clk_trig_p
-output clk_trig_n
 
 //; # 01/2020 steveri note 1: had to add new offset 4666 for top_rte_dom3
 //; # b/c it was overlapping with top_VDD_dom3 at 4500
@@ -418,7 +409,7 @@ AhaGarnetSoC core (
 //;  my $cnt = 0;
   dragonphy_top iphy (
 //; foreach my $io (@{$dragonphy_ios}) {
-//;   if($io->{type} eq "digital") {
+//;   if($io->{is_power} == 0) {
 //;     ++$cnt;
     .`$io->{name}`(`$io->{name}`),
 //;   }
