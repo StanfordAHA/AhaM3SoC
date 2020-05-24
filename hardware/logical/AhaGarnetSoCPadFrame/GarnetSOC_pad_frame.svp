@@ -104,12 +104,8 @@
 module `mname` (
 //; my $mcnt = 0;
 //; foreach my $io (@{$dragonphy_ios}) {
-//;   if($io->{is_power} == 0) {
-//;     if($io->{type} eq 'analog') {
-    `$io->{direction}` `$io->{name}`,
-//;     } else {
+//;   if($io->{type} eq "digital") {
     `$io->{direction}` pad_`$io->{name}`,
-//;     }
 //;   }
 //; }
 //; foreach my $io (@{$io_list}) {
@@ -370,7 +366,7 @@ AhaGarnetSoC core (
 //;   push(@top_pads, $pad_name);
   `$pad_type` `$pad_name` (
 //; if($pad_type eq "PDB2ANA_V") {
-    .RTE(rte_`$pad_domain`),
+    .RTE(rte_`$pad_domain`)
 //; } elsif($pad_type eq "PDDWUWSWCDG_V"){
     .RTE(rte_`$pad_domain`),
 //; }
@@ -393,8 +389,6 @@ AhaGarnetSoC core (
     .PE(1'b0),
     .PS(1'b0),
     .ST(1'b0)
-//; } elsif ($io->{connect} == 1) {
-    .AIO(`$signal_name`)
 //; }
   );
 
