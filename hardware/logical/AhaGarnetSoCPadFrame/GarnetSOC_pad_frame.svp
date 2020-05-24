@@ -356,9 +356,11 @@ AhaGarnetSoC core (
 //;   my $signal_name = $io->{name};
 //;   my $io_type = $io->{type};
 //;   my $pad_name = "";
+//;   if($io->{is_power} == 0) {
+   wire `$signal_name`;
+//;   }
 //;   if($io_type eq "digital") {
 //;     $pad_name = "IOPAD_${signal_name}";
-   wire `$signal_name`;
 //;   } else {
 //;     $pad_name = "ANAIOPAD_${signal_name}";
 //;   }
