@@ -54,30 +54,39 @@
 //; my $print_offset = 1;
 //; my $include_core = parameter(Name=>'include_core', val=>1, doc=>'include soc core or pads only');
 
-//; my $butterphy_ios = $self->force_param(BUTTERPHY_IO_LIST =>
+//; my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
 //;  [
-//;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, type => 'analog' , pad => 'PDB2ANA_V'},
-//;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, type => 'analog' , pad => 'PDB2ANA_V'},
-//;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, type => 'analog' , pad => 'PDB3AC_V'},
-//;    {name => 'ext_clkp'               , domain=> 1, is_power => 0, type => 'analog' , pad => 'PDB3AC_V'},
-//;    {name => 'CVDD'                   , domain=> 1, is_power => 1, type => 'analog' , pad => 'PVDD3ACM_V'},
-//;    {name => 'CVSS'                   , domain=> 1, is_power => 1, type => 'analog' , pad => 'PVDD3ACM_V'},
-//;    {name => 'AVDD'                   , domain=> 2, is_power => 1, type => 'analog' , pad => 'PVDD3ACM_V'},
-//;    {name => 'AVSS'                   , domain=> 2, is_power => 1, type => 'analog' , pad => 'PVDD3ACM_V'},
-//;    {name => 'ext_Vcm'                , domain=> 2, is_power => 0, type => 'analog' , pad => 'PDB3AC_V'},
-//;    {name => 'ext_Vcal'               , domain=> 2, is_power => 0, type => 'analog' , pad => 'PDB3AC_V'},
-//;    {name => 'ext_clk_test0_n'        , domain=> 3, is_power => 0, type => 'analog' , pad => 'PDB2ANA_V'},
-//;    {name => 'ext_clk_test0_p'        , domain=> 3, is_power => 0, type => 'analog' , pad => 'PDB2ANA_V'},
-//;    {name => 'ext_clk_test1_p'        , domain=> 3, is_power => 0, type => 'analog' , pad => 'PDB2ANA_V'},
-//;    {name => 'ext_clk_test1_n'        , domain=> 3, is_power => 0, type => 'analog' , pad => 'PDB2ANA_V'},
-//;    {name => 'jtag_intf_i_phy_tck'    , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'jtag_intf_i_phy_tdi'    , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'jtag_intf_i_phy_tdo'    , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
-//;    {name => 'jtag_intf_i_phy_tms'    , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
+//;    {name => 'ext_clkp'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
+//;    {name => 'CVDD'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'CVSS'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'AVDD'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'AVSS'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'ext_Vcm'                , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'input' },
+//;    {name => 'ext_Vcal'               , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'inout' },
+//;    {name => 'ext_mdll_clk_refp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_refn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_monn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_monp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_rx_inp'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'ext_rx_inn'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'ext_rx_inp_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'ext_rx_inn_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'clk_out_p'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'clk_out_n'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'clk_trig_p'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'clk_trig_n'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'jtag_intf_i_phy_tck'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'jtag_intf_i_phy_tdi'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'jtag_intf_i_phy_tdo'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
+//;    {name => 'jtag_intf_i_phy_tms'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;  ]);
+
 
 //; # 01/2020 steveri note 1: had to add new offset 4666 for top_rte_dom3
 //; # b/c it was overlapping with top_VDD_dom3 at 4500
@@ -94,7 +103,7 @@
 
 module `mname` (
 //; my $mcnt = 0;
-//; foreach my $io (@{$butterphy_ios}) {
+//; foreach my $io (@{$dragonphy_ios}) {
 //;   if($io->{type} eq "digital") {
     `$io->{direction}` pad_`$io->{name}`,
 //;   }
@@ -132,6 +141,8 @@ module `mname` (
   wire out_pad_ds0 = out_pad_ds_grp0[0];
   wire out_pad_ds1 = out_pad_ds_grp0[1];
   wire out_pad_ds2 = out_pad_ds_grp0[2];
+
+  wire ALT_MASTER_CLK;
 
   // Corner cells
   PCORNER corner_ll();
@@ -227,8 +238,8 @@ AhaGarnetSoC core (
   .OUT_PAD_DS_GRP6(out_pad_ds_grp6),
   .OUT_PAD_DS_GRP7(out_pad_ds_grp7),
 
-// Connect this to a clock generated by butterphy
-  .ALT_MASTER_CLK(MASTER_CLK_int),
+// Connect this to a clock generated by dragonphy
+  .ALT_MASTER_CLK(ALT_MASTER_CLK),
 
 //; my $cnt = 0;
 //; foreach my $io (@{$io_list}) {
@@ -332,7 +343,7 @@ AhaGarnetSoC core (
 //; my $current_domain = 0;
   wire rte_3;
 
-//; foreach my $io (@{$butterphy_ios}) {
+//; foreach my $io (@{$dragonphy_ios}) {
 //;   my $pad_domain = $io->{domain};
 //; #if next pad is in new domain, insert a PRCUT
 //;   if($pad_domain != $current_domain) {
@@ -345,12 +356,15 @@ AhaGarnetSoC core (
 //;   my $signal_name = $io->{name};
 //;   my $io_type = $io->{type};
 //;   my $pad_name = "";
+//;   if($io->{is_power} == 0) {
+   wire `$signal_name`;
+//;   }
 //;   if($io_type eq "digital") {
 //;     $pad_name = "IOPAD_${signal_name}";
-   wire `$signal_name`;
 //;   } else {
 //;     $pad_name = "ANAIOPAD_${signal_name}";
 //;   }
+//;   if ($io->{pad} ne "NONE") {
 //;   push(@top_pads, $pad_name);
   `$pad_type` `$pad_name` (
 //; if($pad_type eq "PDB2ANA_V") {
@@ -380,6 +394,7 @@ AhaGarnetSoC core (
 //; }
   );
 
+//;   }
 
 //; }
 
@@ -390,17 +405,14 @@ AhaGarnetSoC core (
   PCBRTE_V IOPAD_top_rte_dom3 (.IRTE(1'b0), .RTE(rte_3));
 //;  push (@top_pads, "IOPAD_top_rte_dom3");
 //;  my $cnt = 0;
-  butterphy_top iphy (
-//; foreach my $io (@{$butterphy_ios}) {
-//;   if($io->{type} eq "digital") {
+  dragonphy_top iphy (
+//; foreach my $io (@{$dragonphy_ios}) {
+//;   if($io->{is_power} == 0) {
 //;     ++$cnt;
-//;     if($cnt < 7) {
     .`$io->{name}`(`$io->{name}`),
-//;     } else {
-    .`$io->{name}`(`$io->{name}`)
-//;     }
 //;   }
 //; }
+    .clk_cgra(ALT_MASTER_CLK)
   );
 
 
