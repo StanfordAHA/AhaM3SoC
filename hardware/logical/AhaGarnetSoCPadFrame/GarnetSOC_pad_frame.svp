@@ -144,10 +144,6 @@ module `mname` (
 
   wire ALT_MASTER_CLK;
 
-  // Corner cells
-  PCORNER corner_ll();
-  PCORNER corner_lr();
-  PCORNER corner_ul();
   // RTE stuff
   PCBRTE_V    IOPAD_bottom_RTE_DIG(.IRTE(1'b0), .RTE(rte));
   PCBRTE_H    IOPAD_left_RTE_DIG(.IRTE(1'b0), .RTE(rte));
@@ -545,7 +541,7 @@ endmodule
 //; print $fh "		(inst name=\"IOPAD_right_POC_DIG\")\n";
 //; print $fh "	)\n";
 
-//; #Now handle corner cells
+//; #Now handle corner cells, which will be added in PD flow
 //; print $fh "	(topleft\n";
 //; print $fh "		(inst name=\"corner_ul\" orientation=MX)\n";
 //; print $fh "	)\n";
