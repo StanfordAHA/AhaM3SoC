@@ -401,6 +401,7 @@ AhaGarnetSoC core (
   PCBRTE_V IOPAD_top_rte_dom3 (.IRTE(1'b0), .RTE(rte_3));
 //;  push (@top_pads, "IOPAD_top_rte_dom3");
 //;  my $cnt = 0;
+//; if ($include_core) {
   dragonphy_top iphy (
 //; foreach my $io (@{$dragonphy_ios}) {
 //;   if($io->{is_power} == 0) {
@@ -410,6 +411,7 @@ AhaGarnetSoC core (
 //; }
     .clk_cgra(ALT_MASTER_CLK)
   );
+//; }
 
 
 endmodule
