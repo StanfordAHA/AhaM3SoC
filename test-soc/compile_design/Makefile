@@ -26,8 +26,7 @@ TBENCH_FILE 			:= tbench_files/Tbench.v
 TO_GEN_FILE_LISTS		:= file-list-tbench.vc file-list-aha.vc file-list-cm3.vc \
 											 file-list-cmsdk.vc file-list-arm_utils.vc file-list-garnet.vc
 AUTO_GEN_FILE_LISTS	:= file-list-nic.vc file-list-dma.vc file-list-tlx.vc
-GARNET_FILE_LISTS 	:= -f inputs/filelists/glb.list -f inputs/filelists/glc.list \
-												-f inputs/filelists/garnet.list
+GARNET_FILE_LISTS 	:= inputs/design.v
 
 # Top Design
 TOP_DESIGN 	:= $(AHA_IP_DIR)/hardware/logical/AhaGarnetSoC/verilog/AhaGarnetSoC.v
