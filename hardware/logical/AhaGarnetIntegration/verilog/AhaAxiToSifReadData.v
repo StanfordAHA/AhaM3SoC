@@ -37,7 +37,7 @@ module AhaAxiToSifReadData (
   wire [63:0] rdata_w;
   assign RDATA = rdata_w;
 
-  DW_fifo_s1_sf  #(
+  CW_fifo_s1_sf  #(
     .width        (64),
     .depth        (32)
   ) u_fifo (

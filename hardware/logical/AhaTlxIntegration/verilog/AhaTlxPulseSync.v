@@ -20,7 +20,7 @@ module AhaTlxPulseSync (
   output  wire  Q
 );
 
-  DW_pulse_sync #(
+  CW_pulse_sync #(
     .reg_event      (1),
     .f_sync_type    (2),
     .pulse_mode     (1)

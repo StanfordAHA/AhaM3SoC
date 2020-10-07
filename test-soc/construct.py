@@ -45,9 +45,9 @@ def construct():
         'interconnect_only' : False,
         'array_width': 4,
         'array_height': 4,
-        'ARM_IP_DIR': '/home/nyengele/Documents/AhaARMIP',
-        'AHA_IP_DIR': '/home/nyengele/Documents/aha-soc-v2',
-        'GARNET_DIR': '/home/nyengele/Documents/garnet',
+        'ARM_IP_DIR': '/sim/kongty/aham3soc_armip',
+        'AHA_IP_DIR': '/sim/kongty/aham3soc',
+        'GARNET_DIR': '/sim/kongty/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
     }
@@ -58,7 +58,7 @@ def construct():
 
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
-    garnet_rtl      = Step(this_dir + '/garnet_rtl')
+    garnet_rtl      = Step(parameters['GARNET_DIR'] + '/mflowgen/common/rtl')
     compile_design  = Step(this_dir + '/compile_design')
     build_test      = Step(this_dir + '/build_test')
     run_test        = Step(this_dir + '/run_test')
@@ -134,12 +134,13 @@ def construct():
     # Set node-specific parameters
     # -------------------------------------------------------------------------
 
+    # Turn off power domain to improve the speed
+    garnet_rtl.update_params({'PWR_AWARE': False})
+
     for step, test in zip(build_steps, test_names):
         step.update_params({'TEST_NAME': test})
     for step, test in zip(run_steps, test_names):
         step.update_params({'TEST_NAME': test})
-
-    garnet_rtl.update_params({'GARNET_HOME': parameters['GARNET_DIR']})
 
     compile_design.update_params({'CGRA_RD_WS': 4})
 
@@ -159,9 +160,8 @@ def construct():
 
     # 'compile_tbench' must be successful
     compile_design.extend_postconditions([
-        "assert 'Error' not in File('vcs_compile.log', enable_case_sensitive = True)",
-        "assert File('outputs/simv')",
-        "assert File('outputs/simv.daidir')"
+        "assert 'Error' not in File('xrun_compile.log', enable_case_sensitive = True)",
+        "assert File('outputs/xcelium.d')",
     ])
 
     return g
