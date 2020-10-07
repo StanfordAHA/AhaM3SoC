@@ -160,9 +160,8 @@ def construct():
 
     # 'compile_tbench' must be successful
     compile_design.extend_postconditions([
-        "assert 'Error' not in File('vcs_compile.log', enable_case_sensitive = True)",
-        "assert File('outputs/simv')",
-        "assert File('outputs/simv.daidir')"
+        "assert 'Error' not in File('xrun_compile.log', enable_case_sensitive = True)",
+        "assert File('outputs/xcelium.d')",
     ])
 
     return g
