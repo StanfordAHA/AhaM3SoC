@@ -82,20 +82,20 @@ def construct():
     # -------------------------------------------------------------------------
 
     # 'compile_design' step produces a simulation executable and its accompanying collateral
-    compile_design.extend_outputs(['simv', 'simv.daidir'])
+    compile_design.extend_outputs(['xcelium.d'])
     compile_design.extend_inputs(['design.v'])
 
     # 'build_test' produces final images for both the CXDT and CPU
     for step in build_steps:
         step.extend_outputs(['CXDT.bin'])
 
-    # 'run_tests' takes CXDT.bin, CPU.bin, and simv to produce a log
+    # 'run_tests' takes CXDT.bin, CPU.bin, and xcelium.d to produce a log
     for step, test in zip(run_steps, test_names):
-        step.extend_inputs(['CXDT.bin', 'simv', 'simv.daidir'])
-        step.extend_outputs(['vcs_run_' + test + '.log'])
+        step.extend_inputs(['CXDT.bin', 'xcelium.d'])
+        step.extend_outputs(['xrun_run_' + test + '.log'])
 
     # 'verdict' consumes the run logs
-    run_logs = list(map((lambda test: 'vcs_run_' + test + '.log'), test_names))
+    run_logs = list(map((lambda test: 'xrun_run_' + test + '.log'), test_names))
     verdict.extend_inputs(run_logs)
 
     # -------------------------------------------------------------------------
