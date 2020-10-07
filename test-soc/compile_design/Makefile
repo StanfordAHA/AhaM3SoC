@@ -3,7 +3,7 @@ AHA_IP_PATH := $(abspath $(AHA_IP_DIR))
 CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 # XRUN Options
-XRUN_COMPILE_OPTS 	:= -verbose -sv -debug -elaborate -covoverwrite -initmem0 -initreg0 -64bit +libext+.v+.sv -timescale 100ps/1ps 
+XRUN_COMPILE_OPTS 	:= -verbose -sv -debug -elaborate -covoverwrite -initmem0 -initreg0 -64bit +libext+.v+.sv -timescale 1ns/1ps 
 XRUN_COMPILE_OPTS 	+= +define+VCD_ON
 
 # Whether or not to include Garnet CGRA
