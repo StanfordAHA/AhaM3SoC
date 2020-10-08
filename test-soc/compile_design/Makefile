@@ -3,8 +3,9 @@ AHA_IP_PATH := $(abspath $(AHA_IP_DIR))
 CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 # XRUN Options
-XRUN_COMPILE_OPTS 	:= -verbose -sv -debug -elaborate -covoverwrite -initmem0 -initreg0 -64bit +libext+.v+.sv -timescale 100ps/1ps 
-XRUN_COMPILE_OPTS 	+= +define+VCD_ON
+XRUN_COMPILE_OPTS 	:= -verbose -notimingchecks -sv -debug -elaborate -initmem0 -covoverwrite -64bit +libext+.v+.sv -timescale 1ns/1ps 
+# Turn off vcd to speed up
+#XRUN_COMPILE_OPTS 	+= +define+VCD_ON
 
 # Whether or not to include Garnet CGRA
 ifeq ($(SOC_ONLY),True)
@@ -17,6 +18,7 @@ XRUN_COMPILE_OPTS += +define+TLX_REV_DATA_LO_WIDTH=$(TLX_REV_DATA_LO_WIDTH)
 
 # GLB Read Wait States
 XRUN_COMPILE_OPTS += +define+CGRA_RD_WS=$(CGRA_RD_WS)
+XRUN_COMPILE_OPTS += +define+NON_STOP_IF_INPUT_PIN_Z
 
 # Testbench File
 TBENCH_FILE 			:= tbench_files/Tbench.v
