@@ -233,9 +233,12 @@ module Tbench;
   //-----------------------------------------
   `ifdef VCD_ON
     initial begin
-      $dumpfile("dump.vcd");
-      $dumpvars(0, Tbench);
-      $dumpon;
+      // $dumpfile("dump.vcd");
+      // $dumpvars(0, Tbench);
+      // $dumpon;
+      // dumping trn file can speed up
+      $recordfile("dump.trn");
+      $recordvars();
     end
   `endif
 

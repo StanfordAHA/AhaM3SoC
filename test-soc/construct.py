@@ -43,8 +43,8 @@ def construct():
         'design_name': 'test-soc',
         'soc_only'  : False,
         'interconnect_only' : False,
-        'array_width': 4,
-        'array_height': 4,
+        'array_width': 32,
+        'array_height': 16,
         'ARM_IP_DIR': '/sim/kongty/aham3soc_armip',
         'AHA_IP_DIR': '/sim/kongty/aham3soc',
         'GARNET_DIR': '/sim/kongty/garnet',
@@ -136,6 +136,8 @@ def construct():
 
     # Turn off power domain to improve the speed
     garnet_rtl.update_params({'PWR_AWARE': False})
+    garnet_rtl.update_params({'array_width': parameters['array_width']})
+    garnet_rtl.update_params({'array_height': parameters['array_height']})
 
     for step, test in zip(build_steps, test_names):
         step.update_params({'TEST_NAME': test})
