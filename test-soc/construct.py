@@ -29,6 +29,7 @@ def construct():
         'tlx_test',
         'cgra_test',
         'master_clock_test',
+        'app_test',
 
         # CXDT Tests
         'discovery',

@@ -19,7 +19,7 @@ module Tbench;
   //-----------------------------------------
   // Clocks and reset
   //-----------------------------------------
-  localparam MAIN_PERIOD    = 100;
+  localparam MAIN_PERIOD    = 10;
 
   reg           master_clk;
   reg           po_reset_n;
@@ -34,7 +34,7 @@ module Tbench;
   initial
     begin
       po_reset_n   = 1'b0;
-      #10000
+      #100
       po_reset_n   = 1'b1;
     end
 
@@ -175,6 +175,18 @@ module Tbench;
   pullup(uart1_rxd);
 
   //-----------------------------------------
+  // max cycle set
+  //-----------------------------------------
+  int max_cycle;
+  initial begin
+    if ($value$plusargs("MAX_CYCLE=%0d", max_cycle)) begin
+      repeat (max_cycle) @(posedge master_clk);
+      $display("\n%0t\tERROR: The %0d cycles marker has passed!", $time, max_cycle);
+      $finish(2);
+    end
+  end
+
+  //-----------------------------------------
   // UART Loop Back
   //-----------------------------------------
   assign uart0_rxd  = uart0_txd;
@@ -231,15 +243,12 @@ module Tbench;
   //-----------------------------------------
   // VCD Dump
   //-----------------------------------------
-  `ifdef VCD_ON
-    initial begin
-      // $dumpfile("dump.vcd");
-      // $dumpvars(0, Tbench);
-      // $dumpon;
-      // dumping trn file can speed up
+  // dumping trn file can speed up
+  initial begin
+    if ($test$plusargs("VCD_ON")) begin
       $recordfile("dump.trn");
-      $recordvars();
+      $recordvars(Tbench.u_soc.core.u_aha_garnet);
     end
-  `endif
+  end
 
 endmodule
