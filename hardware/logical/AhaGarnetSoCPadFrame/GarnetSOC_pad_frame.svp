@@ -56,6 +56,8 @@
 
 //; my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
 //;  [
+//;    {name => 'ext_outp'               , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'ext_outn'               , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
 //;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
@@ -85,6 +87,8 @@
 //;    {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'pad_ramp_clk'           , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'pad_freq_lvl_cross'     , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
 //;  ]);
 
 
