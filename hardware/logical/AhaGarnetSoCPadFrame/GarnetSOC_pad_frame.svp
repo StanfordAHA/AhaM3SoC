@@ -87,8 +87,8 @@
 //;    {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'ramp_clk'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'freq_lvl_cross'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
+//;    {name => 'ramp_clk'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;  ]);
 
 
@@ -102,8 +102,9 @@
 //; $pad_offset{'ANAIOPAD_ext_Vcm'}          = 2106;
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tck'} = 3500;
 //; $pad_offset{'IOPAD_ext_dump_start'}      = 3700;
-//; $pad_offset{'IOPAD_top_VDDPST_dom3'}     = 4117.5; # Try for better placement of this pad (was 4200)
-//; $pad_offset{'IOPAD_freq_lvl_cross'}      = 4285; # Better grouping for ramp/freq maybe?
+//; $pad_offset{'IOPAD_top_VDDPST_dom3'}     = 3888;
+//; $pad_offset{'IOPAD_freq_lvl_cross'}      = 4006;
+//; $pad_offset{'IOPAD_ramp_clk'}            = 4160;
 //; $pad_offset{'IOPAD_top_VDD_dom3'}        = 4500;
 //; $pad_offset{'IOPAD_top_rte_dom3'}        = 4666;
 
