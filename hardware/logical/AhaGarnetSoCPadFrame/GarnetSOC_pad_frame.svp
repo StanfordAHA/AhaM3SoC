@@ -91,22 +91,56 @@
 //;    {name => 'ramp_clk'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;  ]);
 
-
-//; # 01/2020 steveri note 1: had to add new offset 4666 for top_rte_dom3
+//; ########################################################################
+//; # MANUALLY-ADJUSTED PAD OFFSETS
+//; #
+//; # 01/2020 steveri: had to add new offset 4666 for top_rte_dom3
 //; # b/c it was overlapping with top_VDD_dom3 at 4500
 //; # see https://github.com/StanfordAHA/garnet/issues/399
-//; # 10/2020 Try for better placement of top_VDDPST_dom3, 82.5u leftwards
+//; #
+//; # 10/2020 steveri: freezing location of top row pads to same
+//; # as 05/2020 tapeout attempt, so PHY people can reuse same RDL
+//; #
+//; # 10/2020 steveri: changed offset of 'IOPAD_top_VDDPST_dom3'
+//; # for better layout. I don't think the PHY guys use this pad
+//; # so change should be okay maybe
 //; #
 //; my %pad_offset;
-//; $pad_offset{'ANAIOPAD_ext_clk_async_p'}  = 1360;
-//; $pad_offset{'ANAIOPAD_ext_Vcm'}          = 2106;
-//; $pad_offset{'IOPAD_jtag_intf_i_phy_tck'} = 3500;
-//; $pad_offset{'IOPAD_ext_dump_start'}      = 3700;
-//; $pad_offset{'IOPAD_top_VDDPST_dom3'}     = 3888;
-//; $pad_offset{'IOPAD_freq_lvl_cross'}      = 4006;
-//; $pad_offset{'IOPAD_ramp_clk'}            = 4160;
-//; $pad_offset{'IOPAD_top_VDD_dom3'}        = 4500;
-//; $pad_offset{'IOPAD_top_rte_dom3'}        = 4666;
+//; #
+//; # same as 05/2020 tapeout
+//; $pad_offset{'ANAIOPAD_ext_clk_async_p'    } = 1360.000;
+//; $pad_offset{'ANAIOPAD_ext_clk_async_n'    } = 1408.901;
+//; $pad_offset{'IOPAD_top_cut_1'             } = 1457.802;
+//; $pad_offset{'ANAIOPAD_ext_clkn'           } = 1532.287;
+//; $pad_offset{'ANAIOPAD_ext_clkp'           } = 1581.188;
+//; $pad_offset{'ANAIOPAD_CVDD'               } = 1630.088;
+//; $pad_offset{'ANAIOPAD_CVSS'               } = 1730.444;
+//; $pad_offset{'IOPAD_top_cut_2'             } = 1830.801;
+//; $pad_offset{'ANAIOPAD_AVDD'               } = 1905.286;
+//; $pad_offset{'ANAIOPAD_AVSS'               } = 2005.643;
+//; $pad_offset{'ANAIOPAD_ext_Vcm'            } = 2106.000;
+//; $pad_offset{'ANAIOPAD_ext_Vcal'           } = 2301.488;
+//; $pad_offset{'IOPAD_top_cut_3'             } = 2496.976;
+//; $pad_offset{'ANAIOPAD_ext_clk_test0_n'    } = 2718.048;
+//; $pad_offset{'ANAIOPAD_ext_clk_test0_p'    } = 2913.536;
+//; $pad_offset{'ANAIOPAD_ext_clk_test1_p'    } = 3109.024;
+//; $pad_offset{'ANAIOPAD_ext_clk_test1_n'    } = 3304.512;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tck'   } = 3500.000;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tdi'   } = 3533.334;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tdo'   } = 3566.667;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tms'   } = 3600.000;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_trst_n'} = 3633.333;   
+//; $pad_offset{'IOPAD_ext_rstb'              } = 3666.666;
+//; $pad_offset{'IOPAD_ext_dump_start'        } = 3700.000;
+//; $pad_offset{'IOPAD_top_VDD_dom3'          } = 4500.000;
+//; $pad_offset{'IOPAD_top_rte_dom3'          } = 4666.000;
+//; #
+//; # CHANGED for 12/2020 tapeout
+//; $pad_offset{'IOPAD_top_VDDPST_dom3'       } = 4200.000; # (was 3888)
+//; #
+//; # NEW for 12/2020 tapeout
+//; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;   
+//; $pad_offset{'IOPAD_ramp_clk'              } = 4160.000;
 
 module `mname` (
 //; my $mcnt = 0;
