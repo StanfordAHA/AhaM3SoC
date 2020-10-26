@@ -102,8 +102,8 @@
 //; # as 05/2020 tapeout attempt, so PHY people can reuse same RDL
 //; #
 //; # 10/2020 steveri: changed offset of 'IOPAD_top_VDDPST_dom3'
-//; # for better layout. I don't think the PHY guys use this pad
-//; # so change should be okay maybe
+//; # (4200=>3888) for better layout. I don't think the PHY guys
+//; # use this pad so change should be okay maybe
 //; #
 //; my %pad_offset;
 //; #
@@ -136,7 +136,7 @@
 //; $pad_offset{'IOPAD_top_rte_dom3'          } = 4666.000;
 //; #
 //; # CHANGED for 12/2020 tapeout
-//; $pad_offset{'IOPAD_top_VDDPST_dom3'       } = 4200.000; # (was 3888)
+//; $pad_offset{'IOPAD_top_VDDPST_dom3'       } = 3888.000; # (was 4200)
 //; #
 //; # NEW for 12/2020 tapeout
 //; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;   
