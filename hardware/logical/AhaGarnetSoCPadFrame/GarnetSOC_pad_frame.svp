@@ -56,8 +56,8 @@
 
 //; my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
 //;  [
-//;    {name => 'ext_outp'               , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'ext_outn'               , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'ext_tx_outp'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'ext_tx_outn'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
 //;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
 //;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
