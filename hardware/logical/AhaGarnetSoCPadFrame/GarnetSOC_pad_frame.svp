@@ -88,7 +88,7 @@
 //;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;    {name => 'freq_lvl_cross'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
-//;    {name => 'ramp_clk'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'ramp_clock'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;  ]);
 
 //; ########################################################################
