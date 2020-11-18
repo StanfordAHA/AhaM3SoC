@@ -108,8 +108,8 @@
 //; my %pad_offset;
 //; #
 //; # same as 05/2020 tapeout
-//; $pad_offset{'ANAIOPAD_ext_clk_async_p'    } = 1360.000;
-//; $pad_offset{'ANAIOPAD_ext_clk_async_n'    } = 1408.901;
+//; $pad_offset{'ANAIOPAD_ext_clk_async_n'    } = 1360.000;
+//; $pad_offset{'ANAIOPAD_ext_clk_async_p'    } = 1408.901;
 //; $pad_offset{'IOPAD_top_cut_1'             } = 1457.802;
 //; $pad_offset{'ANAIOPAD_ext_clkn'           } = 1532.287;
 //; $pad_offset{'ANAIOPAD_ext_clkp'           } = 1581.188;
