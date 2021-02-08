@@ -49,8 +49,7 @@ source genlibdb-constraints.tcl
 read_parasitics -format spef inputs/power_files/design.spef.gz
 #source inputs/design.namemap > ${pt_reports}/${pt_design_name}.map.rpt
 
-read_saif inputs/power_files/run.saif -strip_path "Tbench/u_soc" 
-read_saif run.saif -strip_path "Tbench/u_soc" 
+read_saif "./inputs/run.saif" -strip_path "Tbench/u_soc" 
 report_power -nosplit -hierarchy -sort_by total_power -verbose > ${pt_reports}/${pt_design_name}.pwr.hier.rpt
 report_power -nosplit -hierarchy -levels 5 -sort_by total_power -verbose > ${pt_reports}/${pt_design_name}.pwr.small.rpt
 report_switching_activity > ${pt_reports}/${pt_design_name}.sw.rpt 
