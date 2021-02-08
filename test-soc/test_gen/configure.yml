@@ -1,0 +1,26 @@
+name: test_gen
+
+commands:
+  - bash gen_testbench.sh
+  # Script extract noteworthy tiles
+
+outputs:
+  - input.raw
+  - gold.raw
+  - design.place
+  - app.bs
+
+parameters:
+  array_width: 4
+  array_height: 4
+  pipeline_config_interval: 8
+  interconnect_only: False
+  soc_only: False
+  PWR_AWARE: False
+  use_container: True
+  use_local_garnet: True
+  app_to_run: "tests/conv_3_3,apps/resnet_layer_gen,apps/harris,tests/conv_1_2,apps/resnet_pond"
+  waves: False
+
+postconditions:
+

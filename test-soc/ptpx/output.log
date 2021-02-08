@@ -1,0 +1,201 @@
+
+                                 PrimeTime (R)
+
+               Version Q-2019.12-SP2 for linux64 - Feb 27, 2020 
+
+                    Copyright (c) 1988 - 2020 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+            or distribution of this software is strictly prohibited.
+#=========================================================================
+# pt_px.tcl
+#=========================================================================
+# We use Synopsys Prime-Time to get the power analysis of the PnR Netlist.
+#
+# This Prime-Time Power analysis step follows the Signoff step to estimate
+# the average power of the gate-level netlist using RTL SAIF file.
+#
+# Author : Shady Agwa, Yanghui Ou
+# Date   : May 7, 2019
+#
+set pt_reports reports
+reports
+file mkdir ${pt_reports}
+lappend search_path ./inputs/gate_level_dec_db
+./inputs/gate_level_dec_db
+lappend search_path ./inputs/gate_level_dec 
+./inputs/gate_level_dec_db ./inputs/gate_level_dec
+set pt_target_libraries stdcells.db
+stdcells.db
+lappend pt_target_libraries stdcells-pm.db
+stdcells.db stdcells-pm.db
+lappend pt_target_libraries iocells.db
+stdcells.db stdcells-pm.db iocells.db
+lappend pt_target_libraries sram_tt.db
+stdcells.db stdcells-pm.db iocells.db sram_tt.db
+lappend pt_target_libraries sram_tt_lake.db
+stdcells.db stdcells-pm.db iocells.db sram_tt.db sram_tt_lake.db
+lappend pt_target_libraries stdcells-lvt.db
+stdcells.db stdcells-pm.db iocells.db sram_tt.db sram_tt_lake.db stdcells-lvt.db
+lappend pt_target_libraries stdcells-ulvt.db
+stdcells.db stdcells-pm.db iocells.db sram_tt.db sram_tt_lake.db stdcells-lvt.db stdcells-ulvt.db
+#lappend pt_target_libraries dragonphy_top_tt.lib
+set pt_design_name  $::env(design_name)
+test-soc
+set pt_clk clk
+clk
+set pt_uut TOP
+TOP
+set pt_clk_period $::env(clock_period)
+1.0
+set_app_var target_library $pt_target_libraries
+stdcells.db stdcells-pm.db iocells.db sram_tt.db sram_tt_lake.db stdcells-lvt.db stdcells-ulvt.db
+set_app_var link_library "* $pt_target_libraries"
+* stdcells.db stdcells-pm.db iocells.db sram_tt.db sram_tt_lake.db stdcells-lvt.db stdcells-ulvt.db
+set_app_var power_enable_analysis true 
+Information: Checked out license 'PrimePower' (PT-019)
+true
+set svr_enable_ansi_style_port_declarations true
+true
+set svr_enable_vpp true
+true
+current_design "GarnetSOC_pad_frame" 
+Information: current_design won't return any data before link (DES-071)
+read_verilog {design.vcs.v glb_top.vcs.v glb_tile.vcs.v global_controller.vcs.v tile_array.vcs.v Tile_MemCore.vcs.v Tile_PE.vcs.v pfiller_dummy.v dragonphy_top.v} 
+1
+#list_design
+#set link_create_black_boxes false
+link_design
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/stdcells.db'
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/design.vcs.v
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/design.vcs.v'
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/tile_array.vcs.v
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/tile_array.vcs.v'
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/glb_tile.vcs.v
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/Tile_MemCore.vcs.v
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/glb_top.vcs.v
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/Tile_PE.vcs.v
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/global_controller.vcs.v
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/dragonphy_top.v
+
+INFO: No verilog pre-processor constructs found. Skipping pre-processing for file /home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/pfiller_dummy.v
+Pre-processing Verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/glb_tile.vcs.v'...
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/Tile_MemCore.vcs.v'
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/stdcells-pm.db'
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/glb_top.vcs.v'
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/iocells.db'
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/sram_tt.db'
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/sram_tt_lake.db'
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/stdcells-lvt.db'
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/Tile_PE.vcs.v'
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/global_controller.vcs.v'
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/dragonphy_top.v'
+Error: Expected ',' or ';' but found '|'
+	at line 33 in '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/dragonphy_top.v'. (SVR-4)
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/pfiller_dummy.v'
+Loading db file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec_db/stdcells-ulvt.db'
+Loading verilog file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/glb_tile.vcs.v'
+Linking design GarnetSOC_pad_frame...
+Warning: Unable to resolve reference to 'PCORNER' in 'GarnetSOC_pad_frame'. (LNK-005)
+Warning: Unable to resolve reference to 'dragonphy_top' in 'GarnetSOC_pad_frame'. (LNK-005)
+Information: Creating black box for iphy/dragonphy_top... (LNK-043)
+Information: Creating black box for corner_ll/PCORNER... (LNK-043)
+Information: Creating black box for corner_lr/PCORNER... (LNK-043)
+Information: Creating black box for corner_ul/PCORNER... (LNK-043)
+Removed 6456 unconnected cells and blackboxes.
+Information: Removing 10749 unneeded designs..... (LNK-034)
+Information: Module 'PFILLER01008' in file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/pfiller_dummy.v' is not used in the current design .  (LNK-039)
+Information: Module 'PFILLER10080' in file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/pfiller_dummy.v' is not used in the current design .  (LNK-039)
+Information: Module 'PFILLER00048' in file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/pfiller_dummy.v' is not used in the current design .  (LNK-039)
+Information: Module 'PFILLER00001' in file '/home/kkoul/AhaM3SoC/build_fast/ptpx_dec/inputs/gate_level_dec/pfiller_dummy.v' is not used in the current design .  (LNK-039)
+Information: 540 (44.23%) library cells are unused in library tcbn16ffcllbwp16p90tt0p8v25c..... (LNK-045)
+Information: 40 (81.63%) library cells are unused in library tcbn16ffcllbwp16p90pmtt0p8v25c..... (LNK-045)
+Information: 22 (64.71%) library cells are unused in library tphn16ffcllgv18ett0p8v1p8v25c..... (LNK-045)
+Information: 883 (72.32%) library cells are unused in library tcbn16ffcllbwp16p90lvttt0p8v25c..... (LNK-045)
+Information: 979 (80.18%) library cells are unused in library tcbn16ffcllbwp16p90ulvttt0p8v25c..... (LNK-045)
+Information: total 2464 library cells are unused (LNK-046)
+Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)
+Design 'GarnetSOC_pad_frame' was successfully linked.
+Information: There are 8889014 leaf cells, ports, hiers and 17425174 nets in the design (LNK-047)
+1
+#create_clock ${pt_clk} -name ideal_clock1 -period ${pt_clk_period}
+read_sdc inputs/gate_level_dec_db/design.sdc -version 2.0 > ${pt_reports}/${pt_design_name}.sdc.rpt
+source genlibdb-constraints.tcl
+read_parasitics -format spef inputs/gate_level_dec_db/design.spef.gz
+Information: Log for 'read_parasitics command' will be generated in 'parasitics_command.log'. (PARA-107)
+1
+#source inputs/design.namemap > ${pt_reports}/${pt_design_name}.map.rpt
+#read_saif inputs/gate_level_dec_db/conv3_3_just_conv.saif -strip_path "Tbench/u_soc" > reports/saif_report.rpt 
+read_saif inputs/gate_level_dec_db/demosaic_complex.saif -strip_path "Tbench/u_soc" 
+Error: Cannot open "inputs/gate_level_dec_db/demosaic_complex.saif".  (PWR-123)
+0
+read_saif demosaic_complex.saif -strip_path "Tbench/u_soc" 
+instance    Tbench                         None Found
+Warning: Switching activity for net RTE_DIG is overwritten with different values (PSW-211)
+instance    corner_ul                      None Found
+instance    corner_ll                      None Found
+instance    corner_lr                      None Found
+instance    ANAIOPAD_AVDD                  None Found
+instance    ANAIOPAD_AVSS                  None Found
+instance    ANAIOPAD_CVDD                  None Found
+instance    ANAIOPAD_CVSS                  None Found
+instance    Tbench/u_cmsdk_uart_capture_ard
+                                           None Found
+instance    Tbench/u_tlx_capture           None Found
+instance    Tbench/u_tlx_capture/u_mon_input_lane
+                                           None Found
+instance    Tbench/u_tlx_capture/u_drv_output_lane
+                                           None Found
+
+======================================================================
+Summary:
+Total number of nets = 9853487
+Number of annotated nets = 9853487 (100.00%)
+Total number of leaf cells = 8635984
+Number of fully annotated leaf cells = 8635984 (100.00%)
+======================================================================
+
+1
+report_power -nosplit -hierarchy -sort_by total_power -verbose > ${pt_reports}/${pt_design_name}.pwr.hier.rpt
+Note - message 'PTE-060' default limit (100) exceeded.  Remainder will be suppressed.
+Note - message 'PWR-278' limit (10000) exceeded.  Remainder will be suppressed.
+Note - message 'PSW-208' limit (10000) exceeded.  Remainder will be suppressed.
+report_power -nosplit -hierarchy -levels 5 -sort_by total_power -verbose > ${pt_reports}/${pt_design_name}.pwr.small.rpt
+report_switching_activity > ${pt_reports}/${pt_design_name}.sw.rpt 
+exit
+Information: Defining new variable 'pt_clk_period'. (CMD-041)
+Information: Defining new variable 'sb_muxes'. (CMD-041)
+Information: Defining new variable 'sb_mux'. (CMD-041)
+Information: Defining new variable 'pt_design_name'. (CMD-041)
+Information: Defining new variable 'config_regs'. (CMD-041)
+Information: Defining new variable 'pt_target_libraries'. (CMD-041)
+Information: Defining new variable 'pt_reports'. (CMD-041)
+Information: Defining new variable 'pt_clk'. (CMD-041)
+Information: Defining new variable 'config_reg_outs'. (CMD-041)
+Information: Defining new variable 'pt_uut'. (CMD-041)
+Suppressed Messages Summary:
+Id          Severity      Occurrences   Suppressed
+-------------------------------------------------------------------------------
+PSW-208     Warning             65572        55572
+PWR-278     Warning             20992        10992
+PTE-060     Warning              1568         1468
+SVR-2       Information             1            1
+Total 4 types of messages are suppressed
+
+Timing updates: 1 (1 implicit, 0 explicit) (0 incremental, 1 full, 0 logical)
+Noise updates: 0 (0 implicit, 0 explicit) (0 incremental, 0 full)
+Maximum memory usage for this session: 16274.62 MB
+CPU usage for this session: 3179 seconds 
+Elapsed time for this session: 1778 seconds
+Diagnostics summary: 1 error, 20350 warnings, 99 informationals
+
+Thank you for using pt_shell!

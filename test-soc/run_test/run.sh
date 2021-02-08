@@ -12,4 +12,4 @@ touch image.hex
 echo "run" > commands.tcl
 echo "exit" >> commands.tcl
 
-xrun +VCD_ON +MAX_CYCLE=${MAX_CYCLE} -R -input commands.tcl | tee outputs/xrun_run_${TEST_NAME}.log
+xrun +MAX_CYCLE=${MAX_CYCLE} -R -input commands.tcl | tee outputs/xrun_run_${TEST_NAME}.log
