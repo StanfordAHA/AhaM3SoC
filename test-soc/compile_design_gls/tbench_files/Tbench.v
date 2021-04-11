@@ -31,30 +31,52 @@ module Tbench;
 
   always #(MAIN_PERIOD/2)  master_clk = ~master_clk;
 
-  reg count;
+  integer count;
+  integer flag;
+  integer start_time;
+  integer start_time2;
 
   initial
   begin
     $set_toggle_region(Tbench);
     //$toggle_start();
-    count = 1'b0;
+    count = 0;
+    flag = 0;
+	start_time = 0;
+    start_time2 = 0;
   end
 
   always@(posedge master_clk) begin
 	
-  if(Tbench.u_soc.core.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_g2f == 1'b1) begin
-    $toggle_start();
-  end
-  
-  if(Tbench.u_soc.core.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.strm_f2g_interrupt_pulse != 1'b0) begin
-  	$toggle_stop();
+  if(Tbench.u_soc.core.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_g2f != 1'b0) begin
     if (count == 0) begin
-    $toggle_report("run.saif", 1e-12,"Tbench");
+      $toggle_start();
+	  $display("count %d, start kernel", count);
+	  start_time = $time;
     end
     if (count == 1) begin
-    $toggle_report("conv3_3_just_conv_2.saif", 1e-12,"Tbench");
+  	  $toggle_stop();
+      $toggle_report("run_1_kernel_plus_setup.saif", 1e-12,"Tbench");
+	  $display("count %d, stop, time %d", count, $time - start_time);
+  	  $toggle_reset();
     end
     count = count + 1;
+  end
+  
+
+  if(Tbench.u_soc.core.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.pc_start_pulse != 1'b0) begin
+    flag = 1;
+    $toggle_start();
+	$display("start reconfigure", count);
+    start_time2 = $time;
+  end
+
+  if(flag && (Tbench.u_soc.core.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.pcfg_g2f_interrupt_pulse != 1'b0)) begin
+    flag = 0;
+  	$toggle_stop();
+    $toggle_report("reconfigure.saif", 1e-12,"Tbench");
+	$display("stop, time %d", $time - start_time2);
+  	$toggle_reset();
   end
   
   //if(Tbench.u_cmsdk_uart_capture_ard.reg_end_simulation == 1'b1) begin

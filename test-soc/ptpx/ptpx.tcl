@@ -14,7 +14,8 @@
 
 
 set pt_reports reports
-file mkdir ${pt_reports}
+file mkdir ${pt_reports}_reconfigure
+file mkdir ${pt_reports}_kernel
 lappend search_path ./inputs/power_files 
 set pt_target_libraries stdcells.db
 lappend pt_target_libraries stdcells-pm.db
@@ -49,8 +50,12 @@ source genlibdb-constraints.tcl
 read_parasitics -format spef inputs/power_files/design.spef.gz
 #source inputs/design.namemap > ${pt_reports}/${pt_design_name}.map.rpt
 
-read_saif "./inputs/run.saif" -strip_path "Tbench/u_soc" 
-report_power -nosplit -hierarchy -sort_by total_power -verbose > ${pt_reports}/${pt_design_name}.pwr.hier.rpt
-report_power -nosplit -hierarchy -levels 5 -sort_by total_power -verbose > ${pt_reports}/${pt_design_name}.pwr.small.rpt
-report_switching_activity > ${pt_reports}/${pt_design_name}.sw.rpt 
+read_saif "./inputs/reconfigure.saif" -strip_path "Tbench/u_soc" 
+report_power -nosplit -hierarchy -levels 5 -sort_by total_power -verbose > ${pt_reports}_reconfigure/${pt_design_name}.pwr.small.rpt
+report_switching_activity > ${pt_reports}/${pt_design_name}_reconfigure.sw.rpt 
+
+
+read_saif "./inputs/run_1_kernel_plus_setup.saif" -strip_path "Tbench/u_soc" 
+report_power -nosplit -hierarchy -levels 5 -sort_by total_power -verbose > ${pt_reports}_kernel/${pt_design_name}.pwr.small.rpt
+report_switching_activity > ${pt_reports}/${pt_design_name}_kernel.sw.rpt 
 exit

@@ -16,4 +16,5 @@ touch image.hex
 
 ./simv +vcs+lic+wait +vcs+flush+log +vcs+initreg+random +vcs+finish+${MAX_SIM_TIME} -assert nopostproc  < quit.do | tee outputs/vcs_run_${TEST_NAME}.log
 
-cp run.saif outputs/
+cp reconfigure.saif outputs/
+cp run_1_kernel_plus_setup.saif outputs/

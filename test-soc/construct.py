@@ -31,15 +31,15 @@ def construct():
         #'master_clock_test',
         'app_test',
         'harris_test',
-        #'app_test_two_images',
-        #'app_test_reconfig',
-        #'app_test_reconfig_pipeline',
-        #'app_test_2_kernels_1_cgra',
+        'app_test_two_images',
+        'app_test_reconfig',
+        'app_test_reconfig_pipeline',
+        'app_test_2_kernels_1_cgra',
        # 'cascade_test',
         #'resnet_test',
         #'resnet_test_i4_o3',
-        #'demosaic_complex',
-        #'demosaic_complex_twice',
+        'demosaic_complex',
+        'demosaic_complex_twice',
         #'demosaic_complex_harris',
         #'resnet_pond',
 
@@ -125,11 +125,12 @@ def construct():
     # 'run_gls_tests' takes CXDT.bin, CPU.bin, and simv and simv.daidir to produce a log
     for step, test in zip(run_gls_steps, test_names):
         step.extend_inputs(['CXDT.bin', 'simv', 'simv.daidir'])
-        step.extend_outputs(['run.saif'])
+        step.extend_outputs(['reconfigure.saif'])
+        step.extend_outputs(['run_1_kernel_plus_setup.saif'])
 
-    # 'ptpx' takes run.saif to produce power reports
+    # 'ptpx' takes saif to produce power reports
     for step, test in zip(run_gls_steps, test_names):
-        step.extend_inputs(['run.saif'])
+        step.extend_inputs(['run_1_kernel_plus_setup.saif'])
 
     # 'verdict' consumes the run logs
     run_logs = list(map((lambda test: 'xrun_run_' + test + '.log'), test_names))
