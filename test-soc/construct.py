@@ -30,18 +30,22 @@ def construct():
         #'cgra_test',
         #'master_clock_test',
         'app_test',
-        'harris_test',
+        'app_test_stage1',
+        'app_test_stage_relocation',
+        #'harris_test',
+        'app_test_two_images_stage1',
         'app_test_two_images',
-        'app_test_reconfig',
-        'app_test_reconfig_pipeline',
-        'app_test_2_kernels_1_cgra',
+        #'app_test_reconfig',
+        #'app_test_reconfig_pipeline',
+        #'app_test_2_kernels_1_cgra',
        # 'cascade_test',
         #'resnet_test',
         #'resnet_test_i4_o3',
-        'demosaic_complex',
-        'demosaic_complex_twice',
+        #'demosaic_complex',
+        #'demosaic_complex_twice',
         #'demosaic_complex_harris',
         #'resnet_pond',
+        'resnet_layer_gen',
 
         # CXDT Tests
         'discovery',
@@ -61,7 +65,7 @@ def construct():
         'clock_period': 1.0,
         'ARM_IP_DIR': '/home/kkoul/aham3soc_armip',
         'AHA_IP_DIR': '/sim/kkoul/AhaM3SoC',
-        'GATE_LEVEL_DIR': '/home/kkoul/gate_level_199',
+        'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
         'GARNET_DIR': '/sim/kkoul/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
@@ -74,6 +78,7 @@ def construct():
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
     garnet_rtl      	= Step(parameters['GARNET_DIR'] + '/mflowgen/common/rtl')
+    amber_rtl  	        = Step(this_dir + '/amber')
     compile_design  	= Step(this_dir + '/compile_design')
     compile_design_gls  = Step(this_dir + '/compile_design_gls')
     build_test      	= Step(this_dir + '/build_test')
@@ -141,6 +146,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     g.add_step(garnet_rtl)
+    g.add_step(amber_rtl)
     g.add_step(compile_design)
     g.add_step(compile_design_gls)
     g.add_step(test_gen)
@@ -163,7 +169,8 @@ def construct():
     # Graph -- Add edges
     # -------------------------------------------------------------------------
 
-    g.connect_by_name(garnet_rtl, compile_design)
+    #g.connect_by_name(garnet_rtl, compile_design)
+    g.connect_by_name(amber_rtl, compile_design)
 
     for r, b in zip(run_steps, build_steps):
         g.connect_by_name(b, r)

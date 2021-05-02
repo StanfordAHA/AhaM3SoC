@@ -3,7 +3,7 @@
 CXDT=`readlink -f inputs/CXDT.bin`
 XCELIUMD=`readlink -f inputs/xcelium.d`
 
-MAX_CYCLE="10000000"
+MAX_CYCLE="20000000"
 
 ln -s ${CXDT} CXDT.bin
 ln -s ${XCELIUMD} xcelium.d

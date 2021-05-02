@@ -16,6 +16,7 @@
 set pt_reports reports
 file mkdir ${pt_reports}_reconfigure
 file mkdir ${pt_reports}_kernel
+file mkdir ${pt_reports}
 lappend search_path ./inputs/power_files 
 set pt_target_libraries stdcells.db
 lappend pt_target_libraries stdcells-pm.db
@@ -35,12 +36,12 @@ set_app_var target_library $pt_target_libraries
 set_app_var link_library "* $pt_target_libraries"
 
 set_app_var power_enable_analysis true 
-
+set power_enable_multi_rail_analysis true
 set svr_enable_ansi_style_port_declarations true
 set svr_enable_vpp true
 
 current_design "GarnetSOC_pad_frame" 
-read_verilog {design.vcs.v glb_top.vcs.v glb_tile.vcs.v global_controller.vcs.v tile_array.vcs.v Tile_MemCore.vcs.v Tile_PE.vcs.v pfiller_dummy.v dragonphy_top.v} 
+read_verilog {design.vcs.pg.v glb_top.vcs.pg.v glb_tile.vcs.pg.v global_controller.vcs.pg.v tile_array.vcs.pg.v Tile_MemCore.vcs.pg.v Tile_PE.vcs.pg.v pfiller_dummy.pg.v dragonphy_top.v} 
 
 link_design
 
@@ -49,6 +50,39 @@ read_sdc inputs/power_files/design.sdc -version 2.0 > ${pt_reports}/${pt_design_
 source genlibdb-constraints.tcl
 read_parasitics -format spef inputs/power_files/design.spef.gz
 #source inputs/design.namemap > ${pt_reports}/${pt_design_name}.map.rpt
+
+current_instance "core/u_aha_garnet/u_garnet/Interconnect_inst0/Tile_X03_Y01"
+# Read in upf 
+set fp [open "./inputs/power_files/Tile_PE.list" r]
+set file_data [read $fp]
+set data [split $file_data "\n"]
+set data [lreplace $data end end]
+echo "PE list length"
+llength $data
+foreach line $data {
+	current_instance "../$line"
+    echo $line
+	load_upf "./inputs/power_files/upf_Tile_PE.tcl"     
+}
+
+
+set fp [open "./inputs/power_files/Tile_MemCore.list" r]
+set file_data [read $fp]
+set data [split $file_data "\n"]
+#remove extra cell hack
+#set data [lreplace $data end end]
+echo "MemCore list length"
+llength $data
+foreach line $data {
+	current_instance "../$line"
+    echo $line
+	load_upf "./inputs/power_files/upf_Tile_MemCore.tcl"     
+}
+
+current_instance "../../../../.."
+
+
+
 
 read_saif "./inputs/reconfigure.saif" -strip_path "Tbench/u_soc" 
 report_power -nosplit -hierarchy -levels 5 -sort_by total_power -verbose > ${pt_reports}_reconfigure/${pt_design_name}.pwr.small.rpt

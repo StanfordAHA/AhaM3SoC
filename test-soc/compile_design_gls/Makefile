@@ -47,20 +47,20 @@ GARNET_FILE_LISTS 	:= -F inputs/filelists/glb.list -f inputs/filelists/glc.list 
 # All File Lists
 ALL_FILE_LISTS := $(foreach file,$(TO_GEN_FILE_LISTS),-F $(file))
 ALL_FILE_LISTS += $(foreach file,$(AUTO_GEN_FILE_LISTS),-F $(file))
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/design.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/glb_top.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/glb_tile.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/global_controller.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/tile_array.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/Tile_MemCore.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/Tile_PE.vcs.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-lvt.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-ulvt.v 
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/sram.v
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/sram_lake.v
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/iocells.v
-ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-pm.v
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/design.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/glb_top.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/glb_tile.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/global_controller.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/tile_array.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/Tile_MemCore.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/Tile_PE.vcs.pg.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-pwr.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-lvt-pwr.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-ulvt-pwr.v 
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/sram-pwr.v
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/sram-pwr2.v
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/iocells-pwr.v
+ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/stdcells-pm-pwr.v
 ALL_FILE_LISTS += $(GATE_LEVEL_PATH)/pfiller_dummy.v
 
 

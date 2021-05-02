@@ -28,8 +28,13 @@ module dragonphy_top (
     input wire ext_tx_outn,
     input wire ext_tx_outp,
 	input wire ramp_clock,
-    input wire freq_lvl_cross
-);
+    input wire freq_lvl_cross,
+	inout DVSS, 
+	inout DVDD, 
+	inout CVSS, 
+	inout CVDD, 
+	inout AVSS, 
+	inout AVDD);
     wire unused =     jtag_intf_i_phy_tck |
                       jtag_intf_i_phy_tdi |
                       jtag_intf_i_phy_tms |

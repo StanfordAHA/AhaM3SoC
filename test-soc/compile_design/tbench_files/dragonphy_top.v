@@ -24,28 +24,13 @@ module dragonphy_top (
     input   wire      ext_rstb,
     input   wire      ext_dump_start,
     output  wire      jtag_intf_i_phy_tdo,
-    output  wire      clk_cgra
+    output  wire      clk_cgra,
+    input wire ext_tx_outn,
+    input wire ext_tx_outp,
+	input wire ramp_clock,
+    input wire freq_lvl_cross
 );
-    wire unused =     jtag_intf_i_phy_tck |
-                      jtag_intf_i_phy_tdi |
-                      jtag_intf_i_phy_tms |
-                      jtag_intf_i_phy_trst_n |
-                      ext_rstb |
-                      ext_dump_start |
-                      ext_clk_async_n |
-                      ext_clk_async_p |
-                      ext_clkn |
-                      ext_clkp |
-                      ext_Vcm |
-                      ext_mdll_clk_refp |
-                      ext_mdll_clk_refn |
-                      ext_mdll_clk_monn |
-                      ext_mdll_clk_monp |
-                      ext_rx_inp |
-                      ext_rx_inn |
-                      ext_rx_inp_test |
-                      ext_rx_inn_test ;
-
+    //wire unused = jtag_intf_i_phy_tck | jtag_intf_i_phy_tdi | jtag_intf_i_phy_tms | jtag_intf_i_phy_trst_n | ext_rstb | ext_dump_start | ext_clk_async_n | ext_clk_async_p | ext_clkn | ext_clkp | ext_Vcm | ext_mdll_clk_refp | ext_mdll_clk_refn | ext_mdll_clk_monn | ext_mdll_clk_monp | ext_rx_inp | ext_rx_inn | ext_rx_inp_test | ext_rx_inn_test | ext_tx_outn | ext_tx_outp | ramp_clock | freq_lvl_cross;
 
     reg clk;
 

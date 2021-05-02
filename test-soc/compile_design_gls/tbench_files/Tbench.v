@@ -24,6 +24,13 @@ module Tbench;
   reg           master_clk;
   reg           po_reset_n;
 
+  // supply 
+  supply1 VDD;
+  supply1 VDDPST;
+  supply0 VSS;
+  supply0 VSSPST;
+
+
   initial
   begin
     master_clk    = 1'b1;
@@ -5929,7 +5936,17 @@ module Tbench;
 
     // LoopBack
     .pad_LOOP_BACK_SELECT           (4'h0),
-    .pad_LOOP_BACK                  ()
+    .pad_LOOP_BACK                  (),
+
+	// Supply Nets	
+    .VDD (VDD),
+    .AVDD (VDD),
+    .CVDD (VDD),
+    .VDDPST (VDDPST),
+	.VSS (VSS),	
+	.AVSS (VSS),	
+	.CVSS (VSS)	
+	//.VSSPST (VSSPST)	
   );
 
   // TLX Master Domain

@@ -1,5 +1,12 @@
-module PCORNER (
-    input wire RTE
-);
-    wire unused = RTE;
+module PCORNER
+	(
+	VSSPST, 
+	VSS, 
+	VDDPST, 
+	VDD
+	);
+   inout VSSPST;
+   inout VSS;
+   inout VDDPST;
+   inout VDD;
 endmodule
