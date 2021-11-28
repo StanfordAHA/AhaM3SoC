@@ -29,7 +29,7 @@ def construct():
         #'tlx_test',
         #'cgra_test',
         #'master_clock_test',
-        'app_test',
+        'app_tlx_test',
         'app_test_stage1',
         'app_test_stage_relocation',
         #'harris_test',
