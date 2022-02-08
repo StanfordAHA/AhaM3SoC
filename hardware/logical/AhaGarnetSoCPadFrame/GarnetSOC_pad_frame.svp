@@ -263,9 +263,7 @@ AhaGarnetSoC core (
 );
 //; }
 
-//; #my @sides = ('top', 'bottom', 'left', 'right');
-//; # Don't need digital VDD/VSS on top side
-//; my @sides = ('bottom', 'left', 'right');
+//; my @sides = ('top', 'bottom', 'left', 'right');
 //; foreach my $side (@sides) {
 //;   my $orient = "";
 //;   if(($side eq "top") or ($side eq "bottom")) {
