@@ -544,6 +544,9 @@ endmodule
 //; print $fh "	(topleft\n";
 //; print $fh "		(inst name=\"corner_ul\" orientation=MX)\n";
 //; print $fh "	)\n";
+//; print $fh "	(topright\n";
+//; print $fh "		(inst name=\"corner_ur\" orientation=R180)\n";
+//; print $fh "	)\n";
 //; print $fh "	(bottomleft\n";
 //; print $fh "		(inst name=\"corner_ll\")\n";
 //; print $fh "	)\n";
