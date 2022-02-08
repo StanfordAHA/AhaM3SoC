@@ -339,7 +339,6 @@ AhaGarnetSoC core (
 
 
 //; my $current_domain = 0;
-  wire rte_3;
 
 //; foreach my $io (@{$dragonphy_ios}) {
 //;   my $pad_domain = $io->{domain};
