@@ -193,32 +193,28 @@ module `mname` (
 //;     elsif($side eq "right") {
 //;       push @right_pads, $pad_name;
 //;     }
-  PRWDWUWSWCDGH_`$orient` `$pad_name` (
+  IN12LP_GPIO18_13M9S30P_IO_`$orient` `$pad_name` (
     .PAD(pad_`$io->{name}`[`$i`]),
 //;     if ($io->{direction} eq "inout") {
-    .C(`$io->{inport}`),
-    .I(`$io->{outport}`),
+    .Y(`$io->{inport}`),
+    .DATA(`$io->{outport}`),
     .IE(~`$io->{io_ctrl}`),
     .OEN(~`$io->{io_ctrl}`),
 //;     }
 //;     elsif ($io->{direction} eq "input") {
-    .C(`$io->{name}`_int[`$i`]),
-    .I(1'b0),
-    .IE(1'b1),
-    .OEN(1'b1),
+    .Y(`$io->{name}`_int[`$i`]),
+    .DATA(1'b0),
+    .RXEN(1'b1),
+    .TRIEN(1'b1),
 //;     } else {
-    .I(`$io->{name}`_int[`$i`]),
-    .IE(1'b0),
-    .OEN(1'b0),
+    .DATA(`$io->{name}`_int[`$i`]),
+    .RXEN(1'b0),
+    .TRIEN(1'b0),
 //;     }
-    .DS0(out_pad_ds0),
-    .DS1(out_pad_ds1),
-    .DS2(out_pad_ds2),
-    .PU(1'b0),
-    .PD(1'b0),
-    .ST(1'b0),
-    .SL(1'b0),
-    .RTE(1'b0)
+    .DRV(out_pad_ds_grp0[1:0]),
+    .PUEN(1'b0),
+    .PDEN(1'b0),
+    .RETC(1'b0)
   );
 //;   }
 //; }
