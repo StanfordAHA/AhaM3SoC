@@ -154,6 +154,7 @@ module `mname` (
 
   // RTE stuff
   IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
+  IN13LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_top_RTE_DIG (.RETCIN(1'b0), .RETCOUT(rte));
   IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_left_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
   IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_right_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
 
@@ -394,12 +395,6 @@ AhaGarnetSoC core (
 
 //; }
 
-  PVDD1CDGM_V IOPAD_top_VDD_dom3 (.RTE(rte));
-//;  push (@top_pads, "IOPAD_top_VDD_dom3");
-  PVDD2POCM_V IOPAD_top_VDDPST_dom3(.RTE(rte_3));
-//;  push (@top_pads, "IOPAD_top_VDDPST_dom3");
-  IN13LP_GPIO18_13M9S30P_PWRDET_TIE_V IOPAD_top_rte_dom3 (.RETCIN(1'b0), .RETCOUT(rte_3));
-//;  push (@top_pads, "IOPAD_top_rte_dom3");
 //;  my $cnt = 0;
 //; if ($include_core) {
   // No phy on Onyx but leaving this as placeholder for Kavya's block
@@ -459,6 +454,7 @@ endmodule
 //;     printpad($fh, $pad)
 //;   }
 //; }
+//; print $fh "		(inst name=\"iopad_top_RTE_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(bottom\n";
@@ -514,7 +510,7 @@ endmodule
 //;   }
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"iopad_left_RTE_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
