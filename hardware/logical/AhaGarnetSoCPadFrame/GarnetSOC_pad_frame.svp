@@ -274,7 +274,7 @@ AhaGarnetSoC core (
 //;   }
 //;   for (my $i = 0; $i < $num_vddpst_per_side; $i++) {
 //;     my $pad_name = "IOPAD_${side}_VDDPST_${i}";
-  PVDD2CDGM_`$orient` `$pad_name` (.RTE(rte));
+  IN12LP_GPIO18_13M9S30P_VDDIO_`$orient` `$pad_name` (.RETC(rte));
 //;     if($side eq "top") {
 //;       my $num_pads = $num_pads_top;
 //;       my $offset = $vddpst_offsets[$i];
@@ -303,7 +303,7 @@ AhaGarnetSoC core (
 //;   }
 //;   for (my $i = 0; $i < $num_vdd_per_side; $i++) {
 //;     my $pad_name = "IOPAD_${side}_VDD_${i}";
-  PVDD1CDGM_`$orient` `$pad_name` (.RTE(rte));
+  IN12LP_GPIO18_13M9S30P_VDDC_`$orient` `$pad_name` (.RETC(rte));
 //;     if($side eq "top") {
 //;       my $num_pads = $num_pads_top;
 //;       my $offset = $vdd_offsets[$i];
