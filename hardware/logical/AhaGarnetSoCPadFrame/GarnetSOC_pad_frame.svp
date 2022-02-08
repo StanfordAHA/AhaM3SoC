@@ -482,7 +482,6 @@ endmodule
 //; }
 //; # rte and pocctrl
 //; print $fh "		(inst name=\"IOPAD_bottom_RTE_DIG\")\n";
-//; print $fh "		(inst name=\"IOPAD_bottom_POC_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(left\n";
@@ -511,7 +510,6 @@ endmodule
 //; }
 //; # rte and pocctrl
 //; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\")\n";
-//; print $fh "		(inst name=\"IOPAD_left_POC_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
@@ -540,7 +538,6 @@ endmodule
 //; }
 //; # rte and pocctrl
 //; print $fh "		(inst name=\"IOPAD_right_RTE_DIG\")\n";
-//; print $fh "		(inst name=\"IOPAD_right_POC_DIG\")\n";
 //; print $fh "	)\n";
 
 //; #Now handle corner cells, which will be added in PD flow
