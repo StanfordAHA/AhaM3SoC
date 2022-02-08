@@ -345,12 +345,12 @@ AhaGarnetSoC core (
 
 //; foreach my $io (@{$dragonphy_ios}) {
 //;   my $pad_domain = $io->{domain};
-//; #if next pad is in new domain, insert a PRCUT
+//; #if next pad is in new domain, insert a breaker cell
 //;   if($pad_domain != $current_domain) {
 //;     $current_domain = $pad_domain;
 //;     my $cut_cell_name = "IOPAD_top_cut_${pad_domain}";
 //;     push(@top_pads, $cut_cell_name);
-  PRCUT_V `$cut_cell_name`();
+  IN12LP_GPIO18_13M9S30P_FULLBRK_V `$cut_cell_name`();
 //;   }
 //;   my $pad_type = $io->{pad};
 //;   my $signal_name = $io->{name};
