@@ -402,6 +402,8 @@ AhaGarnetSoC core (
 //;  push (@top_pads, "IOPAD_top_rte_dom3");
 //;  my $cnt = 0;
 //; if ($include_core) {
+  // No phy on Onyx but leaving this as placeholder for Kavya's block
+  /*
   dragonphy_top iphy (
 //; foreach my $io (@{$dragonphy_ios}) {
 //;   if($io->{is_power} == 0) {
@@ -411,6 +413,9 @@ AhaGarnetSoC core (
 //; }
     .clk_cgra(ALT_MASTER_CLK)
   );
+  */
+  // No ALT_MASTER_CLK for Onyx but tying to 0 for now
+  assign ALT_MASTER_CLK = 1'b0;
 //; }
 
 
