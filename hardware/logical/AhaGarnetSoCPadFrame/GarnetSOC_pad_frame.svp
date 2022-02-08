@@ -425,12 +425,6 @@ endmodule
 //; print $fh "(globals\n	version = 3\n	io_order = default\n)\n(iopad\n";
 //; print $fh "	(top\n";
 //; # Iterate over each side's pads
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
-//; #
-//; # TERRIBLE HACK ALERT (steveri 11/2019)
-//; # Looks like manual offsets only occur on the top edge of the chip
-//; # So only using printpad in top_pads :(
 //; sub printpad {
 //;   my $fh = shift; my $pad=shift;
 //;   if (exists $pad_offset{$pad}) {
@@ -440,103 +434,30 @@ endmodule
 //;   }
 //; }
 //; foreach my $pad (@top_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     # print $fh "		(inst name=\"$pad\")\n";
-//;     printpad($fh, $pad);
-//;
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     printpad($fh, $pad);
-//;
-//;   } else {
-//;     printpad($fh, $pad)
-//;   }
+//;   printpad($fh, $pad)
 //; }
-//; print $fh "		(inst name=\"iopad_top_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"IOPAD_top_RTE_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(bottom\n";
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
 //; foreach my $pad (@bottom_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets_bottom[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
-//;   }
+//;   printpad($fh, $pad)
 //; }
 //; # rte
 //; print $fh "		(inst name=\"IOPAD_bottom_RTE_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(left\n";
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
 //; foreach my $pad (@left_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
-//;   }
+//;   printpad($fh, $pad)
 //; }
 //; # rte
-//; print $fh "		(inst name=\"iopad_left_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\")\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
 //; foreach my $pad (@right_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
-//;   }
+//;   printpad($fh, $pad)
 //; }
 //; # rte
 //; print $fh "		(inst name=\"IOPAD_right_RTE_DIG\")\n";
