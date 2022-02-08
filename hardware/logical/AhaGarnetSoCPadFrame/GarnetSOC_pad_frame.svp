@@ -54,45 +54,101 @@
 //; my $print_offset = 1;
 //; my $include_core = parameter(Name=>'include_core', val=>1, doc=>'include soc core or pads only');
 
-//; #my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
-//; # [
-//; #   {name => 'ext_tx_outp'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//; #   {name => 'ext_tx_outn'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//; #   {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//; #   {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//; #   {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
-//; #   {name => 'ext_clkp'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
-//; #   {name => 'CVDD'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//; #   {name => 'CVSS'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//; #   {name => 'AVDD'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//; #   {name => 'AVSS'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//; #   {name => 'ext_Vcm'                , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'input' },
-//; #   {name => 'ext_Vcal'               , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'inout' },
-//; #   {name => 'ext_mdll_clk_refp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//; #   {name => 'ext_mdll_clk_refn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//; #   {name => 'ext_mdll_clk_monn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//; #   {name => 'ext_mdll_clk_monp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//; #   {name => 'ext_rx_inp'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//; #   {name => 'ext_rx_inn'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//; #   {name => 'ext_rx_inp_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//; #   {name => 'ext_rx_inn_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//; #   {name => 'clk_out_p'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//; #   {name => 'clk_out_n'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//; #   {name => 'clk_trig_p'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//; #   {name => 'clk_trig_n'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//; #   {name => 'jtag_intf_i_phy_tck'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; #   {name => 'jtag_intf_i_phy_tdi'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; #   {name => 'jtag_intf_i_phy_tdo'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
-//; #   {name => 'jtag_intf_i_phy_tms'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; #   {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; #   {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; #   {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; #   {name => 'freq_lvl_cross'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
-//; #   {name => 'ramp_clock'             , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//; # ]);
+//; my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
+//;  [
+//;    {name => 'ext_tx_outp'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'ext_tx_outn'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
+//;    {name => 'ext_clkp'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
+//;    {name => 'CVDD'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'CVSS'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'AVDD'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'AVSS'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
+//;    {name => 'ext_Vcm'                , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'input' },
+//;    {name => 'ext_Vcal'               , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'inout' },
+//;    {name => 'ext_mdll_clk_refp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_refn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_monn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_mdll_clk_monp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
+//;    {name => 'ext_rx_inp'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'ext_rx_inn'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'ext_rx_inp_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'ext_rx_inn_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
+//;    {name => 'clk_out_p'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'clk_out_n'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'clk_trig_p'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'clk_trig_n'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
+//;    {name => 'jtag_intf_i_phy_tck'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'jtag_intf_i_phy_tdi'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'jtag_intf_i_phy_tdo'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
+//;    {name => 'jtag_intf_i_phy_tms'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;    {name => 'freq_lvl_cross'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
+//;    {name => 'ramp_clock'             , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
+//;  ]);
+
+//; ########################################################################
+//; # MANUALLY-ADJUSTED PAD OFFSETS
+//; #
+//; # 01/2020 steveri: had to add new offset 4666 for top_rte_dom3
+//; # b/c it was overlapping with top_VDD_dom3 at 4500
+//; # see https://github.com/StanfordAHA/garnet/issues/399
+//; #
+//; # 10/2020 steveri: freezing location of top row pads to same
+//; # as 05/2020 tapeout attempt, so PHY people can reuse same RDL
+//; #
+//; # 10/2020 steveri: changed offset of 'IOPAD_top_VDDPST_dom3'
+//; # (4200=>3888) for better layout. I don't think the PHY guys
+//; # use this pad so change should be okay maybe
+//; #
+//; my %pad_offset;
+//; #
+//; # same as 05/2020 tapeout
+//; $pad_offset{'ANAIOPAD_ext_clk_async_n'    } = 1360.000;
+//; $pad_offset{'ANAIOPAD_ext_clk_async_p'    } = 1408.901;
+//; $pad_offset{'IOPAD_top_cut_1'             } = 1457.802;
+//; $pad_offset{'ANAIOPAD_ext_clkn'           } = 1532.287;
+//; $pad_offset{'ANAIOPAD_ext_clkp'           } = 1581.188;
+//; $pad_offset{'ANAIOPAD_CVDD'               } = 1630.088;
+//; $pad_offset{'ANAIOPAD_CVSS'               } = 1730.444;
+//; $pad_offset{'IOPAD_top_cut_2'             } = 1830.801;
+//; $pad_offset{'ANAIOPAD_AVDD'               } = 1905.286;
+//; $pad_offset{'ANAIOPAD_AVSS'               } = 2005.643;
+//; $pad_offset{'ANAIOPAD_ext_Vcm'            } = 2106.000;
+//; $pad_offset{'ANAIOPAD_ext_Vcal'           } = 2301.488;
+//; $pad_offset{'IOPAD_top_cut_3'             } = 2496.976;
+//; $pad_offset{'ANAIOPAD_ext_clk_test0_n'    } = 2718.048;
+//; $pad_offset{'ANAIOPAD_ext_clk_test0_p'    } = 2913.536;
+//; $pad_offset{'ANAIOPAD_ext_clk_test1_p'    } = 3109.024;
+//; $pad_offset{'ANAIOPAD_ext_clk_test1_n'    } = 3304.512;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tck'   } = 3500.000;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tdi'   } = 3533.334;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tdo'   } = 3566.667;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_tms'   } = 3600.000;
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_trst_n'} = 3633.333;   
+//; $pad_offset{'IOPAD_ext_rstb'              } = 3666.666;
+//; $pad_offset{'IOPAD_ext_dump_start'        } = 3700.000;
+//; $pad_offset{'IOPAD_top_VDD_dom3'          } = 4500.000;
+//; $pad_offset{'IOPAD_top_rte_dom3'          } = 4666.000;
+//; #
+//; # CHANGED for 12/2020 tapeout
+//; $pad_offset{'IOPAD_top_VDDPST_dom3'       } = 3888.000; # (was 4200)
+//; #
+//; # NEW for 12/2020 tapeout
+//; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;   
+//; $pad_offset{'IOPAD_ramp_clock'            } = 4160.000;
 
 module `mname` (
 //; my $mcnt = 0;
+//; foreach my $io (@{$dragonphy_ios}) {
+//;   if($io->{type} eq "digital") {
+    `$io->{direction}` pad_`$io->{name}`,
+//;   }
+//; }
 //; foreach my $io (@{$io_list}) {
 //;   ++$mcnt;
 //;   if ($mcnt < $num_ios) {
@@ -129,10 +185,16 @@ module `mname` (
 
   wire ALT_MASTER_CLK;
 
-  // Cells to take retention enable from core and distribute to pad
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
+  // RTE stuff
+  PCBRTE_V    IOPAD_bottom_RTE_DIG(.IRTE(1'b0), .RTE(rte));
+  PCBRTE_H    IOPAD_left_RTE_DIG(.IRTE(1'b0), .RTE(rte));
+  PCBRTE_H    IOPAD_right_RTE_DIG(.IRTE(1'b0), .RTE(rte));
+  // POC stuff
+  PVDD2POCM_V IOPAD_bottom_POC_DIG(.RTE(rte));
+  //PVDD2POCM_H IOPAD_left_POC_DIG(.RTE(rte));
+  //PVDD2POCM_H IOPAD_right_POC_DIG(.RTE(rte));
+
+
 
 //; my @top_pads = ();
 //; my @bottom_pads = ();
@@ -168,29 +230,32 @@ module `mname` (
 //;     elsif($side eq "right") {
 //;       push @right_pads, $pad_name;
 //;     }
-  IN12LP_GPIO18_13M9S30P_IO_`$orient` `$pad_name` (
+  PRWDWUWSWCDGH_`$orient` `$pad_name` (
     .PAD(pad_`$io->{name}`[`$i`]),
 //;     if ($io->{direction} eq "inout") {
-    .Y(`$io->{inport}`),
-    .DATA(`$io->{outport}`),
-    .RXEN(~`$io->{io_ctrl}`),
-    .TRIEN(~`$io->{io_ctrl}`),
+    .C(`$io->{inport}`),
+    .I(`$io->{outport}`),
+    .IE(~`$io->{io_ctrl}`),
+    .OEN(~`$io->{io_ctrl}`),
 //;     }
 //;     elsif ($io->{direction} eq "input") {
-    .Y(`$io->{name}`_int[`$i`]),
-    .DATA(1'b0),
-    .RXEN(1'b1),
-    .TRIEN(1'b1),
+    .C(`$io->{name}`_int[`$i`]),
+    .I(1'b0),
+    .IE(1'b1),
+    .OEN(1'b1),
 //;     } else {
     .I(`$io->{name}`_int[`$i`]),
-    .RXEN(1'b0),
-    .TRIEN(1'b0),
+    .IE(1'b0),
+    .OEN(1'b0),
 //;     }
-    .DRV({out_pad_ds1, out_pad_ds0}),
-    .PUEN(1'b0),
-    .PDEN(1'b0),
-    .RETC(1'b0),
-    .NDIN(1'b0)
+    .DS0(out_pad_ds0),
+    .DS1(out_pad_ds1),
+    .DS2(out_pad_ds2),
+    .PU(1'b0),
+    .PD(1'b0),
+    .ST(1'b0),
+    .SL(1'b0),
+    .RTE(1'b0)
   );
 //;   }
 //; }
@@ -238,7 +303,9 @@ AhaGarnetSoC core (
 );
 //; }
 
-//; my @sides = ('top', 'bottom', 'left', 'right');
+//; #my @sides = ('top', 'bottom', 'left', 'right');
+//; # Don't need digital VDD/VSS on top side
+//; my @sides = ('bottom', 'left', 'right');
 //; foreach my $side (@sides) {
 //;   my $orient = "";
 //;   if(($side eq "top") or ($side eq "bottom")) {
