@@ -109,6 +109,12 @@
 //; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;   
 //; $pad_offset{'IOPAD_ramp_clock'            } = 4160.000;
 
+//; my %orientations;
+//; $orientations{'top'} = 'R180';
+//; $orientations{'bottom'} = 'R0';
+//; $orientations{'left'} = 'R0';
+//; $orientations{'right'} = 'R180';
+
 module `mname` (
 //; my $mcnt = 0;
 //; foreach my $io (@{$dragonphy_ios}) {
@@ -425,41 +431,41 @@ endmodule
 //; print $fh "	(top\n";
 //; # Iterate over each side's pads
 //; sub printpad {
-//;   my $fh = shift; my $pad=shift;
+//;   my $fh = shift; my $pad=shift; my $orientation=shift;
 //;   if (exists $pad_offset{$pad}) {
-//;     print $fh "		(inst name=\"$pad\" offset=$pad_offset{$pad})\n";
+//;     print $fh "		(inst name=\"$pad\" offset=$pad_offset{$pad} orientation=$orientation)\n";
 //;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
+//;     print $fh "		(inst name=\"$pad\" orientation=$orientation)\n";
 //;   }
 //; }
 //; foreach my $pad (@top_pads) {
-//;   printpad($fh, $pad)
+//;   printpad($fh, $pad, $orientations{'top'})
 //; }
-//; print $fh "		(inst name=\"IOPAD_top_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"IOPAD_top_RTE_DIG\" orientation=$orientations{'top'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(bottom\n";
 //; foreach my $pad (@bottom_pads) {
-//;   printpad($fh, $pad)
+//;   printpad($fh, $pad, $orientations{'bottom'})
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_bottom_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"IOPAD_bottom_RTE_DIG\" orientation=$orientations{'bottom'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(left\n";
 //; foreach my $pad (@left_pads) {
-//;   printpad($fh, $pad)
+//;   printpad($fh, $pad, $orientations{'left'})
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\" orientation=$orientations{'left'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
 //; foreach my $pad (@right_pads) {
-//;   printpad($fh, $pad)
+//;   printpad($fh, $pad, $orientations{'right'})
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_right_RTE_DIG\")\n";
+//; print $fh "		(inst name=\"IOPAD_right_RTE_DIG\" orientation=$orientations{'right'})\n";
 //; print $fh "	)\n";
 
 //; #Now handle corner cells, which will be added in PD flow
