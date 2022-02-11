@@ -44,6 +44,7 @@
 //; my $num_vdd_per_side = 2;
 //; my $num_vddpst_per_side = 6;
 //; my @vddpst_offsets = (1138, 2014, 2184, 2706, 2879, 3745);
+//; my $pwrdet_max_fanout = 15;
 //; #
 //; # 01/2020 steveri: had to shift bottom-left VDD pad
 //; # 100u closer to corner, to accommodate ICOVL alignment cells,
@@ -142,7 +143,6 @@ module `mname` (
   wire [`$io->{width}-1`:0] `$io->{name}`_int;
 //;   }
 //; }
-  wire rte;
   wire [2:0] out_pad_ds_grp0;
   wire [2:0] out_pad_ds_grp1;
   wire [2:0] out_pad_ds_grp2;
@@ -158,23 +158,18 @@ module `mname` (
 
   wire ALT_MASTER_CLK;
 
-  // Pad cells to drive retention enable
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_top_RTE_DIG (.RETCIN(1'b0), .RETCOUT(rte));
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_left_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-  IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_right_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
+//; my %pads = ( top => [],
+//;              bottom => [],
+//;              left => [],
+//;              right => [] );
+  
+// Pad cells to drive retention enable
+wire rte;
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_top_RTE_DIG (.RETCIN(1'b0), .RETCOUT(rte));
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_left_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_right_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
 
-
-
-//; my @top_pads = ();
-//; my @bottom_pads = ();
-//; my @left_pads = ();
-//; my @right_pads = ();
-
-//; my %pads = ( top => @top_pads,
-//;              bottom => @bottom_pads,
-//;              left => @left_pads,
-//;              right => @right_pads);
 
 
 // Now instantiate all pads
@@ -188,18 +183,7 @@ module `mname` (
 //;   }
 //;   for (my $i = 0; $i < $io->{width}; $i++) {
 //;     my $pad_name = "IOPAD_${side}_$io->{name}_${i}";
-//;     if($side eq "top") {
-//;       push @top_pads, $pad_name;
-//;     }
-//;     elsif($side eq "bottom") {
-//;        push @bottom_pads, $pad_name;
-//;     }
-//;     elsif($side eq "left") {
-//;       push @left_pads, $pad_name;
-//;     }
-//;     elsif($side eq "right") {
-//;       push @right_pads, $pad_name;
-//;     }
+//;     push @{$pads{$side}}, $pad_name;
   IN12LP_GPIO18_13M9S30P_IO_`$orient` `$pad_name` (
     .PAD(pad_`$io->{name}`[`$i`]),
 //;     if ($io->{direction} eq "inout") {
@@ -228,10 +212,10 @@ module `mname` (
 
 //; # Multiply by 2 because 1 VDD and 1 VSS pad for each
 //; my $num_power_pads_per_side = 2 * ($num_vddpst_per_side + $num_vdd_per_side);
-//; my $num_pads_left = scalar(@left_pads) + $num_power_pads_per_side;
-//; my $num_pads_right = scalar(@right_pads) +  $num_power_pads_per_side;
-//; my $num_pads_top = scalar(@top_pads) + $num_power_pads_per_side;
-//; my $num_pads_bottom = scalar(@bottom_pads) +  $num_power_pads_per_side;
+//; my $num_pads_left = scalar(@{$pads{'left'}}) + $num_power_pads_per_side;
+//; my $num_pads_right = scalar(@{$pads{'right'}}) +  $num_power_pads_per_side;
+//; my $num_pads_top = scalar(@{$pads{'top'}}) + $num_power_pads_per_side;
+//; my $num_pads_bottom = scalar(@{$pads{'bottom'}}) +  $num_power_pads_per_side;
 //; if ($include_core) {
 AhaGarnetSoC core (
   .OUT_PAD_DS_GRP0(out_pad_ds_grp0),
@@ -290,29 +274,29 @@ AhaGarnetSoC core (
 //;       my $num_pads = $num_pads_top;
 //;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @top_pads, $index, 0, $vdd_pad_name;
-//;       splice @top_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'top'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'top'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "bottom") {
 //;       my $num_pads = $num_pads_bottom;
 //;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @bottom_pads, $index, 0, $vdd_pad_name;
-//;       splice @bottom_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'bottom'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'bottom'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "left") {
 //;       my $num_pads = $num_pads_left;
 //;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @left_pads, $index, 0, $vdd_pad_name;
-//;       splice @left_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'left'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'left'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "right") {
 //;       my $num_pads = $num_pads_right;
 //;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @right_pads, $index, 0, $vdd_pad_name;
-//;       splice @right_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'right'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'right'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     $pad_offset{$vdd_pad_name} = $offset;
 //;   }
@@ -328,32 +312,32 @@ AhaGarnetSoC core (
 //;       $offset = $vdd_offsets[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @top_pads, $index, 0, $vdd_pad_name;
-//;       splice @top_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'top'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'top'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "bottom") {
 //;       my $num_pads = $num_pads_bottom;
 //;       $offset = $vdd_offsets_bottom[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @bottom_pads, $index, 0, $vdd_pad_name;
-//;       splice @bottom_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'bottom'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'bottom'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "left") {
 //;       my $num_pads = $num_pads_left;
 //;       $offset = $vdd_offsets[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @left_pads, $index, 0, $vdd_pad_name;
-//;       splice @left_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'left'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'left'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "right") {
 //;       my $num_pads = $num_pads_right;
 //;       $offset = $vdd_offsets[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @right_pads, $index, 0, $vdd_pad_name;
-//;       splice @right_pads, $index+1, 0, $vss_pad_name;
+//;       splice @{$pads{'right'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'right'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     $pad_offset{$vdd_pad_name} = $offset;
 //;   }
@@ -368,7 +352,7 @@ AhaGarnetSoC core (
 //;   if($pad_domain != $current_domain) {
 //;     $current_domain = $pad_domain;
 //;     my $cut_cell_name = "IOPAD_top_cut_${pad_domain}";
-//;     push(@top_pads, $cut_cell_name);
+//;     push(@{$pads{'top'}}, $cut_cell_name);
   IN12LP_GPIO18_13M9S30P_FULLBRK_V `$cut_cell_name`();
 //;   }
 //;   my $pad_type = $io->{pad};
@@ -384,7 +368,7 @@ AhaGarnetSoC core (
 //;     $pad_name = "ANAIOPAD_${signal_name}";
 //;   }
 //;   if ($io->{pad} ne "NONE") {
-//;   push(@top_pads, $pad_name);
+//;   push(@{$pads{'top'}}, $pad_name);
   `$pad_type` `$pad_name` (
 //; if($pad_type eq "PDB2ANA_V") {
     .RTE(rte_`$pad_domain`)
@@ -454,14 +438,14 @@ endmodule
 //;     print $fh "		(inst name=\"$pad\" orientation=$orientation)\n";
 //;   }
 //; }
-//; foreach my $pad (@top_pads) {
+//; foreach my $pad (@{$pads{'top'}}) {
 //;   printpad($fh, $pad, $orientations{'top'})
 //; }
 //; print $fh "		(inst name=\"IOPAD_top_RTE_DIG\" orientation=$orientations{'top'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(bottom\n";
-//; foreach my $pad (@bottom_pads) {
+//; foreach my $pad (@{$pads{'bottom'}}) {
 //;   printpad($fh, $pad, $orientations{'bottom'})
 //; }
 //; # rte
@@ -469,7 +453,7 @@ endmodule
 //; print $fh "	)\n";
 
 //; print $fh "	(left\n";
-//; foreach my $pad (@left_pads) {
+//; foreach my $pad (@{$pads{'left'}}) {
 //;   printpad($fh, $pad, $orientations{'left'})
 //; }
 //; # rte
@@ -477,7 +461,7 @@ endmodule
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
-//; foreach my $pad (@right_pads) {
+//; foreach my $pad (@{$pads{'right'}}) {
 //;   printpad($fh, $pad, $orientations{'right'})
 //; }
 //; # rte
