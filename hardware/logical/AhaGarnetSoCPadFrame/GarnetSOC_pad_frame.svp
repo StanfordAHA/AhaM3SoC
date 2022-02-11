@@ -427,6 +427,11 @@ AhaGarnetSoC core (
   assign ALT_MASTER_CLK = 1'b0;
 //; }
 
+  IN12LP_GPIO18_13M9S30P_CORNER corner_ul (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+  IN12LP_GPIO18_13M9S30P_CORNER corner_ur (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+  IN12LP_GPIO18_13M9S30P_CORNER corner_ll (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+  IN12LP_GPIO18_13M9S30P_CORNER corner_lr (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+
 
 endmodule
 
@@ -471,11 +476,6 @@ endmodule
 //; }
 //; # rte
 //; print $fh "	)\n";
-
-IN12LP_GPIO18_13M9S30P_CORNER corner_ul (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
-IN12LP_GPIO18_13M9S30P_CORNER corner_ur (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
-IN12LP_GPIO18_13M9S30P_CORNER corner_ll (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
-IN12LP_GPIO18_13M9S30P_CORNER corner_lr (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
 
 //; #Now handle corner cell placement
 //; print $fh "	(topleft\n";
