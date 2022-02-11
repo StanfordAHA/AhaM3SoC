@@ -163,8 +163,11 @@ module `mname` (
 //;              left => [],
 //;              right => [] );
   
-// pad ring retention enable net
+// pad ring control signals
+// retention enable
 wire rte;
+wire pwrok;
+wire iopwrok;
 
 // Now instantiate all pads
 //; foreach my $io (@{$io_list}) {
@@ -181,7 +184,7 @@ wire rte;
 //;        my $pwrdet_num = int(scalar(@{$pads{$side}}) / $pwrdet_interval);
 //;        my $pwrdet_name = "IOPAD_${side}_PWRDET_${pwrdet_num}";
 
-IN12LP_GPIO18_13M9S30P_PWRDET_TIE_`$orient` `$pwrdet_name` (.RETCIN(1'b0), .RETCOUT(rte));
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_`$orient` `$pwrdet_name` (.RETCIN(1'b0), .RETCOUT(rte), .PWROKOUT(pwrok), .IOPWROKOUT(iopwrok));
 //;        push @{$pads{$side}}, $pwrdet_name;
 //;     }
 
@@ -208,7 +211,9 @@ IN12LP_GPIO18_13M9S30P_PWRDET_TIE_`$orient` `$pwrdet_name` (.RETCIN(1'b0), .RETC
     .DRV(out_pad_ds_grp0[1:0]),
     .PUEN(1'b0),
     .PDEN(1'b0),
-    .RETC(rte)
+    .RETC(rte),
+    .PWROK(pwrok),
+    .IOPWROK(iopwrok)
   );
 //;   }
 //; }
@@ -467,7 +472,12 @@ endmodule
 //; # rte
 //; print $fh "	)\n";
 
-//; #Now handle corner cells, which will be added in PD flow
+IN12LP_GPIO18_13M9S30P_CORNER corner_ul (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+IN12LP_GPIO18_13M9S30P_CORNER corner_ur (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+IN12LP_GPIO18_13M9S30P_CORNER corner_ll (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+IN12LP_GPIO18_13M9S30P_CORNER corner_lr (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+
+//; #Now handle corner cell placement
 //; print $fh "	(topleft\n";
 //; print $fh "		(inst name=\"corner_ul\" orientation=MX)\n";
 //; print $fh "	)\n";
