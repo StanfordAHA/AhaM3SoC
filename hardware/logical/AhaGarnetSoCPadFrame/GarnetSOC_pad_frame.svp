@@ -284,7 +284,8 @@ AhaGarnetSoC core (
 //;     my $vss_pad_name = "IOPAD_${side}_VSSIO_${i}";
 //;     my $offset;
   IN12LP_GPIO18_13M9S30P_VDDIO_`$orient` `$vdd_pad_name` (.RETC(rte));
-  IN12LP_GPIO18_13M9S30P_VSSIO_`$orient` `$vss_pad_name` (.RETC(rte));
+  // VSS_CM means VSSIO and VSSC are shorted together
+  IN12LP_GPIO18_13M9S30P_VSS_CM_`$orient` `$vss_pad_name` (.RETC(rte));
 //;     if($side eq "top") {
 //;       my $num_pads = $num_pads_top;
 //;       $offset = $vddpst_offsets[$i];
@@ -320,7 +321,8 @@ AhaGarnetSoC core (
 //;     my $vss_pad_name = "IOPAD_${side}_VSS_${i}";
 //;     my $offset;
   IN12LP_GPIO18_13M9S30P_VDDC_`$orient` `$vdd_pad_name` (.RETC(rte));
-  IN12LP_GPIO18_13M9S30P_VSSC_`$orient` `$vss_pad_name` (.RETC(rte));
+  // VSS_CM means VSSIO and VSSC are shorted together
+  IN12LP_GPIO18_13M9S30P_VSS_CM_`$orient` `$vss_pad_name` (.RETC(rte));
 //;     if($side eq "top") {
 //;       my $num_pads = $num_pads_top;
 //;       $offset = $vdd_offsets[$i];
