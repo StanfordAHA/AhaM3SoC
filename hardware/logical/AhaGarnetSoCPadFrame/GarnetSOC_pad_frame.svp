@@ -44,7 +44,7 @@
 //; my $num_vdd_per_side = 2;
 //; my $num_vddpst_per_side = 6;
 //; my @vddpst_offsets = (1138, 2014, 2184, 2706, 2879, 3745);
-//; my $pwrdet_max_fanout = 15;
+//; my $pwrdet_interval = 15;
 //; #
 //; # 01/2020 steveri: had to shift bottom-left VDD pad
 //; # 100u closer to corner, to accommodate ICOVL alignment cells,
@@ -163,14 +163,8 @@ module `mname` (
 //;              left => [],
 //;              right => [] );
   
-// Pad cells to drive retention enable
+// pad ring retention enable net
 wire rte;
-IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_top_RTE_DIG (.RETCIN(1'b0), .RETCOUT(rte));
-IN12LP_GPIO18_13M9S30P_PWRDET_TIE_V    IOPAD_bottom_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_left_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_right_RTE_DIG(.RETCIN(1'b0), .RETCOUT(rte));
-
-
 
 // Now instantiate all pads
 //; foreach my $io (@{$io_list}) {
@@ -182,6 +176,15 @@ IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_right_RTE_DIG(.RETCIN(1'b0), .RETCO
 //;     $orient = "H";
 //;   }
 //;   for (my $i = 0; $i < $io->{width}; $i++) {
+//;     # Must obey max fanout rule for PWRDET cell
+//;     if (scalar(@{$pads{$side}}) % $pwrdet_interval == 0) {
+//;        my $pwrdet_num = int(scalar(@{$pads{$side}}) / $pwrdet_interval);
+//;        my $pwrdet_name = "IOPAD_${side}_PWRDET_${pwrdet_num}";
+
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_`$orient` `$pwrdet_name` (.RETCIN(1'b0), .RETCOUT(rte));
+//;        push @{$pads{$side}}, $pwrdet_name;
+//;     }
+
 //;     my $pad_name = "IOPAD_${side}_$io->{name}_${i}";
 //;     push @{$pads{$side}}, $pad_name;
   IN12LP_GPIO18_13M9S30P_IO_`$orient` `$pad_name` (
@@ -205,7 +208,7 @@ IN12LP_GPIO18_13M9S30P_PWRDET_TIE_H    IOPAD_right_RTE_DIG(.RETCIN(1'b0), .RETCO
     .DRV(out_pad_ds_grp0[1:0]),
     .PUEN(1'b0),
     .PDEN(1'b0),
-    .RETC(1'b0)
+    .RETC(rte)
   );
 //;   }
 //; }
@@ -441,7 +444,6 @@ endmodule
 //; foreach my $pad (@{$pads{'top'}}) {
 //;   printpad($fh, $pad, $orientations{'top'})
 //; }
-//; print $fh "		(inst name=\"IOPAD_top_RTE_DIG\" orientation=$orientations{'top'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(bottom\n";
@@ -449,7 +451,6 @@ endmodule
 //;   printpad($fh, $pad, $orientations{'bottom'})
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_bottom_RTE_DIG\" orientation=$orientations{'bottom'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(left\n";
@@ -457,7 +458,6 @@ endmodule
 //;   printpad($fh, $pad, $orientations{'left'})
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\" orientation=$orientations{'left'})\n";
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
@@ -465,7 +465,6 @@ endmodule
 //;   printpad($fh, $pad, $orientations{'right'})
 //; }
 //; # rte
-//; print $fh "		(inst name=\"IOPAD_right_RTE_DIG\" orientation=$orientations{'right'})\n";
 //; print $fh "	)\n";
 
 //; #Now handle corner cells, which will be added in PD flow
