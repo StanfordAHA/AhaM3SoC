@@ -6,6 +6,9 @@
 //
 // Author   : Gedeon Nyengele
 // Date     : Apr 17, 2020
+//
+// ChangeList:
+// - 02/16/2022 : changed DMA engine from ARM PL330 to AHA DMA v1.0
 //------------------------------------------------------------------------------
 module AhaDmaIntegration (
   // Data Interface
@@ -65,119 +68,65 @@ module AhaDmaIntegration (
   output  wire              IRQ_ABORT
 );
 
-  wire [1:0]  int_awlock;
-  wire [1:0]  int_arlock;
+    wire        unused      = PCLKEN;
+    wire        dma_irq;
+    wire [31:0] apb_paddr   = {{20{1'b0}}, PADDR};
 
-  pl330_dma_AhaIntegration u_pl330_dma (
-    // Global Signals
-    .aclk                   (ACLK),
-    .aresetn                (ARESETn),
+    //
+    // Instantiation of AHA DMA
+    //
+    DMA dma_inst (
+        .ACLK               (ACLK),
+        .ARESETn            (ARESETn),
+        .Irq                (dma_irq),
+        .M_AXI_AWID         (AWID),
+        .M_AXI_AWADDR       (AWADDR),
+        .M_AXI_AWLEN        (AWLEN),
+        .M_AXI_AWSIZE       (AWSIZE),
+        .M_AXI_AWBURST      (AWBURST),
+        .M_AXI_AWLOCK       (AWLOCK),
+        .M_AXI_AWCACHE      (AWCACHE),
+        .M_AXI_AWPROT       (AWPROT),
+        .M_AXI_AWVALID      (AWVALID),
+        .M_AXI_AWREADY      (AWREADY),
+        .M_AXI_WDATA        (WDATA),
+        .M_AXI_WSTRB        (WSTRB),
+        .M_AXI_WLAST        (WLAST),
+        .M_AXI_WVALID       (WVALID),
+        .M_AXI_WREADY       (WREADY),
+        .M_AXI_BID          (BID),
+        .M_AXI_BRESP        (BRESP),
+        .M_AXI_BVALID       (BVALID),
+        .M_AXI_BREADY       (BREADY),
+        .M_AXI_ARID         (ARID),
+        .M_AXI_ARADDR       (ARADDR),
+        .M_AXI_ARLEN        (ARLEN),
+        .M_AXI_ARSIZE       (ARSIZE),
+        .M_AXI_ARBURST      (ARBURST),
+        .M_AXI_ARLOCK       (ARLOCK),
+        .M_AXI_ARCACHE      (ARCACHE),
+        .M_AXI_ARPROT       (ARPROT),
+        .M_AXI_ARVALID      (ARVALID),
+        .M_AXI_ARREADY      (ARREADY),
+        .M_AXI_RID          (RID),
+        .M_AXI_RDATA        (RDATA),
+        .M_AXI_RRESP        (RRESP),
+        .M_AXI_RLAST        (RLAST),
+        .M_AXI_RVALID       (RVALID),
+        .M_AXI_RREADY       (RREADY),
+        .RegIntf_PADDR      (apb_paddr),
+        .RegIntf_PSEL       (PSEL),
+        .RegIntf_PENABLE    (PENABLE),
+        .RegIntf_PWRITE     (PWRITE),
+        .RegIntf_PWDATA     (PWDATA),
+        .RegIntf_PREADY     (PREADY),
+        .RegIntf_PRDATA     (PRDATA),
+        .RegIntf_PSLVERR    (PSLVERR)
+    );
 
-    //----------------------------------------
-    // Boot Interface
-    //----------------------------------------
-    .boot_from_pc           (1'b0),
-    .boot_addr              ({32{1'b0}}),
-    .boot_manager_ns        (1'b0),
-    .boot_irq_ns            (2'b11),
-    .boot_periph_ns         (1'b1),
-
-    //----------------------------------------
-    // Periph Request Interfaces
-    //----------------------------------------
-    // Peripheral Interface [0]
-    .drvalid_0              (1'b0),
-    .drtype_0               (2'b00),
-    .drready_0              (/*unused*/),
-    .drlast_0               (1'b0),
-    .davalid_0              (/*unused*/),
-    .datype_0               (/*unused*/),
-    .daready_0              (1'b1),
-
-    //----------------------------------------
-    // Interrupt Outputs
-    //----------------------------------------
-    .irq                    (IRQ),
-    .irq_abort              (IRQ_ABORT),
-
-    //----------------------------------------
-    // AXI Interface
-    //----------------------------------------
-    // Write Address Channel
-    .awid                   (AWID),
-    .awaddr                 (AWADDR),
-    .awlen                  (AWLEN[3:0]),
-    .awsize                 (AWSIZE),
-    .awburst                (AWBURST),
-    .awlock                 (int_awlock),
-    .awcache                (AWCACHE),
-    .awprot                 (AWPROT),
-    .awvalid                (AWVALID),
-    .awready                (AWREADY),
-
-    // Write Data Channel
-    .wid                    (/*unused*/),
-    .wdata                  (WDATA),
-    .wstrb                  (WSTRB),
-    .wlast                  (WLAST),
-    .wvalid                 (WVALID),
-    .wready                 (WREADY),
-
-    // Write Response Channel
-    .bid                    (BID),
-    .bresp                  (BRESP),
-    .bvalid                 (BVALID),
-    .bready                 (BREADY),
-
-    // Read Address Channel
-    .arid                   (ARID),
-    .araddr                 (ARADDR),
-    .arlen                  (ARLEN[3:0]),
-    .arsize                 (ARSIZE),
-    .arburst                (ARBURST),
-    .arlock                 (int_arlock),
-    .arcache                (ARCACHE),
-    .arprot                 (ARPROT),
-    .arvalid                (ARVALID),
-    .arready                (ARREADY),
-
-    // Read Data Channel
-    .rid                    (RID),
-    .rdata                  (RDATA),
-    .rresp                  (RRESP),
-    .rlast                  (RLAST),
-    .rvalid                 (RVALID),
-    .rready                 (RREADY),
-
-    //----------------------------------------
-    // Non-Secure APB Interface
-    //----------------------------------------
-    .prdata                 (/*unused*/),
-    .pclken                 (PCLKEN),
-    .paddr                  ({32{1'b0}}),
-    .psel                   (1'b0),
-    .penable                (1'b0),
-    .pwrite                 (1'b0),
-    .pwdata                 ({32{1'b0}}),
-    .pready                 (/*unused*/),
-
-    //----------------------------------------
-    // Secure APB Interface
-    //----------------------------------------
-    .sprdata                (PRDATA),
-    .spaddr                 ({{20{1'b0}}, PADDR}),
-    .spsel                  (PSEL),
-    .spenable               (PENABLE),
-    .spwrite                (PWRITE),
-    .spwdata                (PWDATA),
-    .spready                (PREADY)
-  );
-
-  assign PREADY     = 1'b1;
-  assign PSLVERR    = 1'b0;
-  assign AWLEN[7:4] = 4'h0;
-  assign ARLEN[7:4] = 4'h0;
-
-  assign AWLOCK = int_awlock[0];
-  assign ARLOCK = int_arlock[0];
+    //
+    // IRQ Output Assignments
+    //
+    assign IRQ          = {1'b0, dma_irq};
+    assign IRQ_ABORT    = 1'b0;
 endmodule
