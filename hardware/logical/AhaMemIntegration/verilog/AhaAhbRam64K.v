@@ -66,17 +66,27 @@ module AhaAhbRam64K (
   wire [63:0]   bank0_bwe_n;
   wire          bank0_ce_n;
   wire          bank0_we_n;
-
-  TS1N16FFCLLSBLVTC2048X64M8SW bank0(
+  IN12LP_S1DB_W02048B064M16S2_HB bank0(
     .CLK    (HCLK),
-    .CEB    (bank0_ce_n),
-    .WEB    (bank0_we_n),
+    .CEN    (bank0_ce_n),
+    .RDWEN  (bank0_we_n),
     .A      (sram_addr[11:1]),
-    .BWEB   (bank0_bwe_n),
+    .BW     (bank0_bwe_n),
     .D      (line_d),
-    .RTSEL  (2'b01),
-    .WTSEL  (2'b00),
-    .Q      (bank0_q)
+    .Q      (bank0_q),
+    .MA_SAWL0(1'b0),
+    .MA_SAWL1(1'b0),
+    .MA_STABAS0(1'b0),
+    .MA_STABAS1(1'b0),
+    .MA_VD0(1'b0),
+    .MA_VD1(1'b0),
+    .MA_WL0(1'b0),
+    .MA_WL1(1'b0),
+    .MA_WRAS0(1'b0),
+    .MA_WRAS1(1'b0),
+    .MA_WRT(1'b0),
+    .T_LOGIC(1'b0),
+    .T_Q_RST(1'b0)
   );
 
   wire [63:0]   bank1_q;
@@ -84,16 +94,27 @@ module AhaAhbRam64K (
   wire          bank1_ce_n;
   wire          bank1_we_n;
 
-  TS1N16FFCLLSBLVTC2048X64M8SW bank1(
+  IN12LP_S1DB_W02048B064M16S2_HB bank1(
     .CLK    (HCLK),
-    .CEB    (bank1_ce_n),
-    .WEB    (bank1_we_n),
+    .CEN    (bank1_ce_n),
+    .RDWEN  (bank1_we_n),
     .A      (sram_addr[11:1]),
-    .BWEB   (bank1_bwe_n),
+    .BW     (bank1_bwe_n),
     .D      (line_d),
-    .RTSEL  (2'b01),
-    .WTSEL  (2'b00),
-    .Q      (bank1_q)
+    .Q      (bank1_q),
+    .MA_SAWL0(1'b0),
+    .MA_SAWL1(1'b0),
+    .MA_STABAS0(1'b0),
+    .MA_STABAS1(1'b0),
+    .MA_VD0(1'b0),
+    .MA_VD1(1'b0),
+    .MA_WL0(1'b0),
+    .MA_WL1(1'b0),
+    .MA_WRAS0(1'b0),
+    .MA_WRAS1(1'b0),
+    .MA_WRT(1'b0),
+    .T_LOGIC(1'b0),
+    .T_Q_RST(1'b0)
   );
 
   wire [63:0]   bank2_q;
@@ -101,16 +122,27 @@ module AhaAhbRam64K (
   wire          bank2_ce_n;
   wire          bank2_we_n;
 
-  TS1N16FFCLLSBLVTC2048X64M8SW bank2(
+  IN12LP_S1DB_W02048B064M16S2_HB bank2(
     .CLK    (HCLK),
-    .CEB    (bank2_ce_n),
-    .WEB    (bank2_we_n),
+    .CEN    (bank2_ce_n),
+    .RDWEN  (bank2_we_n),
     .A      (sram_addr[11:1]),
-    .BWEB   (bank2_bwe_n),
+    .BW     (bank2_bwe_n),
     .D      (line_d),
-    .RTSEL  (2'b01),
-    .WTSEL  (2'b00),
-    .Q      (bank2_q)
+    .Q      (bank2_q),
+    .MA_SAWL0(1'b0),
+    .MA_SAWL1(1'b0),
+    .MA_STABAS0(1'b0),
+    .MA_STABAS1(1'b0),
+    .MA_VD0(1'b0),
+    .MA_VD1(1'b0),
+    .MA_WL0(1'b0),
+    .MA_WL1(1'b0),
+    .MA_WRAS0(1'b0),
+    .MA_WRAS1(1'b0),
+    .MA_WRT(1'b0),
+    .T_LOGIC(1'b0),
+    .T_Q_RST(1'b0)
   );
 
   wire [63:0]   bank3_q;
@@ -118,16 +150,27 @@ module AhaAhbRam64K (
   wire          bank3_ce_n;
   wire          bank3_we_n;
 
-  TS1N16FFCLLSBLVTC2048X64M8SW bank3(
+  IN12LP_S1DB_W02048B064M16S2_HB bank3(
     .CLK    (HCLK),
-    .CEB    (bank3_ce_n),
-    .WEB    (bank3_we_n),
+    .CEN    (bank3_ce_n),
+    .RDWEN  (bank3_we_n),
     .A      (sram_addr[11:1]),
-    .BWEB   (bank3_bwe_n),
+    .BW     (bank3_bwe_n),
     .D      (line_d),
-    .RTSEL  (2'b01),
-    .WTSEL  (2'b00),
-    .Q      (bank3_q)
+    .Q      (bank3_q),
+    .MA_SAWL0(1'b0),
+    .MA_SAWL1(1'b0),
+    .MA_STABAS0(1'b0),
+    .MA_STABAS1(1'b0),
+    .MA_VD0(1'b0),
+    .MA_VD1(1'b0),
+    .MA_WL0(1'b0),
+    .MA_WL1(1'b0),
+    .MA_WRAS0(1'b0),
+    .MA_WRAS1(1'b0),
+    .MA_WRT(1'b0),
+    .T_LOGIC(1'b0),
+    .T_Q_RST(1'b0)
   );
 
   // Chip enables

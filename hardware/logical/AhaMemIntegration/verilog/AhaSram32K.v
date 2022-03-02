@@ -16,10 +16,6 @@ module AhaSram32K (
   output  wire [63:0]   Q
 );
 
-  // Power-Related
-  localparam  RTSEL = 2'b01;
-  localparam  WTSEL = 2'b00;
-
   // Select Wires
   wire        ce_n_0 = CEn | A[11];
   wire        ce_n_1 = CEn | ~A[11];
@@ -41,28 +37,50 @@ module AhaSram32K (
 
   wire we_n = (& WEn);
 
-  TS1N16FFCLLSBLVTC2048X64M8SW u_sram_2048x64_0 (
+  IN12LP_S1DB_W02048B064M16S2_HB u_sram_2048x64_0 (
     .CLK    (CLK),
-    .CEB    (ce_n_0),
-    .WEB    (we_n),
-    .BWEB   (bwe_n),
+    .CEN    (ce_n_0),
+    .RDWEN  (we_n),
+    .BW     (bwe_n),
     .A      (A[10:0]),
     .D      (D),
     .Q      (q0),
-    .RTSEL  (RTSEL),
-    .WTSEL  (WTSEL)
+    .MA_SAWL0(1'b0),
+    .MA_SAWL1(1'b0),
+    .MA_STABAS0(1'b0),
+    .MA_STABAS1(1'b0),
+    .MA_VD0(1'b0),
+    .MA_VD1(1'b0),
+    .MA_WL0(1'b0),
+    .MA_WL1(1'b0),
+    .MA_WRAS0(1'b0),
+    .MA_WRAS1(1'b0),
+    .MA_WRT(1'b0),
+    .T_LOGIC(1'b0),
+    .T_Q_RST(1'b0)
   );
 
-  TS1N16FFCLLSBLVTC2048X64M8SW u_sram_2048x64_1 (
+  IN12LP_S1DB_W02048B064M16S2_HB u_sram_2048x64_1 (
     .CLK    (CLK),
-    .CEB    (ce_n_1),
-    .WEB    (we_n),
-    .BWEB   (bwe_n),
+    .CEN    (ce_n_1),
+    .RDWEN  (we_n),
+    .BW     (bwe_n),
     .A      (A[10:0]),
     .D      (D),
     .Q      (q1),
-    .RTSEL  (RTSEL),
-    .WTSEL  (WTSEL)
+    .MA_SAWL0(1'b0),
+    .MA_SAWL1(1'b0),
+    .MA_STABAS0(1'b0),
+    .MA_STABAS1(1'b0),
+    .MA_VD0(1'b0),
+    .MA_VD1(1'b0),
+    .MA_WL0(1'b0),
+    .MA_WL1(1'b0),
+    .MA_WRAS0(1'b0),
+    .MA_WRAS1(1'b0),
+    .MA_WRT(1'b0),
+    .T_LOGIC(1'b0),
+    .T_Q_RST(1'b0)
   );
 
   // Read Selection
