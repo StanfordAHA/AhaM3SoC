@@ -38,8 +38,6 @@ module AhaAxiToSifWrite #(
   output  wire [63:0]           SIF_DATA
 );
 
-  wire unsed = (| AWLEN[7:4]);
-
   wire        wr_mem_ce_n;
   wire [7:0]  wr_mem_we_n;
   wire [31:0] wr_mem_addr;
@@ -57,7 +55,7 @@ module AhaAxiToSifWrite #(
     .ARESETn                  (ARESETn),
     .AWID                     (AWID),
     .AWADDR                   (AWADDR),
-    .AWLEN                    (AWLEN[3:0]),
+    .AWLEN                    (AWLEN),
     .AWSIZE                   (AWSIZE),
     .AWBURST                  (AWBURST),
     .AWVALID                  (AWVALID),
