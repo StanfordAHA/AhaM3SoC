@@ -15,7 +15,6 @@ module APBRegFile(
   input         setup_phase_RegIntf_PENABLE,
   input         setup_phase_RegIntf_PWRITE,
   input  [31:0] setup_phase_RegIntf_PWDATA,
-  output        setup_phase_RegIntf_PREADY,
   output [31:0] setup_phase_RegIntf_PRDATA,
   output        setup_phase_RegIntf_PSLVERR
 );
@@ -28,7 +27,6 @@ module APBRegFile(
   reg [31:0] _RAND_5;
   reg [31:0] _RAND_6;
   reg [31:0] _RAND_7;
-  reg [31:0] _RAND_8;
 `endif // RANDOMIZE_REG_INIT
   wire  reset = ~ARESETn; // @[APBRegFile.scala 30:38]
   reg  reg_go_pulse; // @[APBRegFile.scala 39:71]
@@ -38,7 +36,6 @@ module APBRegFile(
   reg [31:0] reg_dst_addr; // @[APBRegFile.scala 43:71]
   reg [31:0] reg_length; // @[APBRegFile.scala 44:71]
   reg [31:0] prdata; // @[APBRegFile.scala 49:71]
-  reg  pready; // @[APBRegFile.scala 50:71]
   reg  pslverr; // @[APBRegFile.scala 51:71]
   wire  setup_phase = setup_phase_RegIntf_PSEL & ~setup_phase_RegIntf_PENABLE; // @[APBRegFile.scala 58:45]
   wire  wr_en = setup_phase & setup_phase_RegIntf_PWRITE; // @[APBRegFile.scala 59:44]
@@ -49,14 +46,13 @@ module APBRegFile(
   wire [30:0] _GEN_6 = 3'h6 == setup_phase_RegIntf_PADDR[4:2] ? 31'h5a5a5a5a : 31'h0; // @[APBRegFile.scala 133:25 134:38 140:37]
   wire [31:0] _GEN_7 = 3'h5 == setup_phase_RegIntf_PADDR[4:2] ? reg_length : {{1'd0}, _GEN_6}; // @[APBRegFile.scala 134:38 139:37]
   wire [31:0] _GEN_8 = 3'h4 == setup_phase_RegIntf_PADDR[4:2] ? reg_dst_addr : _GEN_7; // @[APBRegFile.scala 134:38 138:37]
-  wire  _T_26 = setup_phase_RegIntf_PADDR[4:2] > 3'h6; // @[APBRegFile.scala 163:39]
+  wire  _T_26 = setup_phase_RegIntf_PADDR[4:2] > 3'h6; // @[APBRegFile.scala 159:39]
   assign GO_Pulse = reg_go_pulse; // @[APBRegFile.scala 81:21]
   assign IRQEnable = reg_ie; // @[APBRegFile.scala 101:21]
   assign IRQClear_Pulse = reg_intclr_pulse; // @[APBRegFile.scala 92:25]
   assign SrcAddr = reg_src_addr; // @[APBRegFile.scala 110:17]
   assign DstAddr = reg_dst_addr; // @[APBRegFile.scala 119:17]
   assign Length = reg_length; // @[APBRegFile.scala 128:16]
-  assign setup_phase_RegIntf_PREADY = pready; // @[APBRegFile.scala 66:29]
   assign setup_phase_RegIntf_PRDATA = prdata; // @[APBRegFile.scala 65:29]
   assign setup_phase_RegIntf_PSLVERR = pslverr; // @[APBRegFile.scala 67:29]
   always @(posedge ACLK or posedge reset) begin
@@ -117,17 +113,10 @@ module APBRegFile(
     end
   end
   always @(posedge ACLK or posedge reset) begin
-    if (reset) begin // @[APBRegFile.scala 60:44]
-      pready <= 1'h0;
-    end else begin
-      pready <= setup_phase & ~setup_phase_RegIntf_PWRITE;
-    end
-  end
-  always @(posedge ACLK or posedge reset) begin
-    if (reset) begin // @[APBRegFile.scala 162:22]
+    if (reset) begin // @[APBRegFile.scala 158:22]
       pslverr <= 1'h0;
     end else begin
-      pslverr <= rd_en & _T_26; // @[APBRegFile.scala 169:21]
+      pslverr <= rd_en & _T_26; // @[APBRegFile.scala 165:21]
     end
   end
 // Register and memory initialization
@@ -181,9 +170,7 @@ initial begin
   _RAND_6 = {1{`RANDOM}};
   prdata = _RAND_6[31:0];
   _RAND_7 = {1{`RANDOM}};
-  pready = _RAND_7[0:0];
-  _RAND_8 = {1{`RANDOM}};
-  pslverr = _RAND_8[0:0];
+  pslverr = _RAND_7[0:0];
 `endif // RANDOMIZE_REG_INIT
   if (reset) begin
     reg_go_pulse = 1'h0;
@@ -205,9 +192,6 @@ initial begin
   end
   if (reset) begin
     prdata = 32'h0;
-  end
-  if (reset) begin
-    pready = 1'h0;
   end
   if (reset) begin
     pslverr = 1'h0;
@@ -445,7 +429,6 @@ module Controller(
   input         reg_file_RegIntf_RegIntf_PENABLE,
   input         reg_file_RegIntf_RegIntf_PWRITE,
   input  [31:0] reg_file_RegIntf_RegIntf_PWDATA,
-  output        reg_file_RegIntf_RegIntf_PREADY,
   output [31:0] reg_file_RegIntf_RegIntf_PRDATA,
   output        reg_file_RegIntf_RegIntf_PSLVERR
 );
@@ -484,7 +467,6 @@ module Controller(
   wire  reg_file_setup_phase_RegIntf_PENABLE; // @[Controller.scala 96:35]
   wire  reg_file_setup_phase_RegIntf_PWRITE; // @[Controller.scala 96:35]
   wire [31:0] reg_file_setup_phase_RegIntf_PWDATA; // @[Controller.scala 96:35]
-  wire  reg_file_setup_phase_RegIntf_PREADY; // @[Controller.scala 96:35]
   wire [31:0] reg_file_setup_phase_RegIntf_PRDATA; // @[Controller.scala 96:35]
   wire  reg_file_setup_phase_RegIntf_PSLVERR; // @[Controller.scala 96:35]
   wire  rd_splitter_ACLK; // @[Controller.scala 126:45]
@@ -578,7 +560,6 @@ module Controller(
     .setup_phase_RegIntf_PENABLE(reg_file_setup_phase_RegIntf_PENABLE),
     .setup_phase_RegIntf_PWRITE(reg_file_setup_phase_RegIntf_PWRITE),
     .setup_phase_RegIntf_PWDATA(reg_file_setup_phase_RegIntf_PWDATA),
-    .setup_phase_RegIntf_PREADY(reg_file_setup_phase_RegIntf_PREADY),
     .setup_phase_RegIntf_PRDATA(reg_file_setup_phase_RegIntf_PRDATA),
     .setup_phase_RegIntf_PSLVERR(reg_file_setup_phase_RegIntf_PSLVERR)
   );
@@ -627,7 +608,6 @@ module Controller(
   assign WrCmdIntf_bits_NumBytes = wr_splitter_XferCmdIntf_bits_NumBytes; // @[Controller.scala 173:37]
   assign WrCmdIntf_bits_Address = wr_splitter_XferCmdIntf_bits_Address; // @[Controller.scala 173:37]
   assign WrStatIntf_ready = wr_splitter_XferStatIntf_ready; // @[Controller.scala 174:37]
-  assign reg_file_RegIntf_RegIntf_PREADY = reg_file_setup_phase_RegIntf_PREADY; // @[Controller.scala 103:25]
   assign reg_file_RegIntf_RegIntf_PRDATA = reg_file_setup_phase_RegIntf_PRDATA; // @[Controller.scala 103:25]
   assign reg_file_RegIntf_RegIntf_PSLVERR = reg_file_setup_phase_RegIntf_PSLVERR; // @[Controller.scala 103:25]
   assign reg_file_ACLK = ACLK; // @[Controller.scala 101:25]
@@ -1971,7 +1951,6 @@ module DMA(
   wire  controller_reg_file_RegIntf_RegIntf_PENABLE; // @[DMA.scala 62:29]
   wire  controller_reg_file_RegIntf_RegIntf_PWRITE; // @[DMA.scala 62:29]
   wire [31:0] controller_reg_file_RegIntf_RegIntf_PWDATA; // @[DMA.scala 62:29]
-  wire  controller_reg_file_RegIntf_RegIntf_PREADY; // @[DMA.scala 62:29]
   wire [31:0] controller_reg_file_RegIntf_RegIntf_PRDATA; // @[DMA.scala 62:29]
   wire  controller_reg_file_RegIntf_RegIntf_PSLVERR; // @[DMA.scala 62:29]
   wire  data_mover_ACLK; // @[DMA.scala 75:29]
@@ -2042,7 +2021,6 @@ module DMA(
     .reg_file_RegIntf_RegIntf_PENABLE(controller_reg_file_RegIntf_RegIntf_PENABLE),
     .reg_file_RegIntf_RegIntf_PWRITE(controller_reg_file_RegIntf_RegIntf_PWRITE),
     .reg_file_RegIntf_RegIntf_PWDATA(controller_reg_file_RegIntf_RegIntf_PWDATA),
-    .reg_file_RegIntf_RegIntf_PREADY(controller_reg_file_RegIntf_RegIntf_PREADY),
     .reg_file_RegIntf_RegIntf_PRDATA(controller_reg_file_RegIntf_RegIntf_PRDATA),
     .reg_file_RegIntf_RegIntf_PSLVERR(controller_reg_file_RegIntf_RegIntf_PSLVERR)
   );
@@ -2118,7 +2096,7 @@ module DMA(
   assign M_AXI_ARPROT = data_mover_M_AXI_ARPROT; // @[DMA.scala 96:29]
   assign M_AXI_ARVALID = data_mover_M_AXI_ARVALID; // @[DMA.scala 96:29]
   assign M_AXI_RREADY = data_mover_M_AXI_RREADY; // @[DMA.scala 96:29]
-  assign RegIntf_PREADY = controller_reg_file_RegIntf_RegIntf_PREADY; // @[DMA.scala 91:29]
+  assign RegIntf_PREADY = 1'h1; // @[DMA.scala 91:29]
   assign RegIntf_PRDATA = controller_reg_file_RegIntf_RegIntf_PRDATA; // @[DMA.scala 91:29]
   assign RegIntf_PSLVERR = controller_reg_file_RegIntf_RegIntf_PSLVERR; // @[DMA.scala 91:29]
   assign controller_ACLK = ACLK; // @[DMA.scala 89:29]

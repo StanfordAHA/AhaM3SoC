@@ -73,7 +73,7 @@ module AhaAxiRam32K (
     .AWVALID              (AWVALID),
     .AWID                 (AWID),
     .AWADDR               (AWADDR),
-    .AWLEN                (AWLEN[3:0]),
+    .AWLEN                (AWLEN),
     .AWSIZE               (AWSIZE),
     .AWBURST              (AWBURST),
 
@@ -89,7 +89,7 @@ module AhaAxiRam32K (
     .ARVALID              (ARVALID),
     .ARID                 (ARID),
     .ARADDR               (ARADDR),
-    .ARLEN                (ARLEN[3:0]),
+    .ARLEN                (ARLEN),
     .ARSIZE               (ARSIZE),
     .ARBURST              (ARBURST),
 
