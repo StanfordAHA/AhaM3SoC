@@ -195,7 +195,7 @@ addrmap AhaPlatformCtrlAddrMap {
 
     field {
       desc  = "CPU Clock Gate";
-    } CPU [1:1] = 1'b1;
+    } CPU [1:1] = 1'b0;
 
     field {
       desc  = "DAP Clock Gate";
@@ -211,7 +211,7 @@ addrmap AhaPlatformCtrlAddrMap {
 
     field {
       desc  = "SRAM Clock Gate";
-    } SRAMx [5:5] = 1'b1;
+    } SRAMx [5:5] = 1'b0;
 
     field {
       desc  = "TLX_FWD Clock Gate";
@@ -223,7 +223,7 @@ addrmap AhaPlatformCtrlAddrMap {
 
     field {
       desc  = "NIC Clock Gate";
-    } NIC [9:9] = 1'b1;
+    } NIC [9:9] = 1'b0;
 
     field {
       desc  = "TIMER0 Clock Gate";
@@ -357,8 +357,8 @@ addrmap AhaPlatformCtrlAddrMap {
   // Peripheral Reset Acknowledgement Register
   //-------------------------------------------------------------------------
   reg {
-    name  = "Peripheral Reset Request Register";
-    desc  = "Request Reset for Peripherals";
+    name  = "Peripheral Reset Acknowledgement Register";
+    desc  = "Acknowledgement for Peripheral Reset";
 
     field {
       desc  = "DMA0 Enable Reset Ack";
