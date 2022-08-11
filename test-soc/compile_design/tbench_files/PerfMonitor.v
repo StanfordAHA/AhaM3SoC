@@ -185,8 +185,8 @@ module PerfMonitor (
                 i = 0;
                 tlx_base = TLX_BASE_BS;
                 while($fscanf(fp, "%h %h", bs_addr, bs_data) == 2) begin
-                    u_tlx_m_dom.mem.sram_mem.uMemModelBhav.mem0[tlx_base+i] = bs_data;
-                    u_tlx_m_dom.mem.sram_mem.uMemModelBhav.mem1[tlx_base+i] = bs_addr;
+                    Tbench.u_tlx_mem.mem.sram_mem.uMemModelBhav.mem0[tlx_base+i] = bs_data;
+                    Tbench.u_tlx_mem.mem.sram_mem.uMemModelBhav.mem1[tlx_base+i] = bs_addr;
                     i = i + 1;
                 end
                 $display("Total %0d lines are initialized using %s", i, file_path);
@@ -204,8 +204,8 @@ module PerfMonitor (
                 tlx_base = TLX_BASE_INPUT;
                 while(i < total_pixels) begin
                     j = tlx_base + (i/4);
-                    u_tlx_m_dom.mem.sram_mem.uMemModelBhav.mem0[j] = {temp[i+1], temp[i]};
-                    u_tlx_m_dom.mem.sram_mem.uMemModelBhav.mem1[j] = {temp[i+3], temp[i+2]};
+                    Tbench.u_tlx_mem.mem.sram_mem.uMemModelBhav.mem0[j] = {temp[i+1], temp[i]};
+                    Tbench.u_tlx_mem.mem.sram_mem.uMemModelBhav.mem1[j] = {temp[i+3], temp[i+2]};
                     i = i + 4;
                 end
                 $display("Total %0d input pixels are initialized using %s", total_pixels, file_path);
@@ -223,8 +223,8 @@ module PerfMonitor (
                 tlx_base = TLX_BASE_GOLD;
                 while(i < total_pixels) begin
                     j = tlx_base + (i/4);
-                    u_tlx_m_dom.mem.sram_mem.uMemModelBhav.mem0[j] = {temp[i+1], temp[i]};
-                    u_tlx_m_dom.mem.sram_mem.uMemModelBhav.mem1[j] = {temp[i+3], temp[i+2]};
+                    Tbench.u_tlx_mem.mem.sram_mem.uMemModelBhav.mem0[j] = {temp[i+1], temp[i]};
+                    Tbench.u_tlx_mem.mem.sram_mem.uMemModelBhav.mem1[j] = {temp[i+3], temp[i+2]};
                     i = i + 4;
                 end
                 $display("Total %0d gold pixels are initialized using %s", total_pixels, file_path);

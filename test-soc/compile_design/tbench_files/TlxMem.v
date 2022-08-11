@@ -1,4 +1,4 @@
-module tlx_mem (
+module TlxMem (
   // Forward Link
   input   wire            tlx_fwd_clk,
   input   wire            tlx_fwd_reset_n,
