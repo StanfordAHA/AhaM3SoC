@@ -20,3 +20,5 @@ commands:
 
 parameters:
   TEST_NAME: undefined
+  SIMULATOR: undefined
+  IMPL_VIEW: undefined

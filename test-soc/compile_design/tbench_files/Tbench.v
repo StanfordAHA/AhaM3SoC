@@ -288,12 +288,12 @@ module Tbench;
 `else
     PerfMonitor u_perf_monitor (
         .CPU_CLK                    (`SOC_TOP.u_aha_soc_partial.u_cpu_integration.CPU_CLK),
-        .PROC_WR_EN                 (`SOC_TOP.u_aha_soc_partial.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.proc_wr_en),
-        .PROC_RD_EN                 (`SOC_TOP.u_aha_soc_partial.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.proc_rd_en),
-        .IF_CFG_WR_EN               (`SOC_TOP.u_aha_soc_partial.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.if_cfg_wr_en),
-        .CGRA_CFG_G2F_CFG_WR_EN     (|`SOC_TOP.u_aha_soc_partial.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.cgra_cfg_g2f_cfg_wr_en),
-        .STREAM_DATA_VALID_G2F      (|`SOC_TOP.u_aha_soc_partial.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_g2f),
-        .STREAM_DATA_VALID_F2G      (|`SOC_TOP.u_aha_soc_partial.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_f2g)
+        .PROC_WR_EN                 (`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.proc_wr_en),
+        .PROC_RD_EN                 (`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.proc_rd_en),
+        .IF_CFG_WR_EN               (`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.if_cfg_wr_en),
+        .CGRA_CFG_G2F_CFG_WR_EN     (|`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.cgra_cfg_g2f_cfg_wr_en),
+        .STREAM_DATA_VALID_G2F      (|`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_g2f),
+        .STREAM_DATA_VALID_F2G      (|`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_f2g)
     );
 `endif
 
@@ -384,8 +384,13 @@ end
     begin
         if ($test$plusargs("VCD_ON"))
         begin
-            $recordfile("dump.trn");
-            $recordvars(Tbench);
+            `ifdef SIM_XCELIUM
+                $recordfile("dump.trn");
+                $recordvars(Tbench);
+            `else
+                $dumpfile("dump.vcd");
+                $dumpvars(0, u_soc.u_aha_soc_partial);
+            `endif
         end
     end
 

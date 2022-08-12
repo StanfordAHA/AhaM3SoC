@@ -2,4 +2,8 @@
 
 rm -rf outputs
 mkdir outputs
-make -f Makefile_${IMPL_VIEW} TESTNAME=${TEST_NAME} ARM_IP_DIR=${ARM_IP_DIR}
+
+TOP_DIR=$(pwd)
+
+make -f Makefiles/${IMPL_VIEW}/Makefile TESTNAME=${TEST_NAME} ARM_IP_DIR=${ARM_IP_DIR} \
+    TOP_DIR=${TOP_DIR}

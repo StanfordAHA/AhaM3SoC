@@ -20,14 +20,14 @@ def construct():
 
     test_names = [
         # CPU Tests
-        #'apb_mux_test',
+        'apb_mux_test',
         'hello_test',
         #'memory_test',
-        #'dma_single_channel',
-        #'default_slaves_test',
+        'dma_single_channel',
+        'default_slaves_test',
         #'interrupts_test',
         #'tlx_test',
-        #'cgra_test',
+        'cgra_test',
         #'master_clock_test',
         #'app_tlx_test',
         #'app_test_stage1',
@@ -63,8 +63,8 @@ def construct():
         'array_width': 32,
         'array_height': 16,
         'clock_period': 1.0,
-        'ARM_IP_DIR': '/home/kkoul/aham3soc_armip',
-        'AHA_IP_DIR': '/sim/kkoul/AhaM3SoC',
+        'ARM_IP_DIR': '/home/nyengele/temp/soc/aham3soc_armip',
+        'AHA_IP_DIR': '/home/nyengele/temp/soc/aham3soc',
         'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
         'GARNET_DIR': '/sim/kkoul/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
@@ -116,7 +116,7 @@ def construct():
         if parameters['IMPL_VIEW'] == 'ASIC':
             step.extend_outputs(['CXDT.bin'])
         else:
-            step.extend_outputs['ROM.hex']
+            step.extend_outputs(['ROM.hex'])
 
     # 'run_test' takes either CXDT.bin or ROM.hex
     for step, test in zip(run_steps, test_names):
@@ -139,7 +139,6 @@ def construct():
     # Graph -- Add nodes
     # -------------------------------------------------------------------------
 
-    g.add_step(garnet_rtl)
     g.add_step(amber_rtl)
     g.add_step(compile_design)
 
@@ -176,10 +175,8 @@ def construct():
         step.update_params({'TEST_NAME': test})
     for step, test in zip(run_steps, test_names):
         step.update_params({'TEST_NAME': test})
-    for step, test in zip(run_gls_steps, test_names):
-        step.update_params({'TEST_NAME': test})
-    for step, test in zip(ptpx_steps, test_names):
-        step.update_params({'TEST_NAME': test})
+        step.update_params({'SIMULATOR': parameters['SIMULATOR']})
+        step.update_params({'IMPL_VIEW': parameters['IMPL_VIEW']})
 
 
     # -------------------------------------------------------------------------

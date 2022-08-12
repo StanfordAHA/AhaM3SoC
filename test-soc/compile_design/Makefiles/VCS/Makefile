@@ -17,24 +17,24 @@ VCS_COMPILE_OPTS			+= +define+TLX_FWD_DATA_LO_WIDTH=$(TLX_FWD_DATA_LO_WIDTH)
 VCS_COMPILE_OPTS			+= +define+TLX_REV_DATA_LO_WIDTH=$(TLX_REV_DATA_LO_WIDTH)
 
 # CGRA Exclusion
-ifeq($(SOC_ONLY),True)
+ifeq ($(SOC_ONLY),True)
 	VCS_COMPILE_OPTS		+= +define+NO_CGRA
 endif
 
 # SIM or ASIC Simulation
-ifeq($(IMPL_VIEW),ASIC)
+ifeq ($(IMPL_VIEW),ASIC)
 	VCS_COMPILE_OPTS		+= +define+IMPL_ASIC
 else
 	VCS_COMPILE_OPTS		+= +define+IMPL_SIM
 endif
 
 # Process-Dependent Files
-ifeq($(IMPL_VIEW),ASIC)
-	ifeq($(PROCESS),TSMC)
+ifeq ($(IMPL_VIEW),ASIC)
+	ifeq ($(PROCESS),TSMC)
 		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/ASIC/TSMC
 		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/ASIC/TSMC
 	endif
-	ifeq($(PROCESS),GF)
+	ifeq ($(PROCESS),GF)
 		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/ASIC/GF
 		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/ASIC/GF
 	endif
@@ -42,6 +42,9 @@ else
 	VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/SIM
 	VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/SIM
 endif
+
+# Garnet RTL
+VCS_COMPILE_OPTS			+= -v $(TOP_DIR)/inputs/design.v
 
 # ==============================================================================
 # Compilation File Lists
@@ -90,5 +93,5 @@ $(TO_GEN_FILE_LISTS): file-list-%.vc:
 
 # Compilation Target
 compile: $(TO_GEN_FILE_LISTS) $(AUTO_GEN_FILE_LISTS) $(TBENCH_FILE)
-	vcs $(VCS_COMPILE_OPTS) $(ALL_FILE_LISTS) $(TBENCH_FILE) | tee vcs_compile.log
+	vcs $(VCS_COMPILE_OPTS) $(ALL_FILE_LISTS) $(TBENCH_FILE) | tee SIM_compile.log
 	cp -rf simv simv.daidir $(TOP_DIR)/outputs

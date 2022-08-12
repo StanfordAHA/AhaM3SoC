@@ -28,7 +28,7 @@ function error_exit
 # Compile Design
 # ------------------------------------------------------------------------------
 
-make -C makefiles/${SIMULATOR}/Makefile compile \
+make -f Makefiles/${SIMULATOR}/Makefile compile \
     TOP_DIR=${CUR_DIR} \
     ARM_IP_DIR=${ARM_IP_DIR} \
     AHA_IP_DIR=${AHA_IP_DIR} \

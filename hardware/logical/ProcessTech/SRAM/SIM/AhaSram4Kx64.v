@@ -25,11 +25,11 @@ module AhaSram4Kx64 #( parameter IMAGE_FILE = "None" )
     // Instantiate SIM SRAM Generator
     //
 
-    AhaSramSimGen sram_sim_gen_inst #(
+    AhaSramSimGen #(
         .ADDR_WIDTH         (12),
         .DATA_WIDTH         (64),
         .IMAGE_FILE         (IMAGE_FILE)
-    ) (
+    ) sram_sim_gen_inst  (
         .CLK                (CLK),
         .RESETn             (RESETn),
         .CS                 (~CEn),

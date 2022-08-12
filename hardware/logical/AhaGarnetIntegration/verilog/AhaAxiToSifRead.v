@@ -109,6 +109,7 @@ module AhaAxiToSifRead (
     assign RVALID           = RVALID_w;
     assign RLAST            = RLAST_w;
     assign RID              = RID_r;
+    assign RDATA            = RDATA_w;
     assign RRESP            = 2'b00;
 
 endmodule
