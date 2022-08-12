@@ -1,21 +1,46 @@
-ARM_IP_PATH				:= $(abspath $(ARM_IP_DIR))
-AHA_IP_PATH				:= $(abspath $(AHA_IP_DIR))
-TOP_DIR 				:= $(abspath $(TOP_DIR))
+ARM_IP_PATH					:= $(abspath $(ARM_IP_DIR))
+AHA_IP_PATH					:= $(abspath $(AHA_IP_DIR))
+TOP_DIR 					:= $(abspath $(TOP_DIR))
 
 # ==============================================================================
 # VCS Options
 # ------------------------------------------------------------------------------
 
 # Linting Options
-LINT_OPTS				= +lint=PCWM,TFIPC
+LINT_OPTS					= +lint=PCWM,TFIPC
 
 # Compile Options
-VCS_COMPILE_OPTS 		:= +v2k -noIncrComp -debug -full64 +libext+.v+.sv
-VCS_COMPILE_OPTS		+= -sverilog -timescale=1ns/1ps
-VCS_COMPILE_OPTS		+= $(LINT_OPTS)
+VCS_COMPILE_OPTS 			:= +v2k -noIncrComp -debug -full64 +libext+.v+.sv
+VCS_COMPILE_OPTS			+= -sverilog -timescale=1ns/1ps
+VCS_COMPILE_OPTS			+= $(LINT_OPTS)
+VCS_COMPILE_OPTS			+= +define+TLX_FWD_DATA_LO_WIDTH=$(TLX_FWD_DATA_LO_WIDTH)
+VCS_COMPILE_OPTS			+= +define+TLX_REV_DATA_LO_WIDTH=$(TLX_REV_DATA_LO_WIDTH)
 
+# CGRA Exclusion
 ifeq($(SOC_ONLY),True)
-	VCS_COMPILE_OPTS	+= +define+NO_CGRA
+	VCS_COMPILE_OPTS		+= +define+NO_CGRA
+endif
+
+# SIM or ASIC Simulation
+ifeq($(IMPL_VIEW),ASIC)
+	VCS_COMPILE_OPTS		+= +define+IMPL_ASIC
+else
+	VCS_COMPILE_OPTS		+= +define+IMPL_SIM
+endif
+
+# Process-Dependent Files
+ifeq($(IMPL_VIEW),ASIC)
+	ifeq($(PROCESS),TSMC)
+		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/ASIC/TSMC
+		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/ASIC/TSMC
+	endif
+	ifeq($(PROCESS),GF)
+		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/ASIC/GF
+		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/ASIC/GF
+	endif
+else
+	VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/SIM
+	VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/SIM
 endif
 
 # ==============================================================================
@@ -23,23 +48,23 @@ endif
 # ------------------------------------------------------------------------------
 
 # Testbench TopLevel File
-TBENCH_FILE 			= tbench_files/Tbench.v
+TBENCH_FILE 				= 	tbench_files/Tbench.v
 
 # File Lists to Generate
-TO_GEN_FILE_LISTS		:= file-list-tbench.vc	\
-							file-list-aha.vc	\
-							file-list-cm3.vc	\
-							file-list-cmsdk.vc 	\
-							file-list-arm_utils.vc \
-							file-list-garnet.vc
+TO_GEN_FILE_LISTS			:= 	file-list-tbench.vc	\
+								file-list-aha.vc	\
+								file-list-cm3.vc	\
+								file-list-cmsdk.vc 	\
+								file-list-arm_utils.vc \
+								file-list-garnet.vc
 
 # Generated File Lists
-AUTO_GEN_FILE_LISTS		:= file-list-nic.vc		\
-							file-list-tlx.vc
+AUTO_GEN_FILE_LISTS			:= 	file-list-nic.vc		\
+								file-list-tlx.vc
 
 # All File Lists
-ALL_FILE_LISTS			:= $(foreach file,$(TO_GEN_FILE_LISTS),-f $(file))
-ALL_FILE_LISTS			+= $(foreach file,$(AUTO_GEN_FILE_LISTS),-f $(file))
+ALL_FILE_LISTS				:= $(foreach file,$(TO_GEN_FILE_LISTS),-f $(file))
+ALL_FILE_LISTS				+= $(foreach file,$(AUTO_GEN_FILE_LISTS),-f $(file))
 
 # ==============================================================================
 # Targets

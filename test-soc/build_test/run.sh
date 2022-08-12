@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-make TESTNAME=${TEST_NAME} ARM_IP_DIR=${ARM_IP_DIR}
+rm -rf outputs
+mkdir outputs
+make -f Makefile_${IMPL_VIEW} TESTNAME=${TEST_NAME} ARM_IP_DIR=${ARM_IP_DIR}

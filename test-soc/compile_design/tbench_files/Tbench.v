@@ -85,7 +85,7 @@ module Tbench;
 // Clock and Reset
 // -----------------------------------------------------------------------------
 
-    localparam  SYS_CLK_PERIOD  = 10;
+    localparam  MAIN_PERIOD  = 10;
 
     reg                     MASTER_CLK;
     reg                     PO_RESET_N;
