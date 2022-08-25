@@ -4,7 +4,7 @@ ROM_IMAGE=`readlink -f inputs/ROM.hex`
 SIMV_BIN=`readlink -f inputs/simv`
 SIMV_DAIDIR=`readlink -f inputs/simv.daidir`
 
-MAX_SIM_TIME="2000000000"
+MAX_SIM_TIME="20000000000"
 MAX_CYCLE="200000000"
 
 ln -s ${ROM_IMAGE} ROM.hex
