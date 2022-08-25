@@ -14,12 +14,14 @@ module AhaCM3Integration (
   input   wire            DAP_RESETn,         // Debug system reset synchronized to DAP_CLK
   input   wire            JTAG_TRSTn,         // JTAG Reset synchronized to JTAG Test Clock
   input   wire            JTAG_PORESETn,      // JTAG Power on reset synchronized to JTAG_TCK
+  input   wire            TPIU_RESETn,        // TPIU Reset
 
   // Clocks
   input   wire            SYS_CLK,            // CPU-domain free running clock
   input   wire            CPU_CLK,            // CPU-domain gated clock
   input   wire            DAP_CLK,            // DAP Clock
   input   wire            JTAG_TCK,           // JTAG test clock
+  input   wire            TPIU_TRACECLKIN,    // TPIU interface clock
 
   // Clock-related Signals
   input   wire            CPU_CLK_CHANGED,    // Indicates whether CPU clok frequency has changed
@@ -550,9 +552,9 @@ module AhaCM3Integration (
       ) u_cm3_tpiu (
         .CLK                  (CPU_CLK),
         .CLKEN                (trace_enabled),
-        .TRACECLKIN           (CPU_CLK),
+        .TRACECLKIN           (TPIU_TRACECLKIN),
         .RESETn               (CPU_PORESETn),
-        .TRESETn              (CPU_PORESETn),
+        .TRESETn              (TPIU_RESETn),
 
         .PWRITE               (ppb_pwrite),
         .PENABLE              (ppb_penable),

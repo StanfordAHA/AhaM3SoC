@@ -7,9 +7,14 @@
 // Author   : Gedeon Nyengele
 // Date     : Apr 17, 2020
 //------------------------------------------------------------------------------
+// Updates  :
+//  - Aug 25, 2022  : Added CPU-only external reset (SYSRESETn)
+//------------------------------------------------------------------------------
+
 module AhaGarnetSoC (
   // Resets
   input   wire            PORESETn,           // Global Power-on Reset
+  input   wire            SYSRESETn,          // CPU-only Reset
   input   wire            DP_JTAG_TRSTn,      // Coresight JTAG Reset
   input   wire            CGRA_JTAG_TRSTn,    // CGRA JTAG Reset
 
@@ -18,6 +23,7 @@ module AhaGarnetSoC (
   input   wire            ALT_MASTER_CLK,     // Alternate master clock
   input   wire            DP_JTAG_TCK,        // Coresight JTAG Clock
   input   wire            CGRA_JTAG_TCK,      // CGRA JTAG Clock
+  input   wire            TPIU_TRACECLKIN,    // TPIU Interface Clock
 
   // SOC JTAG Interface
   input   wire            DP_JTAG_TDI,        // Coresight JTAG Data In Port
@@ -98,6 +104,7 @@ module AhaGarnetSoC (
   wire            uart1_reset_n;
   wire            wdog_reset_n;
   wire            nic_reset_n;
+  wire            tpiu_reset_n;
 
   // Generated Clocks Wires
   wire            sys_clk;
@@ -312,6 +319,7 @@ module AhaGarnetSoC (
     .UART1_RESETn                 (uart1_reset_n),
     .WDOG_RESETn                  (wdog_reset_n),
     .NIC_RESETn                   (nic_reset_n),
+    .TPIU_RESETn                  (tpiu_reset_n),
 
     // Clocks
     .SYS_CLK                      (sys_clk),
@@ -329,6 +337,7 @@ module AhaGarnetSoC (
     .UART1_CLK                    (uart1_clk),
     .WDOG_CLK                     (wdog_clk),
     .NIC_CLK                      (nic_clk),
+    .TPIU_TRACECLKIN              (TPIU_TRACECLKIN),
 
     // Clock Qualifier Signals
     .TIMER0_CLKEN                 (timer0_clk_en),
@@ -709,10 +718,11 @@ module AhaGarnetSoC (
   // Instantiate Platform Controller
   //------------------------------------------------------------------------------
   AhaPlatformController u_aha_platform_ctrl (
-    // Master Clocks and Power-On Reset
+    // Master Clocks and Resets
     .MASTER_CLK                   (MASTER_CLK),
     .ALT_MASTER_CLK               (ALT_MASTER_CLK),
     .PORESETn                     (PORESETn),
+    .SYSRESETn                    (SYSRESETn),
     .DP_JTAG_TRSTn                (DP_JTAG_TRSTn),
     .CGRA_JTAG_TRSTn              (CGRA_JTAG_TRSTn),
 
@@ -722,6 +732,9 @@ module AhaGarnetSoC (
 
     // TLX Reverse Channel Clock
     .TLX_REV_CLK                  (TLX_REV_CLK),
+
+    // TPIU Input Clock
+    .TPIU_TRACECLKIN              (TPIU_TRACECLKIN),
 
     // Generated Clocks
     .SYS_CLK                      (sys_clk),
@@ -759,6 +772,7 @@ module AhaGarnetSoC (
     .UART1_RESETn                 (uart1_reset_n),
     .WDOG_RESETn                  (wdog_reset_n),
     .NIC_RESETn                   (nic_reset_n),
+    .TPIU_RESETn                  (tpiu_reset_n),
 
     // Peripheral Clock Qualifiers
     .TIMER0_CLKEN                 (timer0_clk_en),

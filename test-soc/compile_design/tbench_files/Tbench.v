@@ -89,6 +89,7 @@ module Tbench;
 
     reg                     MASTER_CLK;
     reg                     PO_RESET_N;
+    reg                     SYS_RESET_N;
 
     initial
     begin
@@ -100,8 +101,13 @@ module Tbench;
     initial
     begin
         PO_RESET_N          = 1'b0;
+        SYS_RESET_N         = 1'b0;
+
         repeat(100) @(posedge MASTER_CLK);
         @(negedge MASTER_CLK) PO_RESET_N = 1'b1;
+
+        repeat(100) @(posedge MASTER_CLK);
+        @(negedge MASTER_CLK) SYS_RESET_N = 1'b1;
     end
 
 // =============================================================================
@@ -112,6 +118,7 @@ module Tbench;
     AhaGarnetSoC u_soc (
         // Resets
         .PORESETn                           (PO_RESET_N),
+        .SYSRESETn                          (SYS_RESET_N),
         .DP_JTAG_TRSTn                      (nTRST),
         .CGRA_JTAG_TRSTn                    (1'b1),
 
@@ -135,6 +142,7 @@ module Tbench;
         .TPIU_TRACE_DATA                    (/* unused */),
         .TPIU_TRACE_SWO                     (/* unused */),
         .TPIU_TRACE_CLK                     (/* unused */),
+        .TPIU_TRACECLKIN                    (MASTER_CLK),
 
         // UART
         .UART0_RXD                          (UART0_RXD),
@@ -155,7 +163,7 @@ module Tbench;
         .TLX_FWD_FLOW_TDATA                 (TLX_FWD_FLOW_TDATA),
 
         //TLX REV Channel
-        .TLX_REV_CLK                        (TLX_REV_CLK),
+        .TLX_REV_CLK                        (MASTER_CLK),
 
         .TLX_REV_PAYLOAD_TVALID             (TLX_REV_PAYLOAD_TVALID),
         .TLX_REV_PAYLOAD_TREADY             (TLX_REV_PAYLOAD_TREADY),
@@ -189,6 +197,7 @@ module Tbench;
         .pad_ext_dump_start                 (1'b0),
 
         .pad_PORESETn                       (PO_RESET_N),
+        .pad_SYSRESETn                      (SYS_RESET_N),
         .pad_DP_JTAG_TRSTn                  (nTRST),
         .pad_CGRA_JTAG_TRSTn                (1'b1),
 
@@ -207,6 +216,7 @@ module Tbench;
         .pad_TPIU_TRACE_DATA                (/* unused */),
         .pad_TPIU_TRACE_SWO                 (/* unused */),
         .pad_TPIU_TRACE_CLK                 (/* unused */),
+        .pad_TPIU_TRACECLKIN                (MASTER_CLK),
 
         .pad_UART0_RXD                      (UART0_RXD),
         .pad_UART0_TXD                      (UART0_TXD),

@@ -18,6 +18,7 @@ module AhaResetController (
   input   wire        SYSRESETREQ,
 
   // CPU
+  input   wire        CPU_SYSRESETn,
   output  wire        CPU_PORESETn,
   output  wire        CPU_RESETn,
 
@@ -51,6 +52,10 @@ module AhaResetController (
   output  wire        TLX_PORESETn,
   output  wire        TLX_RESETn,
   output  wire        TLX_REV_RESETn,
+
+  // TPIU
+  input   wire        TPIU_TRACECLKIN,
+  output  wire        TPIU_RESETn,
 
   // CGRA
   input   wire        CGRA_FCLK,
@@ -139,6 +144,7 @@ module AhaResetController (
   wire        uart0_clk_poreset_n;
   wire        uart1_clk_poreset_n;
   wire        wdog_clk_poreset_n;
+  wire        tpiu_clk_poreset_n;
 
   // --------------------------------------------------------------------------
   // Power-On Resets
@@ -156,6 +162,15 @@ module AhaResetController (
     .Dn       (PORESETn),
     .Qn       (tlx_clk_poreset_n)
   );
+
+  // Power-On Reset -- TPIU Clock Domain
+  AhaResetSync u_tpiu_clk_poresetn_sync (
+    .CLK      (TPIU_TRACECLKIN),
+    .Dn       (PORESETn),
+    .Qn       (tpiu_clk_poreset_n)
+  );
+
+  assign TPIU_RESETn = tpiu_clk_poreset_n;
 
   // Power-On Reset -- CGRA Clock Domain
   AhaResetSync u_cgra_clk_poresetn_sync (
@@ -219,7 +234,7 @@ module AhaResetController (
   // CPU
   AhaResetGen #(.NUM_CYCLES(8)) u_cpu_reset_ctrl (
     .CLK          (SYS_FCLK),
-    .PORESETn     (PORESETn),
+    .PORESETn     (PORESETn & CPU_SYSRESETn),
     .REQ          (SYSRESETREQ),
     .ACK          (),
     .Qn           (CPU_RESETn)

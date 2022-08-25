@@ -21,6 +21,7 @@
 //;   {name => 'CGRA_JTAG_TDO',             width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'MASTER_CLK',                width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'PORESETn',                  width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
+//;   {name => 'SYSRESETn',                 width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'LOOP_BACK',                 width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'LOOP_BACK_SELECT',          width => 4,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'TLX_REV_CLK',               width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
@@ -35,6 +36,7 @@
 //;   {name => 'TPIU_TRACE_DATA',           width => 4,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'TPIU_TRACE_SWO',            width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'TPIU_TRACE_CLK',            width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
+//;   {name => 'TPIU_TRACECLKIN',           width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'UART0_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'UART0_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'UART1_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
@@ -129,7 +131,7 @@
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tdi'   } = 3533.334;
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tdo'   } = 3566.667;
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tms'   } = 3600.000;
-//; $pad_offset{'IOPAD_jtag_intf_i_phy_trst_n'} = 3633.333;   
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_trst_n'} = 3633.333;
 //; $pad_offset{'IOPAD_ext_rstb'              } = 3666.666;
 //; $pad_offset{'IOPAD_ext_dump_start'        } = 3700.000;
 //; $pad_offset{'IOPAD_top_VDD_dom3'          } = 4500.000;
@@ -139,7 +141,7 @@
 //; $pad_offset{'IOPAD_top_VDDPST_dom3'       } = 3888.000; # (was 4200)
 //; #
 //; # NEW for 12/2020 tapeout
-//; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;   
+//; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;
 //; $pad_offset{'IOPAD_ramp_clock'            } = 4160.000;
 
 module `mname` (

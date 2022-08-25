@@ -8,6 +8,12 @@
 // Author   : Gedeon Nyengele
 // Date     : Apr 17, 2020
 //------------------------------------------------------------------------------
+// Updates  :
+//  - Aug 25, 2022  :
+//      - Added external TPIU clock
+//      - Added TPIU_TRACECLKIN-synchronized reset
+//------------------------------------------------------------------------------
+
 module AhaSoCPartialIntegration (
   // Resets
   input   wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_CLK
@@ -27,6 +33,7 @@ module AhaSoCPartialIntegration (
   input   wire            UART1_RESETn,       // UART1 Reset
   input   wire            WDOG_RESETn,        // Watchdog Reset
   input   wire            NIC_RESETn,         // Interconnect Reset
+  input   wire            TPIU_RESETn,        // TPIU Reset
 
   // Clocks
   input   wire            SYS_CLK,            // system free running clock
@@ -44,6 +51,7 @@ module AhaSoCPartialIntegration (
   input   wire            UART1_CLK,          // UART1 Clock
   input   wire            WDOG_CLK,           // Watchdog Clock
   input   wire            NIC_CLK,            // Interconnect Clock
+  input   wire            TPIU_TRACECLKIN,    // TPIU Interface Clock
 
   // Clock-related Signals
   input   wire            CPU_CLK_CHANGED,    // Indicates whether CPU clok frequency has changed
@@ -919,12 +927,14 @@ module AhaSoCPartialIntegration (
     .DAP_RESETn                             (DAP_RESETn),
     .JTAG_TRSTn                             (JTAG_TRSTn),
     .JTAG_PORESETn                          (JTAG_PORESETn),
+    .TPIU_RESETn                            (TPIU_RESETn),
 
     // Clocks
     .SYS_CLK                                (SYS_CLK),
     .CPU_CLK                                (CPU_CLK),
     .DAP_CLK                                (DAP_CLK),
     .JTAG_TCK                               (JTAG_TCK),
+    .TPIU_TRACECLKIN                        (TPIU_TRACECLKIN),
 
     // Clock-Related Signals
     .CPU_CLK_CHANGED                        (CPU_CLK_CHANGED),
