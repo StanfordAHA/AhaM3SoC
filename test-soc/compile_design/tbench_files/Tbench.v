@@ -26,6 +26,9 @@ module Tbench;
     wire                    TDI;        // Test Data In
     wire                    TDO;        // Test Data Out
 
+    wire                    TPIU_SWO;
+    wire                    TPIU_CLK;
+
 // =============================================================================
 // UART Wires
 // -----------------------------------------------------------------------------
@@ -127,6 +130,8 @@ module Tbench;
         .ALT_MASTER_CLK                     (1'b0),
         .DP_JTAG_TCK                        (TCK),
         .CGRA_JTAG_TCK                      (1'b0),
+        .TPIU_TRACECLKIN                    (MASTER_CLK),
+        .XGCD_EXT_CLK                       (MASTER_CLK),
 
         // SoC JTAG Interface
         .DP_JTAG_TDI                        (TDI),
@@ -140,9 +145,8 @@ module Tbench;
 
         // Trace
         .TPIU_TRACE_DATA                    (/* unused */),
-        .TPIU_TRACE_SWO                     (/* unused */),
-        .TPIU_TRACE_CLK                     (/* unused */),
-        .TPIU_TRACECLKIN                    (MASTER_CLK),
+        .TPIU_TRACE_SWO                     (TPIU_SWO),
+        .TPIU_TRACE_CLK                     (TPIU_CLK),
 
         // UART
         .UART0_RXD                          (UART0_RXD),
@@ -184,7 +188,14 @@ module Tbench;
         .OUT_PAD_DS_GRP7                    (/* unused */),
 
         .LOOP_BACK_SELECT                   (4'h0),
-        .LOOP_BACK                          (/* unused */)
+        .LOOP_BACK                          (/* unused */),
+
+        .XGCD_CLK_SELECT                    (2'b00),
+        .XGCD_DIV8_CLK                      (/* unused */),
+        .XGCD0_START                        (/* unused */),
+        .XGCD1_START                        (/* unused */),
+        .XGCD0_DONE                         (/* unused */),
+        .XGCD1_DONE                         (/* unused */)
     );
 `elsif IMPL_ASIC
     GarnetSOC_pad_frame u_soc (
@@ -204,6 +215,8 @@ module Tbench;
         .pad_MASTER_CLK                     (MASTER_CLK),
         .pad_DP_JTAG_TCK                    (TCK),
         .pad_CGRA_JTAG_TCK                  (1'b0),
+        .pad_TPIU_TRACECLKIN                (MASTER_CLK),
+        .pad_XGCD_EXT_CLK                   (MASTER_CLK),
 
         .pad_DP_JTAG_TDI                    (TDI),
         .pad_DP_JTAG_TMS                    (TMS),
@@ -214,9 +227,8 @@ module Tbench;
         .pad_CGRA_JTAG_TDO                  (/* unused */),
 
         .pad_TPIU_TRACE_DATA                (/* unused */),
-        .pad_TPIU_TRACE_SWO                 (/* unused */),
-        .pad_TPIU_TRACE_CLK                 (/* unused */),
-        .pad_TPIU_TRACECLKIN                (MASTER_CLK),
+        .pad_TPIU_TRACE_SWO                 (TPIU_SWO),
+        .pad_TPIU_TRACE_CLK                 (TPIU_CLK),
 
         .pad_UART0_RXD                      (UART0_RXD),
         .pad_UART0_TXD                      (UART0_TXD),
@@ -248,7 +260,15 @@ module Tbench;
 
         // LoopBack
         .pad_LOOP_BACK_SELECT               (4'h0),
-        .pad_LOOP_BACK                      (/* unused */)
+        .pad_LOOP_BACK                      (/* unused */),
+
+        // XGCD
+        .pad_XGCD_CLK_SELECT                (2'b00),
+        .pad_XGCD_DIV8_CLK                  (/* unused */),
+        .pad_XGCD0_START                    (/* unused */),
+        .pad_XGCD1_START                    (/* unused */),
+        .pad_XGCD0_DONE                     (/* unused */),
+        .pad_XGCD1_DONE                     (/* unused */)
     );
 `endif
 // =============================================================================
@@ -285,17 +305,8 @@ module Tbench;
 // Performance Monitor Instantiation
 // -----------------------------------------------------------------------------
 
-`ifdef NO_CGRA
-    PerfMonitor u_perf_monitor (
-        .CPU_CLK                    (1'b0),
-        .PROC_WR_EN                 (1'b0),
-        .PROC_RD_EN                 (1'b0),
-        .IF_CFG_WR_EN               (1'b0),
-        .CGRA_CFG_G2F_CFG_WR_EN     (1'b0),
-        .STREAM_DATA_VALID_G2F      (1'b0),
-        .STREAM_DATA_VALID_F2G      (1'b0)
-    );
-`else
+`ifndef NO_CGRA
+    /*
     PerfMonitor u_perf_monitor (
         .CPU_CLK                    (`SOC_TOP.u_aha_soc_partial.u_cpu_integration.CPU_CLK),
         .PROC_WR_EN                 (`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.proc_wr_en),
@@ -305,6 +316,7 @@ module Tbench;
         .STREAM_DATA_VALID_G2F      (|`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_g2f),
         .STREAM_DATA_VALID_F2G      (|`SOC_TOP.u_aha_garnet.u_garnet.GlobalBuffer_16_32_inst0$global_buffer_inst0.stream_data_valid_f2g)
     );
+    */
 `endif
 
 // =============================================================================
@@ -317,28 +329,22 @@ module Tbench;
     pullup(nTRST);
     pullup(TDO);
 
+    pullup(TPIU_SWO);
+
     pullup(UART0_RXD);
     pullup(UART0_TXD);
     pullup(UART1_RXD);
     pullup(UART1_TXD);
 
+
 // =============================================================================
 // UART Capture (on UART0)
 // -----------------------------------------------------------------------------
 
-    cmsdk_uart_capture_ard u_cmsdk_uart_capture_ard (
-        .RESETn                     (PO_RESET_N),                   // Power on reset
-        .CLK                        (`SOC_TOP.uart0_clk),           // UART Clock
-        .RXD                        (UART0_TXD),                    // Received data
-        .SIMULATIONEND              (),
-        .DEBUG_TESTER_ENABLE        (),
-        .AUXCTRL                    (),
-        .SPI0                       (),
-        .SPI1                       (),
-        .I2C0                       (),
-        .I2C1                       (),
-        .UART0                      (),
-        .UART1                      ()
+    SWOCapture u_swo_capture (
+        .CLK                        (`SOC_TOP.uart0_clk),
+        .RESETn                     (PO_RESET_N),
+        .SWO                        (UART0_TXD)
     );
 
 // =============================================================================

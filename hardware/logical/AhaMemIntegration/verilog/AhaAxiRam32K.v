@@ -63,6 +63,7 @@ module AhaAxiRam32K #(
     wire                    sram_we_n;
     wire [7:0]              sram_wbe_n;
     wire [63:0]             sram_rdata;
+    wire [7:0]              w_SRAM_WBE_n;
 
     //
     // AXI to SRAM Converter
@@ -120,11 +121,13 @@ module AhaAxiRam32K #(
     // SRAM Wrapper Instantiation
     //
 
+    assign w_SRAM_WBE_n     = {8{sram_we_n}} | sram_wbe_n;
+
     AhaSram4Kx64 #(.IMAGE_FILE(IMAGE_FILE)) u_aha_sram_4kx64 (
         .CLK                (ACLK),
         .RESETn             (ARESETn),
         .CEn                (sram_ce_n),
-        .WEn                (sram_wbe_n),
+        .WEn                (w_SRAM_WBE_n),
         .A                  (sram_addr[14:3]),
         .D                  (sram_wdata),
         .Q                  (sram_rdata)

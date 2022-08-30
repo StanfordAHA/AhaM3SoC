@@ -7,6 +7,11 @@
 // Author   : Gedeon Nyengele
 // Date     : May 3, 2020
 //-----------------------------------------------------------------------------
+// Updates  :
+//  - Aug 30, 2022:
+//      - Added XGCD reset
+//------------------------------------------------------------------------------
+
 module AhaResetController (
   // System Clock
   input   wire        SYS_FCLK,
@@ -130,7 +135,11 @@ module AhaResetController (
   // CGRA JTAG
   input   wire        CGRA_JTAG_TCK,
   input   wire        CGRA_JTAG_TRSTn,
-  output  wire        CGRA_JTAG_RESETn
+  output  wire        CGRA_JTAG_RESETn,
+
+  // XGCD
+  input   wire        XGCD_BUS_CLK,
+  output  wire        XGCD_RESETn
 );
 
   // Power-On Reset Wires
@@ -145,6 +154,7 @@ module AhaResetController (
   wire        uart1_clk_poreset_n;
   wire        wdog_clk_poreset_n;
   wire        tpiu_clk_poreset_n;
+  wire        xgcd_clk_poreset_n;
 
   // --------------------------------------------------------------------------
   // Power-On Resets
@@ -227,6 +237,15 @@ module AhaResetController (
     .Dn       (PORESETn),
     .Qn       (wdog_clk_poreset_n)
   );
+
+  // Power-On Reset -- XGCD Clock Domain
+  AhaResetSync u_xgcd_clk_poresetn_sync (
+    .CLK      (XGCD_BUS_CLK),
+    .Dn       (PORESETn),
+    .Qn       (xgcd_clk_poreset_n)
+  );
+
+  assign XGCD_RESETn = xgcd_clk_poreset_n;
 
   // --------------------------------------------------------------------------
   // Reset Controllers

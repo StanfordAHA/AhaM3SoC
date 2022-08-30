@@ -40,7 +40,14 @@
 //;   {name => 'UART0_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'UART0_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'UART1_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
-//;   {name => 'UART1_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'}
+//;   {name => 'UART1_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
+//;   {name => 'XGCD_EXT_CLK',              width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
+//;   {name => 'XGCD_CLK_SELECT',           width => 2,   direction => 'input',   pad => 'digital', side => 'right'},
+//;   {name => 'XGCD_DIV8_CLK',             width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD0_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD1_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD0_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD1_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'right'}
 //;  ]);
 //; my $num_ios = scalar(@{$io_list});
 //; my $num_vdd_per_side = 2;

@@ -26,7 +26,7 @@ def construct():
         'dma_single_channel',
         'default_slaves_test',
         #'interrupts_test',
-        #'tlx_test',
+        'tlx_test',
         'cgra_test',
         #'master_clock_test',
         #'app_tlx_test',
