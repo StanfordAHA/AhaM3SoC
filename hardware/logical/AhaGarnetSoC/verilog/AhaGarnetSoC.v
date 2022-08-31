@@ -52,23 +52,19 @@ module AhaGarnetSoC (
   // TLX FWD Channel
   output  wire            TLX_FWD_CLK,
   output  wire                                  TLX_FWD_PAYLOAD_TVALID,
-  input   wire                                  TLX_FWD_PAYLOAD_TREADY,
   output  wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]   TLX_FWD_PAYLOAD_TDATA_LO,
   output  wire [(39-`TLX_FWD_DATA_LO_WIDTH):0]  TLX_FWD_PAYLOAD_TDATA_HI,
 
   output  wire            TLX_FWD_FLOW_TVALID,
-  input   wire            TLX_FWD_FLOW_TREADY,
   output  wire [1:0]      TLX_FWD_FLOW_TDATA,
 
   // TLX REV Channel
   input   wire            TLX_REV_CLK,
   input   wire                                  TLX_REV_PAYLOAD_TVALID,
-  output  wire                                  TLX_REV_PAYLOAD_TREADY,
   input   wire [(`TLX_REV_DATA_LO_WIDTH-1):0]   TLX_REV_PAYLOAD_TDATA_LO,
   input   wire [(79-`TLX_REV_DATA_LO_WIDTH):0]  TLX_REV_PAYLOAD_TDATA_HI,
 
   input   wire            TLX_REV_FLOW_TVALID,
-  output  wire            TLX_REV_FLOW_TREADY,
   input   wire [2:0]      TLX_REV_FLOW_TDATA,
 
   // Pad Strength Control
@@ -884,20 +880,20 @@ module AhaGarnetSoC (
 
     // Forward Channel
     .TLX_FWD_PAYLOAD_TVALID       (TLX_FWD_PAYLOAD_TVALID),
-    .TLX_FWD_PAYLOAD_TREADY       (TLX_FWD_PAYLOAD_TREADY),
+    .TLX_FWD_PAYLOAD_TREADY       (1'b1),
     .TLX_FWD_PAYLOAD_TDATA        (tlx_fwd_payload_tdata),
 
     .TLX_FWD_FLOW_TVALID          (TLX_FWD_FLOW_TVALID),
-    .TLX_FWD_FLOW_TREADY          (TLX_FWD_FLOW_TREADY),
+    .TLX_FWD_FLOW_TREADY          (1'b1),
     .TLX_FWD_FLOW_TDATA           (TLX_FWD_FLOW_TDATA),
 
     // Reverse Channel
     .TLX_REV_PAYLOAD_TVALID       (TLX_REV_PAYLOAD_TVALID),
-    .TLX_REV_PAYLOAD_TREADY       (TLX_REV_PAYLOAD_TREADY),
+    .TLX_REV_PAYLOAD_TREADY       (/* unused */),
     .TLX_REV_PAYLOAD_TDATA        (tlx_rev_payload_tdata),
 
     .TLX_REV_FLOW_TVALID          (TLX_REV_FLOW_TVALID),
-    .TLX_REV_FLOW_TREADY          (TLX_REV_FLOW_TREADY),
+    .TLX_REV_FLOW_TREADY          (/* unused */),
     .TLX_REV_FLOW_TDATA           (TLX_REV_FLOW_TDATA)
   );
 

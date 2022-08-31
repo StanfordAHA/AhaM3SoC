@@ -17,11 +17,9 @@ module TlxMem (
     input   wire            tlx_fwd_reset_n,
 
     input   wire            tlx_fwd_payload_tvalid,
-    output  wire            tlx_fwd_payload_tready,
     input   wire [39:0]     tlx_fwd_payload_tdata,
 
     input   wire            tlx_fwd_flow_tvalid,
-    output  wire            tlx_fwd_flow_tready,
     input   wire [1:0]      tlx_fwd_flow_tdata,
 
     // Reverse Link
@@ -29,11 +27,9 @@ module TlxMem (
     input   wire            tlx_rev_reset_n,
 
     output  wire            tlx_rev_payload_tvalid,
-    input   wire            tlx_rev_payload_tready,
     output  wire [79:0]     tlx_rev_payload_tdata,
 
     output  wire            tlx_rev_flow_tvalid,
-    input   wire            tlx_rev_flow_tready,
     output  wire [2:0]      tlx_rev_flow_tdata
 );
 
@@ -93,11 +89,11 @@ module TlxMem (
     .tlx_fwd_reset_n                (tlx_fwd_reset_n),
 
     .tlx_fwd_payload_tvalid         (tlx_fwd_payload_tvalid),
-    .tlx_fwd_payload_tready         (tlx_fwd_payload_tready),
+    .tlx_fwd_payload_tready         (/* unused */),
     .tlx_fwd_payload_tdata          (tlx_fwd_payload_tdata),
 
     .tlx_fwd_flow_tvalid            (tlx_fwd_flow_tvalid),
-    .tlx_fwd_flow_tready            (tlx_fwd_flow_tready),
+    .tlx_fwd_flow_tready            (/* unused */),
     .tlx_fwd_flow_tdata             (tlx_fwd_flow_tdata),
 
     // Reverse Link
@@ -105,11 +101,11 @@ module TlxMem (
     .tlx_rev_reset_n                (tlx_rev_reset_n),
 
     .tlx_rev_payload_tvalid         (tlx_rev_payload_tvalid),
-    .tlx_rev_payload_tready         (tlx_rev_payload_tready),
+    .tlx_rev_payload_tready         (1'b1),
     .tlx_rev_payload_tdata          (tlx_rev_payload_tdata),
 
     .tlx_rev_flow_tvalid            (tlx_rev_flow_tvalid),
-    .tlx_rev_flow_tready            (tlx_rev_flow_tready),
+    .tlx_rev_flow_tready            (1'b1),
     .tlx_rev_flow_tdata             (tlx_rev_flow_tdata),
 
     // AXI Master

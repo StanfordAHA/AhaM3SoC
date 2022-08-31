@@ -52,13 +52,11 @@ module Tbench;
 
     wire                                    TLX_FWD_CLK;
     wire                                    TLX_FWD_PAYLOAD_TVALID;
-    wire                                    TLX_FWD_PAYLOAD_TREADY;
     wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]     TLX_FWD_PAYLOAD_TDATA_LO;
     wire [(39-`TLX_FWD_DATA_LO_WIDTH):0]    TLX_FWD_PAYLOAD_TDATA_HI;
     wire [39:0]                             TLX_FWD_PAYLOAD_TDATA;
 
     wire                                    TLX_FWD_FLOW_TVALID;
-    wire                                    TLX_FWD_FLOW_TREADY;
     wire [1:0]                              TLX_FWD_FLOW_TDATA;
 
     assign TLX_FWD_PAYLOAD_TDATA = {TLX_FWD_PAYLOAD_TDATA_HI, TLX_FWD_PAYLOAD_TDATA_LO};
@@ -67,13 +65,11 @@ module Tbench;
     // TLX REV Wires
     //
     wire                                    TLX_REV_PAYLOAD_TVALID;
-    wire                                    TLX_REV_PAYLOAD_TREADY;
     wire [(`TLX_REV_DATA_LO_WIDTH-1):0]     TLX_REV_PAYLOAD_TDATA_LO;
     wire [(79-`TLX_REV_DATA_LO_WIDTH):0]    TLX_REV_PAYLOAD_TDATA_HI;
     wire [79:0]                             TLX_REV_PAYLOAD_TDATA;
 
     wire                                    TLX_REV_FLOW_TVALID;
-    wire                                    TLX_REV_FLOW_TREADY;
     wire [2:0]                              TLX_REV_FLOW_TDATA;
 
     wire                                    TLX_REV_LANE_0;
@@ -156,24 +152,20 @@ module Tbench;
         .TLX_FWD_CLK                        (TLX_FWD_CLK),
 
         .TLX_FWD_PAYLOAD_TVALID             (TLX_FWD_PAYLOAD_TVALID),
-        .TLX_FWD_PAYLOAD_TREADY             (TLX_FWD_PAYLOAD_TREADY),
         .TLX_FWD_PAYLOAD_TDATA_LO           (TLX_FWD_PAYLOAD_TDATA_LO),
         .TLX_FWD_PAYLOAD_TDATA_HI           (TLX_FWD_PAYLOAD_TDATA_HI),
 
         .TLX_FWD_FLOW_TVALID                (TLX_FWD_FLOW_TVALID),
-        .TLX_FWD_FLOW_TREADY                (TLX_FWD_FLOW_TREADY),
         .TLX_FWD_FLOW_TDATA                 (TLX_FWD_FLOW_TDATA),
 
         //TLX REV Channel
         .TLX_REV_CLK                        (MASTER_CLK),
 
         .TLX_REV_PAYLOAD_TVALID             (TLX_REV_PAYLOAD_TVALID),
-        .TLX_REV_PAYLOAD_TREADY             (TLX_REV_PAYLOAD_TREADY),
         .TLX_REV_PAYLOAD_TDATA_LO           (TLX_REV_PAYLOAD_TDATA_LO),
         .TLX_REV_PAYLOAD_TDATA_HI           (TLX_REV_PAYLOAD_TDATA_HI),
 
         .TLX_REV_FLOW_TVALID                (TLX_REV_FLOW_TVALID),
-        .TLX_REV_FLOW_TREADY                (TLX_REV_FLOW_TREADY),
         .TLX_REV_FLOW_TDATA                 (TLX_REV_FLOW_TDATA),
 
         .OUT_PAD_DS_GRP0                    (/* unused */),
@@ -234,24 +226,20 @@ module Tbench;
         // TLX FWD
         .pad_TLX_FWD_CLK                    (TLX_FWD_CLK),
         .pad_TLX_FWD_PAYLOAD_TVALID         (TLX_FWD_PAYLOAD_TVALID),
-        .pad_TLX_FWD_PAYLOAD_TREADY         (TLX_FWD_PAYLOAD_TREADY),
         .pad_TLX_FWD_PAYLOAD_TDATA_LO       (TLX_FWD_PAYLOAD_TDATA_LO),
         .pad_TLX_FWD_PAYLOAD_TDATA_HI       (TLX_FWD_PAYLOAD_TDATA_HI),
 
         .pad_TLX_FWD_FLOW_TVALID            (TLX_FWD_FLOW_TVALID),
-        .pad_TLX_FWD_FLOW_TREADY            (TLX_FWD_FLOW_TREADY),
         .pad_TLX_FWD_FLOW_TDATA             (TLX_FWD_FLOW_TDATA),
 
         // TLX REV
         .pad_TLX_REV_CLK                    (MASTER_CLK),
 
         .pad_TLX_REV_PAYLOAD_TVALID         (TLX_REV_PAYLOAD_TVALID),
-        .pad_TLX_REV_PAYLOAD_TREADY         (TLX_REV_PAYLOAD_TREADY),
         .pad_TLX_REV_PAYLOAD_TDATA_LO       (TLX_REV_PAYLOAD_TDATA_LO),
         .pad_TLX_REV_PAYLOAD_TDATA_HI       (TLX_REV_PAYLOAD_TDATA_HI),
 
         .pad_TLX_REV_FLOW_TVALID            (TLX_REV_FLOW_TVALID),
-        .pad_TLX_REV_FLOW_TREADY            (TLX_REV_FLOW_TREADY),
         .pad_TLX_REV_FLOW_TDATA             (TLX_REV_FLOW_TDATA),
 
         // LoopBack
@@ -277,11 +265,9 @@ module Tbench;
         .tlx_fwd_reset_n                        (PO_RESET_N),
 
         .tlx_fwd_payload_tvalid                 (TLX_FWD_PAYLOAD_TVALID),
-        .tlx_fwd_payload_tready                 (TLX_FWD_PAYLOAD_TREADY),
         .tlx_fwd_payload_tdata                  (TLX_FWD_PAYLOAD_TDATA),
 
         .tlx_fwd_flow_tvalid                    (TLX_FWD_FLOW_TVALID),
-        .tlx_fwd_flow_tready                    (TLX_FWD_FLOW_TREADY),
         .tlx_fwd_flow_tdata                     (TLX_FWD_FLOW_TDATA),
 
         // REV Link
@@ -289,11 +275,9 @@ module Tbench;
         .tlx_rev_reset_n                        (PO_RESET_N),
 
         .tlx_rev_payload_tvalid                 (TLX_REV_PAYLOAD_TVALID),
-        .tlx_rev_payload_tready                 (TLX_REV_PAYLOAD_TREADY),
         .tlx_rev_payload_tdata                  (TLX_REV_PAYLOAD_TDATA),
 
         .tlx_rev_flow_tvalid                    (TLX_REV_FLOW_TVALID),
-        .tlx_rev_flow_tready                    (TLX_REV_FLOW_TREADY),
         .tlx_rev_flow_tdata                     (TLX_REV_FLOW_TDATA)
     );
 
