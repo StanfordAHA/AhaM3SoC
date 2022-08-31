@@ -8,7 +8,7 @@
 // Date     : Aug 30, 2022
 //------------------------------------------------------------------------------
 
-module XGCDWrapper (
+module XGCDWrapperTop (
     input       wire            clk_in_extern,
     input       wire            clk_in_system,
     input       wire            reset_n,

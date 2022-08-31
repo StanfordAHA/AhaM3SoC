@@ -41,9 +41,7 @@ module AhaGarnetSoC (
   output  wire            CGRA_JTAG_TDO,       // CGRA JTAG TDO Port
 
   // Trace
-  output  wire  [3:0]     TPIU_TRACE_DATA,    // Trace Data
   output  wire            TPIU_TRACE_SWO,     // Trace Single Wire Output
-  output  wire            TPIU_TRACE_CLK,     // Trace Output Clock
 
   // UART
   input   wire            UART0_RXD,          // UART0 Rx Data
@@ -461,9 +459,9 @@ module AhaGarnetSoC (
     .JTAG_TDO                     (DP_JTAG_TDO),
 
     // Trace Interface
-    .TPIU_TRACE_DATA              (TPIU_TRACE_DATA),
+    .TPIU_TRACE_DATA              (/* unused */),
     .TPIU_TRACE_SWO               (TPIU_TRACE_SWO),
-    .TPIU_TRACE_CLK               (TPIU_TRACE_CLK),
+    .TPIU_TRACE_CLK               (/* unused */),
 
     // UART Interface
     .UART0_RXD                    (UART0_RXD),

@@ -230,7 +230,7 @@ module AhaXGCDIntegration (
     // XGCD Wrapper
     //
 
-    XGCDWrapper u_xgcd_wrapper (
+    XGCDWrapperTop u_xgcd_wrapper_top (
         .clk_in_extern          (XGCD_EXT_CLK),
         .clk_in_system          (XGCD_SOC_CLK),
         .reset_n                (PORESETn),

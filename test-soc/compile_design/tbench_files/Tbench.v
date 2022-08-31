@@ -144,9 +144,7 @@ module Tbench;
         .CGRA_JTAG_TDO                      (/* unused */),
 
         // Trace
-        .TPIU_TRACE_DATA                    (/* unused */),
         .TPIU_TRACE_SWO                     (TPIU_SWO),
-        .TPIU_TRACE_CLK                     (TPIU_CLK),
 
         // UART
         .UART0_RXD                          (UART0_RXD),
@@ -226,9 +224,7 @@ module Tbench;
         .pad_CGRA_JTAG_TMS                  (1'b0),
         .pad_CGRA_JTAG_TDO                  (/* unused */),
 
-        .pad_TPIU_TRACE_DATA                (/* unused */),
         .pad_TPIU_TRACE_SWO                 (TPIU_SWO),
-        .pad_TPIU_TRACE_CLK                 (TPIU_CLK),
 
         .pad_UART0_RXD                      (UART0_RXD),
         .pad_UART0_TXD                      (UART0_TXD),
