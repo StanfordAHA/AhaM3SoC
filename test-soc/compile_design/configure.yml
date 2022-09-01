@@ -27,7 +27,9 @@ commands:
 parameters:
   ARM_IP_DIR: undefined
   AHA_IP_DIR: undefined
-  CGRA_RD_WS: 1
-  soc_only: undefined
+  SOC_ONLY: undefined
   TLX_FWD_DATA_LO_WIDTH: undefined
   TLX_REV_DATA_LO_WIDTH: undefined
+  IMPL_VIEW: undefined
+  PROCESS: undefined
+  SIMULATOR: undefined

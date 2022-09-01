@@ -1,6 +1,6 @@
-ARM_IP_PATH	:= $(abspath $(ARM_IP_DIR))
-AHA_IP_PATH := $(abspath $(AHA_IP_DIR))
-CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
+ARM_IP_PATH				:= $(abspath $(ARM_IP_DIR))
+AHA_IP_PATH				:= $(abspath $(AHA_IP_DIR))
+CUR_DIR					:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 
 # XRUN Options
 XRUN_COMPILE_OPTS 	:= -notimingchecks -sv -initmem0 -debug -elaborate -covoverwrite -64bit +libext+.v+.sv -timescale 100ps/1ps -unbuffered

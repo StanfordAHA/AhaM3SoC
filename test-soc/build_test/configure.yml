@@ -20,3 +20,4 @@ commands:
 parameters:
   TEST_NAME: undefined
   ARM_IP_DIR: undefined
+  IMPL_VIEW: undefined

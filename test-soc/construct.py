@@ -20,21 +20,21 @@ def construct():
 
     test_names = [
         # CPU Tests
-        #'apb_mux_test',
-        #'hello_test',
+        'apb_mux_test',
+        'hello_test',
         #'memory_test',
-        #'dma_single_channel',
-        #'default_slaves_test',
+        'dma_single_channel',
+        'default_slaves_test',
         #'interrupts_test',
-        #'tlx_test',
-        #'cgra_test',
+        'tlx_test',
+        'cgra_test',
         #'master_clock_test',
-        'app_tlx_test',
-        'app_test_stage1',
-        'app_test_stage_relocation',
+        #'app_tlx_test',
+        #'app_test_stage1',
+        #'app_test_stage_relocation',
         #'harris_test',
-        'app_test_two_images_stage1',
-        'app_test_two_images',
+        #'app_test_two_images_stage1',
+        #'app_test_two_images',
         #'app_test_reconfig',
         #'app_test_reconfig_pipeline',
         #'app_test_2_kernels_1_cgra',
@@ -45,10 +45,10 @@ def construct():
         #'demosaic_complex_twice',
         #'demosaic_complex_harris',
         #'resnet_pond',
-        'resnet_layer_gen',
+        #'resnet_layer_gen',
 
         # CXDT Tests
-        'discovery',
+        #'discovery',
     ]
 
     # -------------------------------------------------------------------------
@@ -63,12 +63,15 @@ def construct():
         'array_width': 32,
         'array_height': 16,
         'clock_period': 1.0,
-        'ARM_IP_DIR': '/home/kkoul/aham3soc_armip',
-        'AHA_IP_DIR': '/sim/kkoul/AhaM3SoC',
+        'ARM_IP_DIR': '/home/gedeon/temp/soc/aham3soc_armip',
+        'AHA_IP_DIR': '/home/gedeon/temp/soc/aham3soc',
         'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
         'GARNET_DIR': '/sim/kkoul/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
+        'IMPL_VIEW': 'SIM', # can be SIM or ASIC
+        'PROCESS': 'GF', # can be GF or TSMC if IMPL_VIEW == ASIC
+        'SIMULATOR': 'VCS', # can be wither VCS or XCELIUM
     }
 
     # -------------------------------------------------------------------------
@@ -77,16 +80,11 @@ def construct():
 
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
-    garnet_rtl      	= Step(parameters['GARNET_DIR'] + '/mflowgen/common/rtl')
     amber_rtl  	        = Step(this_dir + '/amber')
     compile_design  	= Step(this_dir + '/compile_design')
-    compile_design_gls  = Step(this_dir + '/compile_design_gls')
     build_test      	= Step(this_dir + '/build_test')
     run_test        	= Step(this_dir + '/run_test')
-    run_test_gls        = Step(this_dir + '/run_test_gls')
     verdict         	= Step(this_dir + '/verdict')
-    test_gen         	= Step(this_dir + '/test_gen')
-    ptpx 				= Step(this_dir + '/ptpx')
 
     # -------------------------------------------------------------------------
     # Parallelize test build and run
@@ -95,72 +93,59 @@ def construct():
     test_count = len(test_names)
     build_steps = list(map((lambda _: build_test.clone()), range(test_count)))
     run_steps = list(map((lambda _: run_test.clone()), range(test_count)))
-    run_gls_steps = list(map((lambda _: run_test_gls.clone()), range(test_count)))
-    ptpx_steps = list(map((lambda _: ptpx.clone()), range(test_count)))
-	
 
     for step, name in zip(build_steps, test_names):
         step.set_name('build_' + name)
     for step, name in zip(run_steps, test_names):
         step.set_name('run_' + name)
-    for step, name in zip(run_gls_steps, test_names):
-        step.set_name('run_gls_' + name)
-    for step, name in zip(ptpx_steps, test_names):
-        step.set_name('ptpx_' + name)
 
     # -------------------------------------------------------------------------
     # Input/output dependencies
     # -------------------------------------------------------------------------
 
     # 'compile_design' step produces a simulation executable and its accompanying collateral
-    compile_design.extend_outputs(['xcelium.d'])
     compile_design.extend_inputs(['design.v'])
-    compile_design_gls.extend_outputs(['simv'])
-    compile_design_gls.extend_outputs(['simv.daidir'])
+
+    if parameters['SIMULATOR'] == 'VCS':
+        compile_design.extend_outputs(['simv', 'simv.daidir'])
+    elif parameters['SIMULATOR'] == 'XCELIUM':
+        compile_design.extend_outputs(['xcelium.d'])
 
     # 'build_test' produces final images for both the CXDT and CPU
     for step in build_steps:
-        step.extend_outputs(['CXDT.bin'])
+        if parameters['IMPL_VIEW'] == 'ASIC':
+            step.extend_outputs(['CXDT.bin'])
+        else:
+            step.extend_outputs(['ROM.hex'])
 
-    # 'run_tests' takes CXDT.bin, CPU.bin, and xcelium.d to produce a log
+    # 'run_test' takes either CXDT.bin or ROM.hex
     for step, test in zip(run_steps, test_names):
-        step.extend_inputs(['CXDT.bin', 'xcelium.d'])
-        step.extend_outputs(['xrun_run_' + test + '.log'])
+        if parameters['IMPL_VIEW'] == 'ASIC':
+            step.extend_inputs(['CXDT.bin'])
+        else:
+            step.extend_inputs(['ROM.hex'])
+        if parameters['SIMULATOR'] == 'XCELIUM':
+            step.extend_inputs(['xcelium.d'])
+        else:
+            step.extend_inputs(['simv', 'simv.daidir'])
+        step.extend_outputs(['SIM_run_' + test + '.log'])
 
-    # 'run_gls_tests' takes CXDT.bin, CPU.bin, and simv and simv.daidir to produce a log
-    for step, test in zip(run_gls_steps, test_names):
-        step.extend_inputs(['CXDT.bin', 'simv', 'simv.daidir'])
-        step.extend_outputs(['reconfigure.saif'])
-        step.extend_outputs(['run_1_kernel_plus_setup.saif'])
-
-    # 'ptpx' takes saif to produce power reports
-    for step, test in zip(run_gls_steps, test_names):
-        step.extend_inputs(['run_1_kernel_plus_setup.saif'])
 
     # 'verdict' consumes the run logs
-    run_logs = list(map((lambda test: 'xrun_run_' + test + '.log'), test_names))
+    run_logs = list(map((lambda test: 'SIM_run_' + test + '.log'), test_names))
     verdict.extend_inputs(run_logs)
 
     # -------------------------------------------------------------------------
     # Graph -- Add nodes
     # -------------------------------------------------------------------------
 
-    g.add_step(garnet_rtl)
     g.add_step(amber_rtl)
     g.add_step(compile_design)
-    g.add_step(compile_design_gls)
-    g.add_step(test_gen)
 
     for s in build_steps:
         g.add_step(s)
 
     for s in run_steps:
-        g.add_step(s)
-
-    for s in run_gls_steps:
-        g.add_step(s)
-
-    for s in ptpx_steps:
         g.add_step(s)
 
     g.add_step(verdict)
@@ -169,20 +154,12 @@ def construct():
     # Graph -- Add edges
     # -------------------------------------------------------------------------
 
-    #g.connect_by_name(garnet_rtl, compile_design)
     g.connect_by_name(amber_rtl, compile_design)
 
     for r, b in zip(run_steps, build_steps):
         g.connect_by_name(b, r)
         g.connect_by_name(compile_design, r)
         g.connect_by_name(r, verdict)
-
-    for r, b in zip(run_gls_steps, build_steps):
-        g.connect_by_name(b, r)
-        g.connect_by_name(compile_design_gls, r)
-
-    for p, r in zip(ptpx_steps, run_gls_steps):
-        g.connect_by_name(r, p)
 
     # -------------------------------------------------------------------------
     # Set general parameters
@@ -194,23 +171,13 @@ def construct():
     # Set node-specific parameters
     # -------------------------------------------------------------------------
 
-    # Turn off power domain to improve the speed
-    garnet_rtl.update_params({'PWR_AWARE': False})
-    garnet_rtl.update_params({'array_width': parameters['array_width']})
-    garnet_rtl.update_params({'array_height': parameters['array_height']})
-
     for step, test in zip(build_steps, test_names):
         step.update_params({'TEST_NAME': test})
     for step, test in zip(run_steps, test_names):
         step.update_params({'TEST_NAME': test})
-    for step, test in zip(run_gls_steps, test_names):
-        step.update_params({'TEST_NAME': test})
-    for step, test in zip(ptpx_steps, test_names):
-        step.update_params({'TEST_NAME': test})
+        step.update_params({'SIMULATOR': parameters['SIMULATOR']})
+        step.update_params({'IMPL_VIEW': parameters['IMPL_VIEW']})
 
-
-
-    compile_design.update_params({'CGRA_RD_WS': 4})
 
     # -------------------------------------------------------------------------
     # Pre-conditions
@@ -228,8 +195,7 @@ def construct():
 
     # 'compile_tbench' must be successful
     compile_design.extend_postconditions([
-        "assert 'Error' not in File('xrun_compile.log', enable_case_sensitive = True)",
-        "assert File('outputs/xcelium.d')",
+        "assert 'Error' not in File('SIM_compile.log', enable_case_sensitive = True)"
     ])
 
     return g

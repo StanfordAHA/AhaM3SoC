@@ -7,17 +7,28 @@
 // Author   : Gedeon Nyengele
 // Date     : Apr 17, 2020
 //------------------------------------------------------------------------------
+// Updates  :
+//  - Aug 25, 2022
+//      - Added CPU-only external reset (SYSRESETn)
+//
+//  - Aug 30, 2022
+//      - Integrated XGCD
+//------------------------------------------------------------------------------
+
 module AhaGarnetSoC (
   // Resets
   input   wire            PORESETn,           // Global Power-on Reset
+  input   wire            SYSRESETn,          // CPU-only Reset
   input   wire            DP_JTAG_TRSTn,      // Coresight JTAG Reset
   input   wire            CGRA_JTAG_TRSTn,    // CGRA JTAG Reset
 
-  // Clocks
+  // Input Clocks
   input   wire            MASTER_CLK,         // Main Clock
   input   wire            ALT_MASTER_CLK,     // Alternate master clock
   input   wire            DP_JTAG_TCK,        // Coresight JTAG Clock
   input   wire            CGRA_JTAG_TCK,      // CGRA JTAG Clock
+  input   wire            TPIU_TRACECLKIN,    // TPIU Interface Clock
+  input   wire            XGCD_EXT_CLK,       // XGCD External Clock
 
   // SOC JTAG Interface
   input   wire            DP_JTAG_TDI,        // Coresight JTAG Data In Port
@@ -30,9 +41,7 @@ module AhaGarnetSoC (
   output  wire            CGRA_JTAG_TDO,       // CGRA JTAG TDO Port
 
   // Trace
-  output  wire  [3:0]     TPIU_TRACE_DATA,    // Trace Data
   output  wire            TPIU_TRACE_SWO,     // Trace Single Wire Output
-  output  wire            TPIU_TRACE_CLK,     // Trace Output Clock
 
   // UART
   input   wire            UART0_RXD,          // UART0 Rx Data
@@ -43,23 +52,19 @@ module AhaGarnetSoC (
   // TLX FWD Channel
   output  wire            TLX_FWD_CLK,
   output  wire                                  TLX_FWD_PAYLOAD_TVALID,
-  input   wire                                  TLX_FWD_PAYLOAD_TREADY,
   output  wire [(`TLX_FWD_DATA_LO_WIDTH-1):0]   TLX_FWD_PAYLOAD_TDATA_LO,
   output  wire [(39-`TLX_FWD_DATA_LO_WIDTH):0]  TLX_FWD_PAYLOAD_TDATA_HI,
 
   output  wire            TLX_FWD_FLOW_TVALID,
-  input   wire            TLX_FWD_FLOW_TREADY,
   output  wire [1:0]      TLX_FWD_FLOW_TDATA,
 
   // TLX REV Channel
   input   wire            TLX_REV_CLK,
   input   wire                                  TLX_REV_PAYLOAD_TVALID,
-  output  wire                                  TLX_REV_PAYLOAD_TREADY,
   input   wire [(`TLX_REV_DATA_LO_WIDTH-1):0]   TLX_REV_PAYLOAD_TDATA_LO,
   input   wire [(79-`TLX_REV_DATA_LO_WIDTH):0]  TLX_REV_PAYLOAD_TDATA_HI,
 
   input   wire            TLX_REV_FLOW_TVALID,
-  output  wire            TLX_REV_FLOW_TREADY,
   input   wire [2:0]      TLX_REV_FLOW_TDATA,
 
   // Pad Strength Control
@@ -74,7 +79,15 @@ module AhaGarnetSoC (
 
   // LoopBack Signal
   input   wire [3:0]      LOOP_BACK_SELECT,
-  output  wire            LOOP_BACK
+  output  wire            LOOP_BACK,
+
+  // XGCD
+  input   wire [1:0]      XGCD_CLK_SELECT,
+  output  wire            XGCD_DIV8_CLK,
+  output  wire            XGCD0_START,
+  output  wire            XGCD1_START,
+  output  wire            XGCD0_DONE,
+  output  wire            XGCD1_DONE
 );
 
   // Synchronized Reset Wires
@@ -98,6 +111,8 @@ module AhaGarnetSoC (
   wire            uart1_reset_n;
   wire            wdog_reset_n;
   wire            nic_reset_n;
+  wire            tpiu_reset_n;
+  wire            xgcd_reset_n;
 
   // Generated Clocks Wires
   wire            sys_clk;
@@ -290,6 +305,97 @@ module AhaGarnetSoC (
   wire            pctrl_hreadyout;
   wire [1:0]      pctrl_hresp;
 
+  // XGCD wires
+
+  wire [3:0]      xgcd0_awid;
+  wire [31:0]     xgcd0_awaddr;
+  wire [7:0]      xgcd0_awlen;
+  wire [2:0]      xgcd0_awsize;
+  wire [1:0]      xgcd0_awburst;
+  wire            xgcd0_awlock;
+  wire [3:0]      xgcd0_awcache;
+  wire [2:0]      xgcd0_awprot;
+  wire            xgcd0_awvalid;
+  wire            xgcd0_awready;
+  wire [63:0]     xgcd0_wdata;
+  wire [7:0]      xgcd0_wstrb;
+  wire            xgcd0_wlast;
+  wire            xgcd0_wvalid;
+  wire            xgcd0_wready;
+  wire [3:0]      xgcd0_bid;
+  wire [1:0]      xgcd0_bresp;
+  wire            xgcd0_bvalid;
+  wire            xgcd0_bready;
+  wire [3:0]      xgcd0_arid;
+  wire [31:0]     xgcd0_araddr;
+  wire [7:0]      xgcd0_arlen;
+  wire [2:0]      xgcd0_arsize;
+  wire [1:0]      xgcd0_arburst;
+  wire            xgcd0_arlock;
+  wire [3:0]      xgcd0_arcache;
+  wire [2:0]      xgcd0_arprot;
+  wire            xgcd0_arvalid;
+  wire            xgcd0_arready;
+  wire [3:0]      xgcd0_rid;
+  wire [63:0]     xgcd0_rdata;
+  wire [1:0]      xgcd0_rresp;
+  wire            xgcd0_rlast;
+  wire            xgcd0_rvalid;
+  wire            xgcd0_rready;
+
+  wire [3:0]      xgcd1_awid;
+  wire [31:0]     xgcd1_awaddr;
+  wire [7:0]      xgcd1_awlen;
+  wire [2:0]      xgcd1_awsize;
+  wire [1:0]      xgcd1_awburst;
+  wire            xgcd1_awlock;
+  wire [3:0]      xgcd1_awcache;
+  wire [2:0]      xgcd1_awprot;
+  wire            xgcd1_awvalid;
+  wire            xgcd1_awready;
+  wire [63:0]     xgcd1_wdata;
+  wire [7:0]      xgcd1_wstrb;
+  wire            xgcd1_wlast;
+  wire            xgcd1_wvalid;
+  wire            xgcd1_wready;
+  wire [3:0]      xgcd1_bid;
+  wire [1:0]      xgcd1_bresp;
+  wire            xgcd1_bvalid;
+  wire            xgcd1_bready;
+  wire [3:0]      xgcd1_arid;
+  wire [31:0]     xgcd1_araddr;
+  wire [7:0]      xgcd1_arlen;
+  wire [2:0]      xgcd1_arsize;
+  wire [1:0]      xgcd1_arburst;
+  wire            xgcd1_arlock;
+  wire [3:0]      xgcd1_arcache;
+  wire [2:0]      xgcd1_arprot;
+  wire            xgcd1_arvalid;
+  wire            xgcd1_arready;
+  wire [3:0]      xgcd1_rid;
+  wire [63:0]     xgcd1_rdata;
+  wire [1:0]      xgcd1_rresp;
+  wire            xgcd1_rlast;
+  wire            xgcd1_rvalid;
+  wire            xgcd1_rready;
+
+  wire [31:0]     xgcd_haddr;
+  wire [2:0]      xgcd_hburst;
+  wire [3:0]      xgcd_hprot;
+  wire [2:0]      xgcd_hsize;
+  wire [1:0]      xgcd_htrans;
+  wire [31:0]     xgcd_hwdata;
+  wire            xgcd_hwrite;
+  wire [31:0]     xgcd_hrdata;
+  wire            xgcd_hreadyout;
+  wire            xgcd_hresp;
+  wire            xgcd_hselx;
+  wire            xgcd_hready;
+
+  wire            xgcd0_int;
+  wire            xgcd1_int;
+
+
   //------------------------------------------------------------------------------
   // Instantiate Partial SoC Integration
   //------------------------------------------------------------------------------
@@ -312,6 +418,8 @@ module AhaGarnetSoC (
     .UART1_RESETn                 (uart1_reset_n),
     .WDOG_RESETn                  (wdog_reset_n),
     .NIC_RESETn                   (nic_reset_n),
+    .TPIU_RESETn                  (tpiu_reset_n),
+    .XGCD_RESETn                  (xgcd_reset_n),
 
     // Clocks
     .SYS_CLK                      (sys_clk),
@@ -329,6 +437,8 @@ module AhaGarnetSoC (
     .UART1_CLK                    (uart1_clk),
     .WDOG_CLK                     (wdog_clk),
     .NIC_CLK                      (nic_clk),
+    .TPIU_TRACECLKIN              (TPIU_TRACECLKIN),
+    .XGCD_BUS_CLK                 (XGCD_DIV8_CLK),
 
     // Clock Qualifier Signals
     .TIMER0_CLKEN                 (timer0_clk_en),
@@ -345,9 +455,9 @@ module AhaGarnetSoC (
     .JTAG_TDO                     (DP_JTAG_TDO),
 
     // Trace Interface
-    .TPIU_TRACE_DATA              (TPIU_TRACE_DATA),
+    .TPIU_TRACE_DATA              (/* unused */),
     .TPIU_TRACE_SWO               (TPIU_TRACE_SWO),
-    .TPIU_TRACE_CLK               (TPIU_TRACE_CLK),
+    .TPIU_TRACE_CLK               (/* unused */),
 
     // UART Interface
     .UART0_RXD                    (UART0_RXD),
@@ -505,6 +615,95 @@ module AhaGarnetSoC (
     .TLX_HRESP                    (tlx_hresp),
     .TLX_HSELx                    (tlx_hselx),
     .TLX_HREADY                   (tlx_hready),
+
+    // XGCD
+    .XGCD0_AWID                   (xgcd0_awid),
+    .XGCD0_AWADDR                 (xgcd0_awaddr),
+    .XGCD0_AWLEN                  (xgcd0_awlen),
+    .XGCD0_AWSIZE                 (xgcd0_awsize),
+    .XGCD0_AWBURST                (xgcd0_awburst),
+    .XGCD0_AWLOCK                 (xgcd0_awlock),
+    .XGCD0_AWCACHE                (xgcd0_awcache),
+    .XGCD0_AWPROT                 (xgcd0_awprot),
+    .XGCD0_AWVALID                (xgcd0_awvalid),
+    .XGCD0_AWREADY                (xgcd0_awready),
+    .XGCD0_WDATA                  (xgcd0_wdata),
+    .XGCD0_WSTRB                  (xgcd0_wstrb),
+    .XGCD0_WLAST                  (xgcd0_wlast),
+    .XGCD0_WVALID                 (xgcd0_wvalid),
+    .XGCD0_WREADY                 (xgcd0_wready),
+    .XGCD0_BID                    (xgcd0_bid),
+    .XGCD0_BRESP                  (xgcd0_bresp),
+    .XGCD0_BVALID                 (xgcd0_bvalid),
+    .XGCD0_BREADY                 (xgcd0_bready),
+    .XGCD0_ARID                   (xgcd0_arid),
+    .XGCD0_ARADDR                 (xgcd0_araddr),
+    .XGCD0_ARLEN                  (xgcd0_arlen),
+    .XGCD0_ARSIZE                 (xgcd0_arsize),
+    .XGCD0_ARBURST                (xgcd0_arburst),
+    .XGCD0_ARLOCK                 (xgcd0_arlock),
+    .XGCD0_ARCACHE                (xgcd0_arcache),
+    .XGCD0_ARPROT                 (xgcd0_arprot),
+    .XGCD0_ARVALID                (xgcd0_arvalid),
+    .XGCD0_ARREADY                (xgcd0_arready),
+    .XGCD0_RID                    (xgcd0_rid),
+    .XGCD0_RDATA                  (xgcd0_rdata),
+    .XGCD0_RRESP                  (xgcd0_rresp),
+    .XGCD0_RLAST                  (xgcd0_rlast),
+    .XGCD0_RVALID                 (xgcd0_rvalid),
+    .XGCD0_RREADY                 (xgcd0_rready),
+
+    .XGCD1_AWID                   (xgcd1_awid),
+    .XGCD1_AWADDR                 (xgcd1_awaddr),
+    .XGCD1_AWLEN                  (xgcd1_awlen),
+    .XGCD1_AWSIZE                 (xgcd1_awsize),
+    .XGCD1_AWBURST                (xgcd1_awburst),
+    .XGCD1_AWLOCK                 (xgcd1_awlock),
+    .XGCD1_AWCACHE                (xgcd1_awcache),
+    .XGCD1_AWPROT                 (xgcd1_awprot),
+    .XGCD1_AWVALID                (xgcd1_awvalid),
+    .XGCD1_AWREADY                (xgcd1_awready),
+    .XGCD1_WDATA                  (xgcd1_wdata),
+    .XGCD1_WSTRB                  (xgcd1_wstrb),
+    .XGCD1_WLAST                  (xgcd1_wlast),
+    .XGCD1_WVALID                 (xgcd1_wvalid),
+    .XGCD1_WREADY                 (xgcd1_wready),
+    .XGCD1_BID                    (xgcd1_bid),
+    .XGCD1_BRESP                  (xgcd1_bresp),
+    .XGCD1_BVALID                 (xgcd1_bvalid),
+    .XGCD1_BREADY                 (xgcd1_bready),
+    .XGCD1_ARID                   (xgcd1_arid),
+    .XGCD1_ARADDR                 (xgcd1_araddr),
+    .XGCD1_ARLEN                  (xgcd1_arlen),
+    .XGCD1_ARSIZE                 (xgcd1_arsize),
+    .XGCD1_ARBURST                (xgcd1_arburst),
+    .XGCD1_ARLOCK                 (xgcd1_arlock),
+    .XGCD1_ARCACHE                (xgcd1_arcache),
+    .XGCD1_ARPROT                 (xgcd1_arprot),
+    .XGCD1_ARVALID                (xgcd1_arvalid),
+    .XGCD1_ARREADY                (xgcd1_arready),
+    .XGCD1_RID                    (xgcd1_rid),
+    .XGCD1_RDATA                  (xgcd1_rdata),
+    .XGCD1_RRESP                  (xgcd1_rresp),
+    .XGCD1_RLAST                  (xgcd1_rlast),
+    .XGCD1_RVALID                 (xgcd1_rvalid),
+    .XGCD1_RREADY                 (xgcd1_rready),
+
+    .XGCD_HADDR                   (xgcd_haddr),
+    .XGCD_HBURST                  (xgcd_hburst),
+    .XGCD_HPROT                   (xgcd_hprot),
+    .XGCD_HSIZE                   (xgcd_hsize),
+    .XGCD_HTRANS                  (xgcd_htrans),
+    .XGCD_HWDATA                  (xgcd_hwdata),
+    .XGCD_HWRITE                  (xgcd_hwrite),
+    .XGCD_HRDATA                  (xgcd_hrdata),
+    .XGCD_HREADYOUT               (xgcd_hreadyout),
+    .XGCD_HRESP                   (xgcd_hresp),
+    .XGCD_HSELx                   (xgcd_hselx),
+    .XGCD_HREADY                  (xgcd_hready),
+
+    .XGCD0_INT                    (xgcd0_int),
+    .XGCD1_INT                    (xgcd1_int),
 
     // Platform Controller
     .PCTRL_HSEL                   (pctrl_hsel),
@@ -681,20 +880,20 @@ module AhaGarnetSoC (
 
     // Forward Channel
     .TLX_FWD_PAYLOAD_TVALID       (TLX_FWD_PAYLOAD_TVALID),
-    .TLX_FWD_PAYLOAD_TREADY       (TLX_FWD_PAYLOAD_TREADY),
+    .TLX_FWD_PAYLOAD_TREADY       (1'b1),
     .TLX_FWD_PAYLOAD_TDATA        (tlx_fwd_payload_tdata),
 
     .TLX_FWD_FLOW_TVALID          (TLX_FWD_FLOW_TVALID),
-    .TLX_FWD_FLOW_TREADY          (TLX_FWD_FLOW_TREADY),
+    .TLX_FWD_FLOW_TREADY          (1'b1),
     .TLX_FWD_FLOW_TDATA           (TLX_FWD_FLOW_TDATA),
 
     // Reverse Channel
     .TLX_REV_PAYLOAD_TVALID       (TLX_REV_PAYLOAD_TVALID),
-    .TLX_REV_PAYLOAD_TREADY       (TLX_REV_PAYLOAD_TREADY),
+    .TLX_REV_PAYLOAD_TREADY       (/* unused */),
     .TLX_REV_PAYLOAD_TDATA        (tlx_rev_payload_tdata),
 
     .TLX_REV_FLOW_TVALID          (TLX_REV_FLOW_TVALID),
-    .TLX_REV_FLOW_TREADY          (TLX_REV_FLOW_TREADY),
+    .TLX_REV_FLOW_TREADY          (/* unused */),
     .TLX_REV_FLOW_TDATA           (TLX_REV_FLOW_TDATA)
   );
 
@@ -706,13 +905,118 @@ module AhaGarnetSoC (
   assign tlx_rev_payload_tdata    = {TLX_REV_PAYLOAD_TDATA_HI, TLX_REV_PAYLOAD_TDATA_LO};
 
   //------------------------------------------------------------------------------
+  // Instantiate XGCD
+  //------------------------------------------------------------------------------
+  AhaXGCDIntegration u_aha_xgcd_integration (
+    .XGCD_EXT_CLK                   (XGCD_EXT_CLK),
+    .XGCD_SOC_CLK                   (1'b0),                 // Connect this
+    .XGCD_CLK_SELECT                (XGCD_CLK_SELECT),
+    .PORESETn                       (PORESETn),
+    .XGCD_DIV8_CLK                  (XGCD_DIV8_CLK),
+
+    .XGCD_HADDR                     (xgcd_haddr),
+    .XGCD_HBURST                    (xgcd_hburst),
+    .XGCD_HPROT                     (xgcd_hprot),
+    .XGCD_HSIZE                     (xgcd_hsize),
+    .XGCD_HTRANS                    (xgcd_htrans),
+    .XGCD_HWDATA                    (xgcd_hwdata),
+    .XGCD_HWRITE                    (xgcd_hwrite),
+    .XGCD_HRDATA                    (xgcd_hrdata),
+    .XGCD_HREADYOUT                 (xgcd_hreadyout),
+    .XGCD_HRESP                     (xgcd_hresp),
+    .XGCD_HSELx                     (xgcd_hselx),
+    .XGCD_HREADY                    (xgcd_hready),
+
+    .XGCD0_AWID                     (xgcd0_awid),
+    .XGCD0_AWADDR                   (xgcd0_awaddr),
+    .XGCD0_AWLEN                    (xgcd0_awlen),
+    .XGCD0_AWSIZE                   (xgcd0_awsize),
+    .XGCD0_AWBURST                  (xgcd0_awburst),
+    .XGCD0_AWLOCK                   (xgcd0_awlock),
+    .XGCD0_AWCACHE                  (xgcd0_awcache),
+    .XGCD0_AWPROT                   (xgcd0_awprot),
+    .XGCD0_AWVALID                  (xgcd0_awvalid),
+    .XGCD0_AWREADY                  (xgcd0_awready),
+    .XGCD0_WDATA                    (xgcd0_wdata),
+    .XGCD0_WSTRB                    (xgcd0_wstrb),
+    .XGCD0_WLAST                    (xgcd0_wlast),
+    .XGCD0_WVALID                   (xgcd0_wvalid),
+    .XGCD0_WREADY                   (xgcd0_wready),
+    .XGCD0_BID                      (xgcd0_bid),
+    .XGCD0_BRESP                    (xgcd0_bresp),
+    .XGCD0_BVALID                   (xgcd0_bvalid),
+    .XGCD0_BREADY                   (xgcd0_bready),
+    .XGCD0_ARID                     (xgcd0_arid),
+    .XGCD0_ARADDR                   (xgcd0_araddr),
+    .XGCD0_ARLEN                    (xgcd0_arlen),
+    .XGCD0_ARSIZE                   (xgcd0_arsize),
+    .XGCD0_ARBURST                  (xgcd0_arburst),
+    .XGCD0_ARLOCK                   (xgcd0_arlock),
+    .XGCD0_ARCACHE                  (xgcd0_arcache),
+    .XGCD0_ARPROT                   (xgcd0_arprot),
+    .XGCD0_ARVALID                  (xgcd0_arvalid),
+    .XGCD0_ARREADY                  (xgcd0_arready),
+    .XGCD0_RID                      (xgcd0_rid),
+    .XGCD0_RDATA                    (xgcd0_rdata),
+    .XGCD0_RRESP                    (xgcd0_rresp),
+    .XGCD0_RLAST                    (xgcd0_rlast),
+    .XGCD0_RVALID                   (xgcd0_rvalid),
+    .XGCD0_RREADY                   (xgcd0_rready),
+
+    .XGCD1_AWID                     (xgcd1_awid),
+    .XGCD1_AWADDR                   (xgcd1_awaddr),
+    .XGCD1_AWLEN                    (xgcd1_awlen),
+    .XGCD1_AWSIZE                   (xgcd1_awsize),
+    .XGCD1_AWBURST                  (xgcd1_awburst),
+    .XGCD1_AWLOCK                   (xgcd1_awlock),
+    .XGCD1_AWCACHE                  (xgcd1_awcache),
+    .XGCD1_AWPROT                   (xgcd1_awprot),
+    .XGCD1_AWVALID                  (xgcd1_awvalid),
+    .XGCD1_AWREADY                  (xgcd1_awready),
+    .XGCD1_WDATA                    (xgcd1_wdata),
+    .XGCD1_WSTRB                    (xgcd1_wstrb),
+    .XGCD1_WLAST                    (xgcd1_wlast),
+    .XGCD1_WVALID                   (xgcd1_wvalid),
+    .XGCD1_WREADY                   (xgcd1_wready),
+    .XGCD1_BID                      (xgcd1_bid),
+    .XGCD1_BRESP                    (xgcd1_bresp),
+    .XGCD1_BVALID                   (xgcd1_bvalid),
+    .XGCD1_BREADY                   (xgcd1_bready),
+    .XGCD1_ARID                     (xgcd1_arid),
+    .XGCD1_ARADDR                   (xgcd1_araddr),
+    .XGCD1_ARLEN                    (xgcd1_arlen),
+    .XGCD1_ARSIZE                   (xgcd1_arsize),
+    .XGCD1_ARBURST                  (xgcd1_arburst),
+    .XGCD1_ARLOCK                   (xgcd1_arlock),
+    .XGCD1_ARCACHE                  (xgcd1_arcache),
+    .XGCD1_ARPROT                   (xgcd1_arprot),
+    .XGCD1_ARVALID                  (xgcd1_arvalid),
+    .XGCD1_ARREADY                  (xgcd1_arready),
+    .XGCD1_RID                      (xgcd1_rid),
+    .XGCD1_RDATA                    (xgcd1_rdata),
+    .XGCD1_RRESP                    (xgcd1_rresp),
+    .XGCD1_RLAST                    (xgcd1_rlast),
+    .XGCD1_RVALID                   (xgcd1_rvalid),
+    .XGCD1_RREADY                   (xgcd1_rready),
+
+    .XGCD0_INT                      (xgcd0_int),
+    .XGCD1_INT                      (xgcd1_int),
+
+    .XGCD0_START                    (XGCD0_START),
+    .XGCD1_START                    (XGCD1_START),
+    .XGCD0_DONE                     (XGCD0_DONE),
+    .XGCD1_DONE                     (XGCD1_DONE)
+  );
+
+  //------------------------------------------------------------------------------
   // Instantiate Platform Controller
   //------------------------------------------------------------------------------
   AhaPlatformController u_aha_platform_ctrl (
-    // Master Clocks and Power-On Reset
+    // Master Clocks and Resets
     .MASTER_CLK                   (MASTER_CLK),
     .ALT_MASTER_CLK               (ALT_MASTER_CLK),
     .PORESETn                     (PORESETn),
+    .SYSRESETn                    (SYSRESETn),
     .DP_JTAG_TRSTn                (DP_JTAG_TRSTn),
     .CGRA_JTAG_TRSTn              (CGRA_JTAG_TRSTn),
 
@@ -722,6 +1026,12 @@ module AhaGarnetSoC (
 
     // TLX Reverse Channel Clock
     .TLX_REV_CLK                  (TLX_REV_CLK),
+
+    // TPIU Input Clock
+    .TPIU_TRACECLKIN              (TPIU_TRACECLKIN),
+
+    // XGCD Bus Clock
+    .XGCD_BUS_CLK                 (XGCD_DIV8_CLK),
 
     // Generated Clocks
     .SYS_CLK                      (sys_clk),
@@ -759,6 +1069,8 @@ module AhaGarnetSoC (
     .UART1_RESETn                 (uart1_reset_n),
     .WDOG_RESETn                  (wdog_reset_n),
     .NIC_RESETn                   (nic_reset_n),
+    .TPIU_RESETn                  (tpiu_reset_n),
+    .XGCD_RESETn                  (xgcd_reset_n),
 
     // Peripheral Clock Qualifiers
     .TIMER0_CLKEN                 (timer0_clk_en),

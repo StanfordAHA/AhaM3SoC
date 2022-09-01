@@ -1,8 +1,8 @@
-TARGET_FOLDER 			= verilog
-RDL_FILE 						= platform_ctrl.rdl
-ORDT_TOOL 					= ./ordt/Ordt.jar
-ORDT_PARAM_FILE 		= ./ordt/params.txt
-ORDT_TARG_LANG 			= -verilog
+TARGET_FOLDER			= temp
+RDL_FILE				= platform_ctrl.rdl
+ORDT_TOOL				= ./ordt/Ordt.jar
+ORDT_PARAM_FILE			= ./ordt/params.txt
+ORDT_TARG_LANG			= -verilog
 
 rtl: $(TARGET_FOLDER)
 	@(echo "Generated ${TARGET_FOLDER} RTL folder")

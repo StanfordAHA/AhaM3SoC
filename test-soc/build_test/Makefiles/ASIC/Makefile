@@ -1,4 +1,4 @@
-CXDT_TESTS	:= discovery
+CXDT_TESTS		:= discovery
 TEST_DIR 		:= $(abspath $(ARM_IP_DIR)/software/testcodes/$(TESTNAME))
 CXDT_DIR 		:= $(abspath $(ARM_IP_DIR)/software/coresight/validation)
 CUR_DIR 		:= $(abspath .)

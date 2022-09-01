@@ -4,10 +4,8 @@
 //;  [
 //;   {name => 'TLX_FWD_CLK',               width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'TLX_FWD_PAYLOAD_TVALID',    width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
-//;   {name => 'TLX_FWD_PAYLOAD_TREADY',    width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'TLX_FWD_PAYLOAD_TDATA_HI',  width => 24,  direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'TLX_FWD_FLOW_TVALID',       width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
-//;   {name => 'TLX_FWD_FLOW_TREADY',       width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'TLX_FWD_FLOW_TDATA',        width => 2,   direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'DP_JTAG_TCK',               width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'DP_JTAG_TDI',               width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
@@ -21,24 +19,29 @@
 //;   {name => 'CGRA_JTAG_TDO',             width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'MASTER_CLK',                width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'PORESETn',                  width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
+//;   {name => 'SYSRESETn',                 width => 1,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'LOOP_BACK',                 width => 1,   direction => 'output',  pad => 'digital', side => 'left'},
 //;   {name => 'LOOP_BACK_SELECT',          width => 4,   direction => 'input',   pad => 'digital', side => 'left'},
 //;   {name => 'TLX_REV_CLK',               width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
 //;   {name => 'TLX_REV_PAYLOAD_TVALID',    width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
-//;   {name => 'TLX_REV_PAYLOAD_TREADY',    width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
 //;   {name => 'TLX_REV_PAYLOAD_TDATA_LO',  width => 45,  direction => 'input',   pad => 'digital', side => 'right'},
 //;   {name => 'TLX_REV_FLOW_TVALID',       width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
-//;   {name => 'TLX_REV_FLOW_TREADY',       width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
 //;   {name => 'TLX_REV_FLOW_TDATA',        width => 3,   direction => 'input',   pad => 'digital', side => 'right'},
 //;   {name => 'TLX_REV_PAYLOAD_TDATA_HI',  width => 35,  direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'TLX_FWD_PAYLOAD_TDATA_LO',  width => 16,  direction => 'output',  pad => 'digital', side => 'bottom'},
-//;   {name => 'TPIU_TRACE_DATA',           width => 4,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'TPIU_TRACE_SWO',            width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
-//;   {name => 'TPIU_TRACE_CLK',            width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
+//;   {name => 'TPIU_TRACECLKIN',           width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'UART0_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'UART0_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'UART1_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
-//;   {name => 'UART1_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'}
+//;   {name => 'UART1_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
+//;   {name => 'XGCD_EXT_CLK',              width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
+//;   {name => 'XGCD_CLK_SELECT',           width => 2,   direction => 'input',   pad => 'digital', side => 'right'},
+//;   {name => 'XGCD_DIV8_CLK',             width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD0_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD1_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD0_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
+//;   {name => 'XGCD1_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'right'}
 //;  ]);
 //; my $num_ios = scalar(@{$io_list});
 //; my $num_vdd_per_side = 2;
@@ -97,7 +100,7 @@
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tdi'   } = 3533.334;
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tdo'   } = 3566.667;
 //; $pad_offset{'IOPAD_jtag_intf_i_phy_tms'   } = 3600.000;
-//; $pad_offset{'IOPAD_jtag_intf_i_phy_trst_n'} = 3633.333;   
+//; $pad_offset{'IOPAD_jtag_intf_i_phy_trst_n'} = 3633.333;
 //; $pad_offset{'IOPAD_ext_rstb'              } = 3666.666;
 //; $pad_offset{'IOPAD_ext_dump_start'        } = 3700.000;
 //; $pad_offset{'IOPAD_top_VDD_dom3'          } = 4500.000;
@@ -107,7 +110,7 @@
 //; $pad_offset{'IOPAD_top_VDDPST_dom3'       } = 3888.000; # (was 4200)
 //; #
 //; # NEW for 12/2020 tapeout
-//; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;   
+//; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;
 //; $pad_offset{'IOPAD_ramp_clock'            } = 4160.000;
 
 //; my %orientations;

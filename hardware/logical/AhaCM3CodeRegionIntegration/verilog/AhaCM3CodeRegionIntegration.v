@@ -15,12 +15,14 @@ module AhaCM3CodeRegionIntegration (
   input   wire            DAP_RESETn,         // Debug system reset synchronized to DAP_CLK
   input   wire            JTAG_TRSTn,         // JTAG Reset synchronized to JTAG Test Clock
   input   wire            JTAG_PORESETn,      // JTAG Power on reset synchronized to JTAG_TCK
+  input   wire            TPIU_RESETn,        // TPIU Reset (synchronized to TPIU_TRACECLKIN)
 
   // Clocks
   input   wire            SYS_CLK ,           // CPU-domain free running clock
-  input   wire            CPU_CLK,           // CPU-domain gated clock
+  input   wire            CPU_CLK,            // CPU-domain gated clock
   input   wire            DAP_CLK,            // DAP Clock
   input   wire            JTAG_TCK,           // JTAG test clock
+  input   wire            TPIU_TRACECLKIN,    // TPIU interface clock
 
   // Clock-related Signals
   input   wire            CPU_CLK_CHANGED,    // Indicates whether CPU clok frequency has changed
@@ -77,6 +79,8 @@ module AhaCM3CodeRegionIntegration (
   input   wire            CGRA_INT,
   input   wire            WDOG_INT,           // Watchdog interrupt used as NMI
   input   wire            TLX_INT,
+  input   wire            XGCD0_INT,
+  input   wire            XGCD1_INT,
 
   // SysTick
   input   wire            SYS_TICK_NOT_10MS_MULT, // Does the sys-tick calibration value
@@ -103,12 +107,14 @@ module AhaCM3CodeRegionIntegration (
     .DAP_RESETn           (DAP_RESETn),
     .JTAG_TRSTn           (JTAG_TRSTn),
     .JTAG_PORESETn        (JTAG_PORESETn),
+    .TPIU_RESETn          (TPIU_RESETn),
 
     // Clocks
     .SYS_CLK              (SYS_CLK),
     .CPU_CLK              (CPU_CLK),
     .DAP_CLK              (DAP_CLK),
     .JTAG_TCK             (JTAG_TCK),
+    .TPIU_TRACECLKIN      (TPIU_TRACECLKIN),
 
     // Clock-related
     .CPU_CLK_CHANGED      (CPU_CLK_CHANGED),
@@ -176,6 +182,8 @@ module AhaCM3CodeRegionIntegration (
     .CGRA_INT             (CGRA_INT),
     .WDOG_INT             (WDOG_INT),
     .TLX_INT              (TLX_INT),
+    .XGCD0_INT            (XGCD0_INT),
+    .XGCD1_INT            (XGCD1_INT),
 
     // SysTick
     .SYS_TICK_CALIB       (SYS_TICK_CALIB),

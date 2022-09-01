@@ -7,6 +7,11 @@
 // Author   : Gedeon Nyengele
 // Date     : May 3, 2020
 //-----------------------------------------------------------------------------
+// Updates  :
+//  - Aug 30, 2022:
+//      - Added XGCD reset
+//------------------------------------------------------------------------------
+
 module AhaResetController (
   // System Clock
   input   wire        SYS_FCLK,
@@ -18,6 +23,7 @@ module AhaResetController (
   input   wire        SYSRESETREQ,
 
   // CPU
+  input   wire        CPU_SYSRESETn,
   output  wire        CPU_PORESETn,
   output  wire        CPU_RESETn,
 
@@ -51,6 +57,10 @@ module AhaResetController (
   output  wire        TLX_PORESETn,
   output  wire        TLX_RESETn,
   output  wire        TLX_REV_RESETn,
+
+  // TPIU
+  input   wire        TPIU_TRACECLKIN,
+  output  wire        TPIU_RESETn,
 
   // CGRA
   input   wire        CGRA_FCLK,
@@ -125,7 +135,11 @@ module AhaResetController (
   // CGRA JTAG
   input   wire        CGRA_JTAG_TCK,
   input   wire        CGRA_JTAG_TRSTn,
-  output  wire        CGRA_JTAG_RESETn
+  output  wire        CGRA_JTAG_RESETn,
+
+  // XGCD
+  input   wire        XGCD_BUS_CLK,
+  output  wire        XGCD_RESETn
 );
 
   // Power-On Reset Wires
@@ -139,6 +153,8 @@ module AhaResetController (
   wire        uart0_clk_poreset_n;
   wire        uart1_clk_poreset_n;
   wire        wdog_clk_poreset_n;
+  wire        tpiu_clk_poreset_n;
+  wire        xgcd_clk_poreset_n;
 
   // --------------------------------------------------------------------------
   // Power-On Resets
@@ -156,6 +172,15 @@ module AhaResetController (
     .Dn       (PORESETn),
     .Qn       (tlx_clk_poreset_n)
   );
+
+  // Power-On Reset -- TPIU Clock Domain
+  AhaResetSync u_tpiu_clk_poresetn_sync (
+    .CLK      (TPIU_TRACECLKIN),
+    .Dn       (PORESETn),
+    .Qn       (tpiu_clk_poreset_n)
+  );
+
+  assign TPIU_RESETn = tpiu_clk_poreset_n;
 
   // Power-On Reset -- CGRA Clock Domain
   AhaResetSync u_cgra_clk_poresetn_sync (
@@ -213,13 +238,22 @@ module AhaResetController (
     .Qn       (wdog_clk_poreset_n)
   );
 
+  // Power-On Reset -- XGCD Clock Domain
+  AhaResetSync u_xgcd_clk_poresetn_sync (
+    .CLK      (XGCD_BUS_CLK),
+    .Dn       (PORESETn),
+    .Qn       (xgcd_clk_poreset_n)
+  );
+
+  assign XGCD_RESETn = xgcd_clk_poreset_n;
+
   // --------------------------------------------------------------------------
   // Reset Controllers
   // --------------------------------------------------------------------------
   // CPU
   AhaResetGen #(.NUM_CYCLES(8)) u_cpu_reset_ctrl (
     .CLK          (SYS_FCLK),
-    .PORESETn     (PORESETn),
+    .PORESETn     (PORESETn & CPU_SYSRESETn),
     .REQ          (SYSRESETREQ),
     .ACK          (),
     .Qn           (CPU_RESETn)
