@@ -28,6 +28,7 @@ def construct():
         #'interrupts_test',
         'tlx_test',
         'cgra_test',
+        'xgcd_test',
         #'master_clock_test',
         #'app_tlx_test',
         #'app_test_stage1',
