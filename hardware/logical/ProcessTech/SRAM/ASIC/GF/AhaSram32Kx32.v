@@ -21,6 +21,10 @@ module AhaSram32Kx32 #( parameter IMAGE_FILE = "None" )
     output  wire [31:0]     Q
 );
 
+    initial begin
+    $deposit(Q, 0);
+    end
+
 
     //
     // Internal Signals
@@ -31,6 +35,7 @@ module AhaSram32Kx32 #( parameter IMAGE_FILE = "None" )
     wire [7:0]              lane2_wen;
     wire [7:0]              lane3_wen;
     wire [31:0]             bwen;
+    wire [31:0]             bwe;
     wire                    wen_w;
 
     assign lane0_wen        = {8{WEn[0]}};
@@ -40,6 +45,7 @@ module AhaSram32Kx32 #( parameter IMAGE_FILE = "None" )
 
     assign bwen             = { lane3_wen, lane2_wen, lane1_wen, lane0_wen };
     assign wen_w            = (& WEn);
+    assign bwe              = ~bwen;
 
     //
     // Instantiate SRAM Macro
@@ -49,7 +55,7 @@ module AhaSram32Kx32 #( parameter IMAGE_FILE = "None" )
         .CLK                (CLK),
         .CEN                (CEn),
         .RDWEN              (wen_w),
-        .BW                 (bwen),
+        .BW                 (bwe),
         .A                  (A),
         .D                  (D),
         .Q                  (Q),
