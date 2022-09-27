@@ -64,10 +64,10 @@ def construct():
         'array_width': 32,
         'array_height': 16,
         'clock_period': 1.0,
-        'ARM_IP_DIR': '/home/gedeon/temp/soc/aham3soc_armip',
-        'AHA_IP_DIR': '/home/gedeon/temp/soc/aham3soc',
+        'ARM_IP_DIR': '/sim/kkoul/aham3soc_armip',
+        'AHA_IP_DIR': '/sim/kkoul/AhaM3SoC',
         'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
-        'GARNET_DIR': '/sim/kkoul/garnet',
+        'GARNET_DIR': '/sim/kkoul/aha/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
         'IMPL_VIEW': 'SIM', # can be SIM or ASIC
@@ -80,7 +80,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     this_dir = os.path.dirname(os.path.abspath(__file__))
-
+    garnet_rtl          = Step(parameters['GARNET_DIR'] + '/mflowgen/common/rtl')
     amber_rtl  	        = Step(this_dir + '/amber')
     compile_design  	= Step(this_dir + '/compile_design')
     build_test      	= Step(this_dir + '/build_test')
@@ -141,6 +141,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     g.add_step(amber_rtl)
+    g.add_step(garnet_rtl)
     g.add_step(compile_design)
 
     for s in build_steps:
@@ -155,7 +156,8 @@ def construct():
     # Graph -- Add edges
     # -------------------------------------------------------------------------
 
-    g.connect_by_name(amber_rtl, compile_design)
+    #g.connect_by_name(amber_rtl, compile_design)
+    g.connect_by_name(garnet_rtl, compile_design)
 
     for r, b in zip(run_steps, build_steps):
         g.connect_by_name(b, r)
