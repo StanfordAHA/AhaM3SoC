@@ -7,7 +7,7 @@
 // Date     : April 17, 2020
 //------------------------------------------------------------------------------
 // Updates:
-//  - September 27, 2020
+//  - September 27, 2022
 //      - Added 2-FF synchronizer at the input stage (allows to write timing
 //          exception constraints)
 //------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ module AhaClockSwitch (
     assign w_OTHERS_SEL = ALT_CLK_EN1 | ALT_CLK_EN2 | ALT_CLK_EN3 | ALT_CLK_EN4 | ALT_CLK_EN5;
 
     //
-    // Clock Selection Update Stages
+    // Clock Selection Synchronization Stages
     //
 
     always @(posedge CLK) begin
