@@ -44,6 +44,7 @@ module AhaClockSwitch (
     reg                 r_EN_STAGE0_SYNC;
     reg                 r_EN_STATEG1;
     reg                 r_EN;
+    wire                w_CLK_OUT;
 
     //
     // Clock Selection Conditions
@@ -53,7 +54,7 @@ module AhaClockSwitch (
     assign w_OTHERS_SEL = ALT_CLK_EN1 | ALT_CLK_EN2 | ALT_CLK_EN3 | ALT_CLK_EN4 | ALT_CLK_EN5;
 
     //
-    // Clock Selection Synchronization Stages
+    // Clock Selection Input Stages (Synchronization)
     //
 
     always @(posedge CLK) begin
@@ -62,17 +63,24 @@ module AhaClockSwitch (
     end
 
     //
-    // Update of Clock Gating Signal
+    // Clock Selection Output Stage (Clock Gating)
     //
 
     always @(negedge CLK)
         r_EN    <= r_EN_STATEG1;
 
+    AhaClockGate u_clock_gate_CLK (
+        .TE     (1'b0),
+        .E      (r_EN),
+        .CP     (CLK),
+        .Q      (w_CLK_OUT)
+    );
+
     //
     // Output Assignments
     //
 
-    assign CLK_OUT          = CLK & r_EN;
+    assign CLK_OUT          = w_CLK_OUT;
     assign CLK_EN_OUT       = CLK_EN & r_EN;
     assign SELECT_ACK       = r_EN;
 endmodule

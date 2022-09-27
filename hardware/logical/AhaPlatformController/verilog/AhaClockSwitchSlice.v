@@ -32,6 +32,7 @@ module AhaClockSwitchSlice (
   reg               r_EN_STAGE0_SYNC;
   reg               r_EN_STAGE1;
   reg               r_EN;
+  wire              w_CLK_OUT;
 
   //
   // Clock Selection Synchronization Stages
@@ -49,11 +50,17 @@ module AhaClockSwitchSlice (
   always @(negedge CLK)
       r_EN    <= r_EN_STAGE1;
 
+  AhaClockGate u_clock_gate_CLK (
+      .TE     (1'b0),
+      .E      (r_EN),
+      .CP     (CLK),
+      .Q      (w_CLK_OUT)
+  );
+
   //
   // Output Assignments
   //
 
-  assign CLK_OUT          = CLK & r_EN;
+  assign CLK_OUT          = w_CLK_OUT;
   assign SELECT_ACK       = r_EN;
-
 endmodule
