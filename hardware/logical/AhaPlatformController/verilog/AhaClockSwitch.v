@@ -41,7 +41,14 @@ module AhaClockSwitch (
     clk_en    <= clk_sel_cond & ~others_sel;
   end
 
-  assign CLK_OUT      = CLK & clk_en;
+  AhaClockGate u_clock_switch_en (
+    .TE     (1'b0),
+    .E      (clk_en),
+    .CP     (CLK),
+    .Q      (CLK_OUT)
+  );
+
+  //assign CLK_OUT      = CLK & clk_en;
   assign CLK_EN_OUT   = CLK_EN & clk_en;
   assign SELECT_ACK   = clk_sel;
 
