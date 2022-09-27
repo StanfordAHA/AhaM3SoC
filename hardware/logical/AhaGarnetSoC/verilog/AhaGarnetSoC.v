@@ -909,7 +909,7 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   AhaXGCDIntegration u_aha_xgcd_integration (
     .XGCD_EXT_CLK                   (XGCD_EXT_CLK),
-    .XGCD_SOC_CLK                   (sys_clk),                 
+    .XGCD_SOC_CLK                   (1'b0),                 
     .XGCD_CLK_SELECT                (XGCD_CLK_SELECT),
     .PORESETn                       (PORESETn),
     .XGCD_DIV8_CLK                  (XGCD_DIV8_CLK),
