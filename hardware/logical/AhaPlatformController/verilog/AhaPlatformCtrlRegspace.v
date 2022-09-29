@@ -102,142 +102,448 @@ module AhaPlatformCtrlRegspace (
   output  wire                L2H_MASTER_CLK_SELECT_SELECT_r
 );
 
-//------------------------------------------------------------------------------
-// Simple Register Access Interface Wires
-//------------------------------------------------------------------------------
-  wire  [11:0]                regif_addr;
-  wire                        regif_read_en;
-  wire                        regif_write_en;
-  wire  [3:0]                 regif_byte_strobe;
-  wire  [31:0]                regif_wdata;
-  wire  [31:0]                regif_rdata;
-  wire                        regif_ack;
-  wire                        regif_nack;
+    //
+    // Internal Signals
+    //
 
-//------------------------------------------------------------------------------
-// Convert AHB to Simple Reg Access Interface
-//------------------------------------------------------------------------------
+    wire    [11:0]              w_PADDR;
+    wire                        w_PENABLE;
+    wire                        w_PWRITE;
+    wire    [31:0]              w_PWDATA;
+    wire                        w_PSEL;
+    wire                        w_PREADY;
+    wire                        w_PSLVERR;
+    wire    [31:0]              w_PRDATA;
 
-  AhaAHBToParallel #(.ADDR_WIDTH(12)) u_pctrl_ahb_to_parallel_if (
-    // AHB Interface
-    .HCLK                     (HCLK),
-    .HRESETn                  (HRESETn),
+    reg [31:0]                  apb_rdata;
+    reg [31:0]                  apb_rdata_reg;
+    wire                        apb_setup_phase;
+    wire                        apb_rd_en;
+    wire                        apb_wr_en;
+    wire [4:0]                  apb_addr_oft;
 
-    .HSEL                     (HSEL),
-    .HADDR                    (HADDR),
-    .HTRANS                   (HTRANS),
-    .HWRITE                   (HWRITE),
-    .HSIZE                    (HSIZE),
-    .HBURST                   (HBURST),
-    .HPROT                    (HPROT),
-    .HMASTER                  (HMASTER),
-    .HWDATA                   (HWDATA),
-    .HMASTLOCK                (HMASTLOCK),
-    .HREADYMUX                (HREADYMUX),
+    reg     [31:0]              PAD_STRENGTH_CTRL_REG;
+    reg     [31:0]              SYS_CLK_SELECT_REG;
+    reg                         SYS_CLK_SELECT_SWMOD;
+    reg     [31:0]              DMA0_PCLK_SELECT_REG;
+    reg     [31:0]              DMA1_PCLK_SELECT_REG;
+    reg     [31:0]              TLX_FWD_CLK_SELECT_REG;
+    reg     [31:0]              CGRA_CLK_SELECT_REG;
+    reg     [31:0]              TIMER0_CLK_SELECT_REG;
+    reg     [31:0]              TIMER1_CLK_SELECT_REG;
+    reg     [31:0]              UART0_CLK_SELECT_REG;
+    reg     [31:0]              UART1_CLK_SELECT_REG;
+    reg     [31:0]              WDOG_CLK_SELECT_REG;
+    reg     [31:0]              CLK_GATE_EN_REG;
+    reg     [31:0]              SYS_RESET_PROP_REG;
+    reg     [31:0]              RESET_REQ_REG;
+    reg     [31:0]              SYS_TICK_CONFIG_REG;
+    reg     [31:0]              SYS_RESET_AGGR_REG;
+    reg     [31:0]              MASTER_CLK_SELECT_REG;
 
-    .HRDATA                   (HRDATA),
-    .HREADYOUT                (HREADYOUT),
-    .HRESP                    (HRESP),
+    wire    [31:0]              w_RESET_ACK_REG;
 
-    // Parallel Interface
-    .PAR_ADDR                 (regif_addr),
-    .PAR_RD_EN                (regif_read_en),
-    .PAR_WR_EN                (regif_write_en),
-    .PAR_WR_STRB              (regif_byte_strobe),
-    .PAR_WR_DATA              (regif_wdata),
-    .PAR_RD_DATA              (regif_rdata),
-    .PAR_ACK                  (regif_ack),
-    .PAR_NACK                 (regif_nack)
-  );
+    //
+    // AHB to APB
+    //
 
-//------------------------------------------------------------------------------
-// Register Space Integration
-//------------------------------------------------------------------------------
-  AhaPlatformCtrlAddrMap_pio u_pctrl_addr_map (
-    .clk                                            (HCLK),
-    .reset                                          (~HRESETn),
+    cmsdk_ahb_to_apb #(
+        .ADDRWIDTH              (12),
+        .REGISTER_RDATA         (1),
+        .REGISTER_WDATA         (1)
+    ) u_cmsdk_ahb_apb_bridge (
+        .HCLK                   (HCLK),
+        .HRESETn                (HRESETn),
+        .PCLKEN                 (1'b1),
 
-    .h2l_RESET_ACK_REG_DMA0_w                       (H2L_RESET_ACK_REG_DMA0_w),
-    .h2l_RESET_ACK_REG_DMA1_w                       (H2L_RESET_ACK_REG_DMA1_w),
-    .h2l_RESET_ACK_REG_TLX_FWD_w                    (H2L_RESET_ACK_REG_TLX_FWD_w),
-    .h2l_RESET_ACK_REG_TLX_REV_w                    (H2L_RESET_ACK_REG_TLX_REV_w),
-    .h2l_RESET_ACK_REG_GGRA_w                       (H2L_RESET_ACK_REG_GGRA_w),
-    .h2l_RESET_ACK_REG_NIC_w                        (H2L_RESET_ACK_REG_NIC_w),
-    .h2l_RESET_ACK_REG_TIMER0_w                     (H2L_RESET_ACK_REG_TIMER0_w),
-    .h2l_RESET_ACK_REG_TIMER1_w                     (H2L_RESET_ACK_REG_TIMER1_w),
-    .h2l_RESET_ACK_REG_UART0_w                      (H2L_RESET_ACK_REG_UART0_w),
-    .h2l_RESET_ACK_REG_UART1_w                      (H2L_RESET_ACK_REG_UART1_w),
-    .h2l_RESET_ACK_REG_WDOG_w                       (H2L_RESET_ACK_REG_WDOG_w),
-    .h2d_pio_dec_address                            (regif_addr[6:2]),
-    .h2d_pio_dec_write_data                         (regif_wdata),
-    .h2d_pio_dec_write_enable                       (regif_byte_strobe),
-    .h2d_pio_dec_write                              (regif_write_en),
-    .h2d_pio_dec_read                               (regif_read_en),
+        .HSEL                   (HSEL),
+        .HADDR                  (HADDR[11:0]),
+        .HTRANS                 (HTRANS),
+        .HSIZE                  (HSIZE),
+        .HPROT                  (HPROT),
+        .HWRITE                 (HWRITE),
+        .HREADY                 (HREADYMUX),
+        .HWDATA                 (HWDATA),
 
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP0_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP0_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP1_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP1_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP2_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP2_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP3_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP3_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP4_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP4_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP5_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP5_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP6_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP6_r),
-    .l2h_PAD_STRENGTH_CTRL_REG_GRP7_r               (L2H_PAD_STRENGTH_CTRL_REG_GRP7_r),
-    .l2h_SYS_CLK_SELECT_REG_SELECT_swmod_o          (L2H_SYS_CLK_SELECT_REG_SELECT_SWMOD_o),
-    .l2h_SYS_CLK_SELECT_REG_SELECT_r                (L2H_SYS_CLK_SELECT_REG_SELECT_r),
-    .l2h_DMA0_PCLK_SELECT_REG_SELECT_r              (L2H_DMA0_PCLK_SELECT_REG_SELECT_r),
-    .l2h_DMA1_PCLK_SELECT_REG_SELECT_r              (L2H_DMA1_PCLK_SELECT_REG_SELECT_r),
-    .l2h_TLX_FWD_CLK_SELECT_REG_SELECT_r            (L2H_TLX_FWD_CLK_SELECT_REG_SELECT_r),
-    .l2h_CGRA_CLK_SELECT_REG_SELECT_r               (L2H_CGRA_CLK_SELECT_REG_SELECT_r),
-    .l2h_TIMER0_CLK_SELECT_REG_SELECT_r             (L2H_TIMER0_CLK_SELECT_REG_SELECT_r),
-    .l2h_TIMER1_CLK_SELECT_REG_SELECT_r             (L2H_TIMER1_CLK_SELECT_REG_SELECT_r),
-    .l2h_UART0_CLK_SELECT_REG_SELECT_r              (L2H_UART0_CLK_SELECT_REG_SELECT_r),
-    .l2h_UART1_CLK_SELECT_REG_SELECT_r              (L2H_UART1_CLK_SELECT_REG_SELECT_r),
-    .l2h_WDOG_CLK_SELECT_REG_SELECT_r               (L2H_WDOG_CLK_SELECT_REG_SELECT_r),
-    .l2h_CLK_GATE_EN_REG_CPU_r                      (L2H_CLK_GATE_EN_REG_CPU_r),
-    .l2h_CLK_GATE_EN_REG_DAP_r                      (L2H_CLK_GATE_EN_REG_DAP_r),
-    .l2h_CLK_GATE_EN_REG_DMA0_r                     (L2H_CLK_GATE_EN_REG_DMA0_r),
-    .l2h_CLK_GATE_EN_REG_DMA1_r                     (L2H_CLK_GATE_EN_REG_DMA1_r),
-    .l2h_CLK_GATE_EN_REG_SRAMx_r                    (L2H_CLK_GATE_EN_REG_SRAMX_r),
-    .l2h_CLK_GATE_EN_REG_TLX_FWD_r                  (L2H_CLK_GATE_EN_REG_TLX_FWD_r),
-    .l2h_CLK_GATE_EN_REG_GGRA_r                     (L2H_CLK_GATE_EN_REG_GGRA_r),
-    .l2h_CLK_GATE_EN_REG_NIC_r                      (L2H_CLK_GATE_EN_REG_NIC_r),
-    .l2h_CLK_GATE_EN_REG_TIMER0_r                   (L2H_CLK_GATE_EN_REG_TIMER0_r),
-    .l2h_CLK_GATE_EN_REG_TIMER1_r                   (L2H_CLK_GATE_EN_REG_TIMER1_r),
-    .l2h_CLK_GATE_EN_REG_UART0_r                    (L2H_CLK_GATE_EN_REG_UART0_r),
-    .l2h_CLK_GATE_EN_REG_UART1_r                    (L2H_CLK_GATE_EN_REG_UART1_r),
-    .l2h_CLK_GATE_EN_REG_WDOG_r                     (L2H_CLK_GATE_EN_REG_WDOG_r),
-    .l2h_SYS_RESET_PROP_REG_DMA0_r                  (L2H_SYS_RESET_PROP_REG_DMA0_r),
-    .l2h_SYS_RESET_PROP_REG_DMA1_r                  (L2H_SYS_RESET_PROP_REG_DMA1_r),
-    .l2h_SYS_RESET_PROP_REG_SRAMx_r                 (L2H_SYS_RESET_PROP_REG_SRAMX_r),
-    .l2h_SYS_RESET_PROP_REG_TLX_FWD_r               (L2H_SYS_RESET_PROP_REG_TLX_FWD_r),
-    .l2h_SYS_RESET_PROP_REG_GGRA_r                  (L2H_SYS_RESET_PROP_REG_GGRA_r),
-    .l2h_SYS_RESET_PROP_REG_NIC_r                   (L2H_SYS_RESET_PROP_REG_NIC_r),
-    .l2h_SYS_RESET_PROP_REG_TIMER0_r                (L2H_SYS_RESET_PROP_REG_TIMER0_r),
-    .l2h_SYS_RESET_PROP_REG_TIMER1_r                (L2H_SYS_RESET_PROP_REG_TIMER1_r),
-    .l2h_SYS_RESET_PROP_REG_UART0_r                 (L2H_SYS_RESET_PROP_REG_UART0_r),
-    .l2h_SYS_RESET_PROP_REG_UART1_r                 (L2H_SYS_RESET_PROP_REG_UART1_r),
-    .l2h_SYS_RESET_PROP_REG_WDOG_r                  (L2H_SYS_RESET_PROP_REG_WDOG_r),
-    .l2h_RESET_REQ_REG_DMA0_r                       (L2H_RESET_REQ_REG_DMA0_r),
-    .l2h_RESET_REQ_REG_DMA1_r                       (L2H_RESET_REQ_REG_DMA1_r),
-    .l2h_RESET_REQ_REG_TLX_FWD_r                    (L2H_RESET_REQ_REG_TLX_FWD_r),
-    .l2h_RESET_REQ_REG_TLX_REV_r                    (L2H_RESET_REQ_REG_TLX_REV_r),
-    .l2h_RESET_REQ_REG_GGRA_r                       (L2H_RESET_REQ_REG_GGRA_r),
-    .l2h_RESET_REQ_REG_NIC_r                        (L2H_RESET_REQ_REG_NIC_r),
-    .l2h_RESET_REQ_REG_TIMER0_r                     (L2H_RESET_REQ_REG_TIMER0_r),
-    .l2h_RESET_REQ_REG_TIMER1_r                     (L2H_RESET_REQ_REG_TIMER1_r),
-    .l2h_RESET_REQ_REG_UART0_r                      (L2H_RESET_REQ_REG_UART0_r),
-    .l2h_RESET_REQ_REG_UART1_r                      (L2H_RESET_REQ_REG_UART1_r),
-    .l2h_RESET_REQ_REG_WDOG_r                       (L2H_RESET_REQ_REG_WDOG_r),
-    .l2h_SYS_TICK_CONFIG_REG_CALIB_r                (L2H_SYS_TICK_CONFIG_REG_CALIB_r),
-    .l2h_SYS_TICK_CONFIG_REG_NOT_10_MS_r            (L2H_SYS_TICK_CONFIG_REG_NOT_10_MS_r),
-    .l2h_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r       (L2H_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r),
-    .l2h_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r (L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r),
-    .l2h_MASTER_CLK_SELECT_SELECT_r                 (L2H_MASTER_CLK_SELECT_SELECT_r),
-    .d2h_dec_pio_read_data                          (regif_rdata),
-    .d2h_dec_pio_ack                                (regif_ack),
-    .d2h_dec_pio_nack                               (regif_nack)
-  );
+        .HREADYOUT              (HREADYOUT),
+        .HRDATA                 (HRDATA),
+        .HRESP                  (HRESP[0]),
+
+        .PADDR                  (w_PADDR),
+        .PENABLE                (w_PENABLE),
+        .PWRITE                 (w_PWRITE),
+        .PSTRB                  (/*unused*/),
+        .PPROT                  (/*unused*/),
+        .PWDATA                 (w_PWDATA),
+        .PSEL                   (w_PSEL),
+
+        .APBACTIVE              (/*unused*/),
+
+        .PRDATA                 (w_PRDATA),
+        .PREADY                 (w_PREADY),
+        .PSLVERR                (w_PSLVERR)
+    );
+
+    assign HRESP[1] = 1'b0;
+
+    //
+    // APB Control Signals
+    //
+
+    assign apb_addr_oft         = w_PADDR[6:2];
+    assign apb_setup_phase      = w_PSEL & ~w_PENABLE;
+    assign apb_rd_en            = apb_setup_phase & ~w_PWRITE;
+    assign apb_wr_en            = apb_setup_phase & w_PWRITE;
+
+    //
+    // PAD_STRENGTH_CTRL_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            PAD_STRENGTH_CTRL_REG   <= {32{1'b0}};
+        else if (apb_wr_en && (apb_addr_oft == 5'd1))
+            PAD_STRENGTH_CTRL_REG   <= w_PWDATA;
+
+    //
+    // SYS_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn) begin
+            SYS_CLK_SELECT_REG      <= 32'h00000001;
+            SYS_CLK_SELECT_SWMOD    <= 1'b0;
+        end
+        else begin
+            if (apb_wr_en && (apb_addr_oft == 5'd2)) begin
+                SYS_CLK_SELECT_REG      <= w_PWDATA;
+                SYS_CLK_SELECT_SWMOD    <= 1'b1;
+            end
+            else
+                SYS_CLK_SELECT_SWMOD    <= 1'b0;
+        end
+
+    //
+    // DMA0_PCLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            DMA0_PCLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd5))
+            DMA0_PCLK_SELECT_REG   <= w_PWDATA;
 
 
+    //
+    // DMA1_PCLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            DMA1_PCLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd6))
+            DMA1_PCLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // TLX_FWD_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            TLX_FWD_CLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd8))
+            TLX_FWD_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // CGRA_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            CGRA_CLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd10))
+            CGRA_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // TIMER0_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            TIMER0_CLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd12))
+            TIMER0_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // TIMER1_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            TIMER1_CLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd13))
+            TIMER1_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // UART0_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            UART0_CLK_SELECT_REG   <= 32'h00000001;
+        else if (apb_wr_en && (apb_addr_oft == 5'd14))
+            UART0_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // UART1_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            UART1_CLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd15))
+            UART1_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // WDOG_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            WDOG_CLK_SELECT_REG   <= 32'h00000005;
+        else if (apb_wr_en && (apb_addr_oft == 5'd16))
+            WDOG_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // CLK_GATE_EN_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            CLK_GATE_EN_REG   <= 32'h00007D5C;
+        else if (apb_wr_en && (apb_addr_oft == 5'd17))
+            CLK_GATE_EN_REG   <= w_PWDATA;
+
+    //
+    // SYS_RESET_PROP_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            SYS_RESET_PROP_REG   <= 32'h00007F78;
+        else if (apb_wr_en && (apb_addr_oft == 5'd18))
+            SYS_RESET_PROP_REG   <= w_PWDATA;
+
+    //
+    // RESET_REQ_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            RESET_REQ_REG   <= 32'h00007DD8;
+        else if (apb_wr_en && (apb_addr_oft == 5'd19))
+            RESET_REQ_REG   <= w_PWDATA;
+
+    //
+    // SYS_TICK_CONFIG_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            SYS_TICK_CONFIG_REG   <= 32'h80000000;
+        else if (apb_wr_en && (apb_addr_oft == 5'd21))
+            SYS_TICK_CONFIG_REG   <= w_PWDATA;
+
+    //
+    // SYS_RESET_AGGR_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            SYS_RESET_AGGR_REG   <= {32{1'b0}};
+        else if (apb_wr_en && (apb_addr_oft == 5'd22))
+            SYS_RESET_AGGR_REG   <= w_PWDATA;
+
+    //
+    // MASTER_CLK_SELECT_REG
+    //
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            MASTER_CLK_SELECT_REG   <= {32{1'b0}};
+        else if (apb_wr_en && (apb_addr_oft == 5'd23))
+            MASTER_CLK_SELECT_REG   <= w_PWDATA;
+
+    //
+    // Read Data
+    //
+
+    always @(*)
+        case (apb_addr_oft)
+            5'd0    : apb_rdata_reg = 32'h5A5A5A5A;
+            5'd1    : apb_rdata_reg = PAD_STRENGTH_CTRL_REG;
+            5'd2    : apb_rdata_reg = SYS_CLK_SELECT_REG;
+            5'd5    : apb_rdata_reg = DMA0_PCLK_SELECT_REG;
+            5'd6    : apb_rdata_reg = DMA1_PCLK_SELECT_REG;
+            5'd8    : apb_rdata_reg = TLX_FWD_CLK_SELECT_REG;
+            5'd10   : apb_rdata_reg = CGRA_CLK_SELECT_REG;
+            5'd12   : apb_rdata_reg = TIMER0_CLK_SELECT_REG;
+            5'd13   : apb_rdata_reg = TIMER1_CLK_SELECT_REG;
+            5'd14   : apb_rdata_reg = UART0_CLK_SELECT_REG;
+            5'd15   : apb_rdata_reg = UART1_CLK_SELECT_REG;
+            5'd16   : apb_rdata_reg = WDOG_CLK_SELECT_REG;
+            5'd17   : apb_rdata_reg = CLK_GATE_EN_REG;
+            5'd18   : apb_rdata_reg = SYS_RESET_PROP_REG;
+            5'd19   : apb_rdata_reg = RESET_REQ_REG;
+            5'd20   : apb_rdata_reg = w_RESET_ACK_REG;
+            5'd21   : apb_rdata_reg = SYS_TICK_CONFIG_REG;
+            5'd22   : apb_rdata_reg = SYS_RESET_AGGR_REG;
+            5'd23   : apb_rdata_reg = MASTER_CLK_SELECT_REG;
+            default : apb_rdata_reg = {32{1'b0}};
+        endcase
+
+    always @(posedge HCLK or negedge HRESETn)
+        if (!HRESETn)
+            apb_rdata   <= {32{1'b0}};
+        else if (apb_rd_en)
+            apb_rdata   <= apb_rdata_reg;
+
+    //
+    // APB Outputs
+    //
+
+    assign w_PRDATA             = apb_rdata;
+    assign w_PREADY             = 1'b1;
+    assign w_PSLVERR            = 1'b0;
+
+    //
+    // Control Signals
+    //
+
+    assign w_RESET_ACK_REG  = { 17'd0,
+                                H2L_RESET_ACK_REG_WDOG_w,
+                                H2L_RESET_ACK_REG_UART1_w,
+                                H2L_RESET_ACK_REG_UART0_w,
+                                H2L_RESET_ACK_REG_TIMER1_w,
+                                H2L_RESET_ACK_REG_TIMER0_w,
+                                H2L_RESET_ACK_REG_NIC_w,
+                                H2L_RESET_ACK_REG_GGRA_w,
+                                H2L_RESET_ACK_REG_TLX_REV_w,
+                                H2L_RESET_ACK_REG_TLX_FWD_w,
+                                1'b0,
+                                H2L_RESET_ACK_REG_DMA1_w,
+                                H2L_RESET_ACK_REG_DMA0_w,
+                                3'b000};
+
+
+    // PAD_STRENGTH_CTRL_REG
+
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP0_r = PAD_STRENGTH_CTRL_REG[2:0];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP1_r = PAD_STRENGTH_CTRL_REG[5:3];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP2_r = PAD_STRENGTH_CTRL_REG[8:6];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP3_r = PAD_STRENGTH_CTRL_REG[11:9];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP4_r = PAD_STRENGTH_CTRL_REG[14:12];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP5_r = PAD_STRENGTH_CTRL_REG[17:15];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP6_r = PAD_STRENGTH_CTRL_REG[20:18];
+    assign L2H_PAD_STRENGTH_CTRL_REG_GRP7_r = PAD_STRENGTH_CTRL_REG[23:21];
+
+    // SYS_CLK_SELECT_REG
+
+    assign L2H_SYS_CLK_SELECT_REG_SELECT_SWMOD_o    = SYS_CLK_SELECT_SWMOD;
+    assign L2H_SYS_CLK_SELECT_REG_SELECT_r          = SYS_CLK_SELECT_REG[2:0];
+
+    // DMA0_PCLK_SELECT_REG
+
+    assign L2H_DMA0_PCLK_SELECT_REG_SELECT_r    = DMA0_PCLK_SELECT_REG[2:0];
+
+    // DMA1_PCLK_SELECT_REG
+
+    assign L2H_DMA1_PCLK_SELECT_REG_SELECT_r    = DMA1_PCLK_SELECT_REG[2:0];
+
+    // TLX_FWD_CLK_SELECT_REG
+
+    assign L2H_TLX_FWD_CLK_SELECT_REG_SELECT_r  = TLX_FWD_CLK_SELECT_REG[2:0];
+
+    // CGRA_CLK_SELECT_REG
+
+    assign L2H_CGRA_CLK_SELECT_REG_SELECT_r     = CGRA_CLK_SELECT_REG[2:0];
+
+    // TIMER0_CLK_SELECT_REG
+
+    assign L2H_TIMER0_CLK_SELECT_REG_SELECT_r   = TIMER0_CLK_SELECT_REG[2:0];
+
+    // TIMER1_CLK_SELECT_REG
+
+    assign L2H_TIMER1_CLK_SELECT_REG_SELECT_r   = TIMER1_CLK_SELECT_REG[2:0];
+
+    // UART0_CLK_SELECT_REG
+
+    assign L2H_UART0_CLK_SELECT_REG_SELECT_r    = UART0_CLK_SELECT_REG[2:0];
+
+    // UART1_CLK_SELECT_REG
+
+    assign L2H_UART1_CLK_SELECT_REG_SELECT_r    = UART1_CLK_SELECT_REG[2:0];
+
+    // WDOG_CLK_SELECT_REG
+
+    assign L2H_WDOG_CLK_SELECT_REG_SELECT_r    = WDOG_CLK_SELECT_REG[2:0];
+
+    // CLK_GATE_EN_REG
+
+    assign L2H_CLK_GATE_EN_REG_CPU_r            = CLK_GATE_EN_REG[1];
+    assign L2H_CLK_GATE_EN_REG_DAP_r            = CLK_GATE_EN_REG[2];
+    assign L2H_CLK_GATE_EN_REG_DMA0_r           = CLK_GATE_EN_REG[3];
+    assign L2H_CLK_GATE_EN_REG_DMA1_r           = CLK_GATE_EN_REG[4];
+    assign L2H_CLK_GATE_EN_REG_SRAMX_r          = CLK_GATE_EN_REG[5];
+    assign L2H_CLK_GATE_EN_REG_TLX_FWD_r        = CLK_GATE_EN_REG[6];
+    assign L2H_CLK_GATE_EN_REG_GGRA_r           = CLK_GATE_EN_REG[8];
+    assign L2H_CLK_GATE_EN_REG_NIC_r            = CLK_GATE_EN_REG[9];
+    assign L2H_CLK_GATE_EN_REG_TIMER0_r         = CLK_GATE_EN_REG[10];
+    assign L2H_CLK_GATE_EN_REG_TIMER1_r         = CLK_GATE_EN_REG[11];
+    assign L2H_CLK_GATE_EN_REG_UART0_r          = CLK_GATE_EN_REG[12];
+    assign L2H_CLK_GATE_EN_REG_UART1_r          = CLK_GATE_EN_REG[13];
+    assign L2H_CLK_GATE_EN_REG_WDOG_r           = CLK_GATE_EN_REG[14];
+
+    // SYS_RESET_PROP_REG
+
+    assign L2H_SYS_RESET_PROP_REG_DMA0_r        = SYS_RESET_PROP_REG[3];
+    assign L2H_SYS_RESET_PROP_REG_DMA1_r        = SYS_RESET_PROP_REG[4];
+    assign L2H_SYS_RESET_PROP_REG_SRAMX_r       = SYS_RESET_PROP_REG[5];
+    assign L2H_SYS_RESET_PROP_REG_TLX_FWD_r     = SYS_RESET_PROP_REG[6];
+    assign L2H_SYS_RESET_PROP_REG_GGRA_r        = SYS_RESET_PROP_REG[8];
+    assign L2H_SYS_RESET_PROP_REG_NIC_r         = SYS_RESET_PROP_REG[9];
+    assign L2H_SYS_RESET_PROP_REG_TIMER0_r      = SYS_RESET_PROP_REG[10];
+    assign L2H_SYS_RESET_PROP_REG_TIMER1_r      = SYS_RESET_PROP_REG[11];
+    assign L2H_SYS_RESET_PROP_REG_UART0_r       = SYS_RESET_PROP_REG[12];
+    assign L2H_SYS_RESET_PROP_REG_UART1_r       = SYS_RESET_PROP_REG[13];
+    assign L2H_SYS_RESET_PROP_REG_WDOG_r        = SYS_RESET_PROP_REG[14];
+
+    // RESET_REQ_REG
+
+    assign L2H_RESET_REQ_REG_DMA0_r             = RESET_REQ_REG[3];
+    assign L2H_RESET_REQ_REG_DMA1_r             = RESET_REQ_REG[4];
+    assign L2H_RESET_REQ_REG_TLX_FWD_r          = RESET_REQ_REG[6];
+    assign L2H_RESET_REQ_REG_TLX_REV_r          = RESET_REQ_REG[7];
+    assign L2H_RESET_REQ_REG_GGRA_r             = RESET_REQ_REG[8];
+    assign L2H_RESET_REQ_REG_NIC_r              = RESET_REQ_REG[9];
+    assign L2H_RESET_REQ_REG_TIMER0_r           = RESET_REQ_REG[10];
+    assign L2H_RESET_REQ_REG_TIMER1_r           = RESET_REQ_REG[11];
+    assign L2H_RESET_REQ_REG_UART0_r            = RESET_REQ_REG[12];
+    assign L2H_RESET_REQ_REG_UART1_r            = RESET_REQ_REG[13];
+    assign L2H_RESET_REQ_REG_WDOG_r             = RESET_REQ_REG[14];
+
+    // SYS_TICK_CONFIG_REG
+
+    assign L2H_SYS_TICK_CONFIG_REG_CALIB_r      = SYS_TICK_CONFIG_REG[23:0];
+    assign L2H_SYS_TICK_CONFIG_REG_NOT_10_MS_r  = SYS_TICK_CONFIG_REG[31];
+
+    // SYS_RESET_AGGR_REG
+
+    assign L2H_SYS_RESET_AGGR_REG_LOCKUP_RESET_EN_r       = SYS_RESET_AGGR_REG[0];
+    assign L2H_SYS_RESET_AGGR_REG_WDOG_TIMEOUT_RESET_EN_r = SYS_RESET_AGGR_REG[1];
+
+    // MASTER_CLK_SELECT_REG
+
+    assign L2H_MASTER_CLK_SELECT_SELECT_r       = MASTER_CLK_SELECT_REG[0];
 
 endmodule
