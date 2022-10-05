@@ -21,6 +21,11 @@ ifeq ($(SOC_ONLY),True)
 	VCS_COMPILE_OPTS		+= +define+NO_CGRA
 endif
 
+# XGCD Exclusion
+ifeq ($(INCLUDE_XGCD),False)
+	VCS_COMPILE_OPTS		+= +define+NO_XGCD
+endif
+
 # SIM or ASIC Simulation
 ifeq ($(IMPL_VIEW),ASIC)
 	VCS_COMPILE_OPTS		+= +define+IMPL_ASIC

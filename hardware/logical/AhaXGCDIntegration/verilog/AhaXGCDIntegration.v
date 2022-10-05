@@ -118,6 +118,8 @@ module AhaXGCDIntegration (
     output      wire            XGCD1_DONE          // BUMP
 );
 
+`ifndef NO_XGCD
+
     //
     // Wrapper Reset Synchronization
     //
@@ -345,4 +347,93 @@ module AhaXGCDIntegration (
         .S_AXI_RREADY_1279      (XGCD1_RREADY)
     );
 
+`else
+
+    wire unused =   (| XGCD0_AWID)    |
+                    (| XGCD0_AWADDR)  |
+                    (| XGCD0_AWLEN)   |
+                    (| XGCD0_AWSIZE)  |
+                    (| XGCD0_AWBURST) |
+                    (| XGCD0_AWLOCK)  |
+                    (| XGCD0_AWCACHE) |
+                    (| XGCD0_AWPROT)  |
+                    (| XGCD0_AWVALID) |
+                    (| XGCD0_WDATA)   |
+                    (| XGCD0_WSTRB)   |
+                    (| XGCD0_WLAST)   |
+                    (| XGCD0_WVALID)  |
+                    (| XGCD0_BREADY)  |
+                    (| XGCD0_ARID)    |
+                    (| XGCD0_ARADDR)  |
+                    (| XGCD0_ARLEN)   |
+                    (| XGCD0_ARSIZE)  |
+                    (| XGCD0_ARBURST) |
+                    (| XGCD0_ARLOCK)  |
+                    (| XGCD0_ARCACHE) |
+                    (| XGCD0_ARPROT)  |
+                    (| XGCD0_ARVALID) |
+                    (| XGCD0_RREADY)  |
+                    (| XGCD1_AWID)    |
+                    (| XGCD1_AWADDR)  |
+                    (| XGCD1_AWLEN)   |
+                    (| XGCD1_AWSIZE)  |
+                    (| XGCD1_AWBURST) |
+                    (| XGCD1_AWLOCK)  |
+                    (| XGCD1_AWCACHE) |
+                    (| XGCD1_AWPROT)  |
+                    (| XGCD1_AWVALID) |
+                    (| XGCD1_WDATA)   |
+                    (| XGCD1_WSTRB)   |
+                    (| XGCD1_WLAST)   |
+                    (| XGCD1_WVALID)  |
+                    (| XGCD1_BREADY)  |
+                    (| XGCD1_ARID)    |
+                    (| XGCD1_ARADDR)  |
+                    (| XGCD1_ARLEN)   |
+                    (| XGCD1_ARSIZE)  |
+                    (| XGCD1_ARBURST) |
+                    (| XGCD1_ARLOCK)  |
+                    (| XGCD1_ARCACHE) |
+                    (| XGCD1_ARPROT)  |
+                    (| XGCD1_ARVALID) |
+                    (| XGCD1_RREADY)  |
+                    (| XGCD_EXT_CLK)  |
+                    (| XGCD_SOC_CLK)  |
+                    (| XGCD_CLK_SELECT)|
+                    (| PORESETn)      |
+                    (| XGCD_HADDR   ) |
+                    (| XGCD_HBURST  ) |
+                    (| XGCD_HPROT   ) |
+                    (| XGCD_HSIZE   ) |
+                    (| XGCD_HTRANS  ) |
+                    (| XGCD_HWDATA  ) |
+                    (| XGCD_HWRITE  ) |
+                    (| XGCD_HSELx   ) |
+                    (| XGCD_HREADY  );
+
+    assign  XGCD_DIV8_CLK       = 1'b0;
+    assign  XGCD0_START         = 1'b0;
+    assign  XGCD1_START         = 1'b0;
+    assign  XGCD0_DONE          = 1'b0;
+    assign  XGCD1_DONE          = 1'b0;
+    assign  XGCD0_INT           = 1'b0;
+    assign  XGCD1_INT           = 1'b0;
+
+    assign  XGCD_HRDATA         = {32{1'b0}};
+    assign  XGCD_HREADYOUT      = 1'b1;
+    assign  XGCD_HRESP          = 1'b0;
+
+    assign  XGCD0_AWREADY       = 1'b1;
+    assign  XGCD0_WREADY        = 1'b1;
+    assign  XGCD0_BID           = 4'h0;
+    assign  XGCD0_BRESP         = 2'b00;
+    assign  XGCD0_BVALID        = 1'b1;
+    assign  XGCD0_ARREADY       = 1'b1;
+    assign  XGCD0_RID           = 4'h0;
+    assign  XGCD0_RDATA         = {64{1'b0}};
+    assign  XGCD0_RRESP         = 2'b00;
+    assign  XGCD0_RLAST         = 1'b1;
+    assign  XGCD0_RVALID        = 1'b1;
+
+`endif // NO_XGCD
 endmodule

@@ -385,7 +385,7 @@ end
                 $recordvars(Tbench);
             `else
                 $dumpfile("dump.vcd");
-                $dumpvars(0, u_soc.u_aha_soc_partial);
+                $dumpvars(0, u_soc.u_aha_soc_partial, u_soc.u_aha_xgcd_integration);
             `endif
         end
     end

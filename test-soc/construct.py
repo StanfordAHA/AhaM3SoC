@@ -64,8 +64,8 @@ def construct():
         'array_width': 32,
         'array_height': 16,
         'clock_period': 1.0,
-        'ARM_IP_DIR': '/home/gedeon/temp/soc/aham3soc_armip',
-        'AHA_IP_DIR': '/home/gedeon/temp/soc/aham3soc',
+        'ARM_IP_DIR': '/home/nyengele/temp/soc/aham3soc_armip',
+        'AHA_IP_DIR': '/home/nyengele/temp/soc/aham3soc',
         'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
         'GARNET_DIR': '/sim/kkoul/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
@@ -73,6 +73,7 @@ def construct():
         'IMPL_VIEW': 'SIM', # can be SIM or ASIC
         'PROCESS': 'GF', # can be GF or TSMC if IMPL_VIEW == ASIC
         'SIMULATOR': 'VCS', # can be wither VCS or XCELIUM
+        'INCLUDE_XGCD' : True,
     }
 
     # -------------------------------------------------------------------------
