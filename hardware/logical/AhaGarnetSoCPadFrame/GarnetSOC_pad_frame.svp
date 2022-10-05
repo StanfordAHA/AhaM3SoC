@@ -35,18 +35,19 @@
 //;   {name => 'UART0_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
 //;   {name => 'UART1_RXD',                 width => 1,   direction => 'input',   pad => 'digital', side => 'bottom'},
 //;   {name => 'UART1_TXD',                 width => 1,   direction => 'output',  pad => 'digital', side => 'bottom'},
-//;   {name => 'XGCD_EXT_CLK',              width => 1,   direction => 'input',   pad => 'digital', side => 'right'},
-//;   {name => 'XGCD_CLK_SELECT',           width => 2,   direction => 'input',   pad => 'digital', side => 'right'},
-//;   {name => 'XGCD_DIV8_CLK',             width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
-//;   {name => 'XGCD0_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
-//;   {name => 'XGCD1_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
-//;   {name => 'XGCD0_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'right'},
-//;   {name => 'XGCD1_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'right'}
+//;   {name => 'XGCD_EXT_CLK',              width => 1,   direction => 'input',   pad => 'digital', side => 'top'},
+//;   {name => 'XGCD_CLK_SELECT',           width => 2,   direction => 'input',   pad => 'digital', side => 'top'},
+//;   {name => 'XGCD_DIV8_CLK',             width => 1,   direction => 'output',  pad => 'digital', side => 'top'},
+//;   {name => 'XGCD0_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'top'},
+//;   {name => 'XGCD1_START',               width => 1,   direction => 'output',  pad => 'digital', side => 'top'},
+//;   {name => 'XGCD0_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'top'},
+//;   {name => 'XGCD1_DONE',                width => 1,   direction => 'output',  pad => 'digital', side => 'top'}
 //;  ]);
 //; my $num_ios = scalar(@{$io_list});
 //; my $num_vdd_per_side = 2;
 //; my $num_vddpst_per_side = 6;
 //; my @vddpst_offsets = (1138, 2014, 2184, 2706, 2879, 3745);
+//; my $pwrdet_interval = 15;
 //; #
 //; # 01/2020 steveri: had to shift bottom-left VDD pad
 //; # 100u closer to corner, to accommodate ICOVL alignment cells,
@@ -59,39 +60,6 @@
 
 //; my $dragonphy_ios = $self->force_param(DRAGONPHY_IO_LIST =>
 //;  [
-//;    {name => 'ext_tx_outp'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'ext_tx_outn'            , domain=> 0, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'ext_clk_async_n'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_clk_async_p'        , domain=> 0, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_clkn'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
-//;    {name => 'ext_clkp'               , domain=> 1, is_power => 0, connect => 0, type => 'analog' , pad => 'PDB3AC_V',     direction => 'input' },
-//;    {name => 'CVDD'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//;    {name => 'CVSS'                   , domain=> 1, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//;    {name => 'AVDD'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//;    {name => 'AVSS'                   , domain=> 2, is_power => 1, connect => 0, type => 'analog' , pad => 'PVDD3ACM_V',    direction => '' },
-//;    {name => 'ext_Vcm'                , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'input' },
-//;    {name => 'ext_Vcal'               , domain=> 2, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB3AC_V',      direction => 'inout' },
-//;    {name => 'ext_mdll_clk_refp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_mdll_clk_refn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_mdll_clk_monn'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_mdll_clk_monp'      , domain=> 3, is_power => 0, connect => 1, type => 'analog' , pad => 'PDB2ANA_V',     direction => 'input' },
-//;    {name => 'ext_rx_inp'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//;    {name => 'ext_rx_inn'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//;    {name => 'ext_rx_inp_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//;    {name => 'ext_rx_inn_test'        , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'input' },
-//;    {name => 'clk_out_p'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'clk_out_n'              , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'clk_trig_p'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'clk_trig_n'             , domain=> 3, is_power => 0, connect => 0, type => 'analog' , pad => 'NONE',          direction => 'output' },
-//;    {name => 'jtag_intf_i_phy_tck'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'jtag_intf_i_phy_tdi'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'jtag_intf_i_phy_tdo'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
-//;    {name => 'jtag_intf_i_phy_tms'    , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'jtag_intf_i_phy_trst_n' , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'ext_rstb'               , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'ext_dump_start'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
-//;    {name => 'freq_lvl_cross'         , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'output' },
-//;    {name => 'ramp_clock'             , domain=> 3, is_power => 0, connect => 1, type => 'digital', pad => 'PDDWUWSWCDG_V', direction => 'input'  },
 //;  ]);
 
 //; ########################################################################
@@ -144,6 +112,15 @@
 //; # NEW for 12/2020 tapeout
 //; $pad_offset{'IOPAD_freq_lvl_cross'        } = 4006.000;
 //; $pad_offset{'IOPAD_ramp_clock'            } = 4160.000;
+//;
+//; # Put XGCD pads on right half of top side
+//; $pad_offset{'XGCD_EXT_CLK'                } = 2500;
+
+//; my %orientations;
+//; $orientations{'top'} = 'R180';
+//; $orientations{'bottom'} = 'R0';
+//; $orientations{'left'} = 'R0';
+//; $orientations{'right'} = 'R180';
 
 module `mname` (
 //; my $mcnt = 0;
@@ -172,7 +149,6 @@ module `mname` (
   wire [`$io->{width}-1`:0] `$io->{name}`_int;
 //;   }
 //; }
-  wire rte;
   wire [2:0] out_pad_ds_grp0;
   wire [2:0] out_pad_ds_grp1;
   wire [2:0] out_pad_ds_grp2;
@@ -188,27 +164,16 @@ module `mname` (
 
   wire ALT_MASTER_CLK;
 
-  // RTE stuff
-  PCBRTE_V    IOPAD_bottom_RTE_DIG(.IRTE(1'b0), .RTE(rte));
-  PCBRTE_H    IOPAD_left_RTE_DIG(.IRTE(1'b0), .RTE(rte));
-  PCBRTE_H    IOPAD_right_RTE_DIG(.IRTE(1'b0), .RTE(rte));
-  // POC stuff
-  PVDD2POCM_V IOPAD_bottom_POC_DIG(.RTE(rte));
-  //PVDD2POCM_H IOPAD_left_POC_DIG(.RTE(rte));
-  //PVDD2POCM_H IOPAD_right_POC_DIG(.RTE(rte));
-
-
-
-//; my @top_pads = ();
-//; my @bottom_pads = ();
-//; my @left_pads = ();
-//; my @right_pads = ();
-
-//; my %pads = ( top => @top_pads,
-//;              bottom => @bottom_pads,
-//;              left => @left_pads,
-//;              right => @right_pads);
-
+//; my %pads = ( top => [],
+//;              bottom => [],
+//;              left => [],
+//;              right => [] );
+  
+// pad ring control signals
+// retention enable
+wire rte;
+wire pwrok;
+wire iopwrok;
 
 // Now instantiate all pads
 //; foreach my $io (@{$io_list}) {
@@ -220,53 +185,51 @@ module `mname` (
 //;     $orient = "H";
 //;   }
 //;   for (my $i = 0; $i < $io->{width}; $i++) {
+//;     # Must obey max fanout rule for PWRDET cell
+//;     if (scalar(@{$pads{$side}}) % $pwrdet_interval == 0) {
+//;        my $pwrdet_num = int(scalar(@{$pads{$side}}) / $pwrdet_interval);
+//;        my $pwrdet_name = "IOPAD_${side}_PWRDET_${pwrdet_num}";
+
+IN12LP_GPIO18_13M9S30P_PWRDET_TIE_`$orient` `$pwrdet_name` (.RETCIN(1'b0), .RETCOUT(rte), .PWROKOUT(pwrok), .IOPWROKOUT(iopwrok));
+//;        push @{$pads{$side}}, $pwrdet_name;
+//;     }
+
 //;     my $pad_name = "IOPAD_${side}_$io->{name}_${i}";
-//;     if($side eq "top") {
-//;       push @top_pads, $pad_name;
-//;     }
-//;     elsif($side eq "bottom") {
-//;        push @bottom_pads, $pad_name;
-//;     }
-//;     elsif($side eq "left") {
-//;       push @left_pads, $pad_name;
-//;     }
-//;     elsif($side eq "right") {
-//;       push @right_pads, $pad_name;
-//;     }
-  PRWDWUWSWCDGH_`$orient` `$pad_name` (
+//;     push @{$pads{$side}}, $pad_name;
+  IN12LP_GPIO18_13M9S30P_IO_`$orient` `$pad_name` (
     .PAD(pad_`$io->{name}`[`$i`]),
 //;     if ($io->{direction} eq "inout") {
-    .C(`$io->{inport}`),
-    .I(`$io->{outport}`),
+    .Y(`$io->{inport}`),
+    .DATA(`$io->{outport}`),
     .IE(~`$io->{io_ctrl}`),
     .OEN(~`$io->{io_ctrl}`),
 //;     }
 //;     elsif ($io->{direction} eq "input") {
-    .C(`$io->{name}`_int[`$i`]),
-    .I(1'b0),
-    .IE(1'b1),
-    .OEN(1'b1),
+    .Y(`$io->{name}`_int[`$i`]),
+    .DATA(1'b0),
+    .RXEN(1'b1),
+    .TRIEN(1'b1),
 //;     } else {
-    .I(`$io->{name}`_int[`$i`]),
-    .IE(1'b0),
-    .OEN(1'b0),
+    .DATA(`$io->{name}`_int[`$i`]),
+    .RXEN(1'b0),
+    .TRIEN(1'b0),
 //;     }
-    .DS0(out_pad_ds0),
-    .DS1(out_pad_ds1),
-    .DS2(out_pad_ds2),
-    .PU(1'b0),
-    .PD(1'b0),
-    .ST(1'b0),
-    .SL(1'b0),
-    .RTE(1'b0)
+    .DRV(out_pad_ds_grp0[1:0]),
+    .PUEN(1'b0),
+    .PDEN(1'b0),
+    .RETC(rte),
+    .PWROK(pwrok),
+    .IOPWROK(iopwrok)
   );
 //;   }
 //; }
 
-//; my $num_pads_left = scalar(@left_pads) + $num_vddpst_per_side + $num_vdd_per_side;
-//; my $num_pads_right = scalar(@right_pads) + $num_vddpst_per_side + $num_vdd_per_side;
-//; my $num_pads_top = scalar(@top_pads) + $num_vddpst_per_side + $num_vdd_per_side;
-//; my $num_pads_bottom = scalar(@bottom_pads) + $num_vddpst_per_side + $num_vdd_per_side;
+//; # Multiply by 2 because 1 VDD and 1 VSS pad for each
+//; my $num_power_pads_per_side = 2 * ($num_vddpst_per_side + $num_vdd_per_side);
+//; my $num_pads_left = scalar(@{$pads{'left'}}) + $num_power_pads_per_side;
+//; my $num_pads_right = scalar(@{$pads{'right'}}) +  $num_power_pads_per_side;
+//; my $num_pads_top = scalar(@{$pads{'top'}}) + $num_power_pads_per_side;
+//; my $num_pads_bottom = scalar(@{$pads{'bottom'}}) +  $num_power_pads_per_side;
 //; if ($include_core) {
 AhaGarnetSoC core (
   .OUT_PAD_DS_GRP0(out_pad_ds_grp0),
@@ -306,9 +269,7 @@ AhaGarnetSoC core (
 );
 //; }
 
-//; #my @sides = ('top', 'bottom', 'left', 'right');
-//; # Don't need digital VDD/VSS on top side
-//; my @sides = ('bottom', 'left', 'right');
+//; my @sides = ('top', 'bottom', 'left', 'right');
 //; foreach my $side (@sides) {
 //;   my $orient = "";
 //;   if(($side eq "top") or ($side eq "bottom")) {
@@ -317,80 +278,96 @@ AhaGarnetSoC core (
 //;     $orient = "H";
 //;   }
 //;   for (my $i = 0; $i < $num_vddpst_per_side; $i++) {
-//;     my $pad_name = "IOPAD_${side}_VDDPST_${i}";
-  PVDD2CDGM_`$orient` `$pad_name` (.RTE(rte));
+//;     my $vdd_pad_name = "IOPAD_${side}_VDDIO_${i}";
+//;     my $vss_pad_name = "IOPAD_${side}_VSSIO_${i}";
+//;     my $offset;
+  IN12LP_GPIO18_13M9S30P_VDDIO_`$orient` `$vdd_pad_name` (.RETC(rte));
+  // VSS_CM means VSSIO and VSSC are shorted together
+  IN12LP_GPIO18_13M9S30P_VSS_CM_`$orient` `$vss_pad_name` (.RETC(rte));
 //;     if($side eq "top") {
 //;       my $num_pads = $num_pads_top;
-//;       my $offset = $vddpst_offsets[$i];
+//;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @top_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'top'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'top'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "bottom") {
 //;       my $num_pads = $num_pads_bottom;
-//;       my $offset = $vddpst_offsets[$i];
+//;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @bottom_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'bottom'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'bottom'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "left") {
 //;       my $num_pads = $num_pads_left;
-//;       my $offset = $vddpst_offsets[$i];
+//;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @left_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'left'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'left'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "right") {
 //;       my $num_pads = $num_pads_right;
-//;       my $offset = $vddpst_offsets[$i];
+//;       $offset = $vddpst_offsets[$i];
 //;       my $index = floor(($offset-500) / (4000 / $num_pads));
-//;       splice @right_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'right'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'right'}}, $index+1, 0, $vss_pad_name;
 //;     }
-
+//;     $pad_offset{$vdd_pad_name} = $offset;
 //;   }
 //;   for (my $i = 0; $i < $num_vdd_per_side; $i++) {
-//;     my $pad_name = "IOPAD_${side}_VDD_${i}";
-  PVDD1CDGM_`$orient` `$pad_name` (.RTE(rte));
+//;     my $vdd_pad_name = "IOPAD_${side}_VDD_${i}";
+//;     my $vss_pad_name = "IOPAD_${side}_VSS_${i}";
+//;     my $offset;
+  IN12LP_GPIO18_13M9S30P_VDDC_`$orient` `$vdd_pad_name` (.RETC(rte));
+  // VSS_CM means VSSIO and VSSC are shorted together
+  IN12LP_GPIO18_13M9S30P_VSS_CM_`$orient` `$vss_pad_name` (.RETC(rte));
 //;     if($side eq "top") {
 //;       my $num_pads = $num_pads_top;
-//;       my $offset = $vdd_offsets[$i];
+//;       $offset = $vdd_offsets[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @top_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'top'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'top'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "bottom") {
 //;       my $num_pads = $num_pads_bottom;
-//;       my $offset = $vdd_offsets_bottom[$i];
+//;       $offset = $vdd_offsets_bottom[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @bottom_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'bottom'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'bottom'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "left") {
 //;       my $num_pads = $num_pads_left;
-//;       my $offset = $vdd_offsets[$i];
+//;       $offset = $vdd_offsets[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @left_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'left'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'left'}}, $index+1, 0, $vss_pad_name;
 //;     }
 //;     elsif($side eq "right") {
 //;       my $num_pads = $num_pads_right;
-//;       my $offset = $vdd_offsets[$i];
+//;       $offset = $vdd_offsets[$i];
 //;       #my $index = ceil($offset / (5000 / $num_pads));
 //;       my $index = ($offset > 2500) ? $num_pads - 1 : 0;
-//;       splice @right_pads, $index, 0, $pad_name;
+//;       splice @{$pads{'right'}}, $index, 0, $vdd_pad_name;
+//;       splice @{$pads{'right'}}, $index+1, 0, $vss_pad_name;
 //;     }
+//;     $pad_offset{$vdd_pad_name} = $offset;
 //;   }
 //; }
 
 
 //; my $current_domain = 0;
-  wire rte_3;
 
 //; foreach my $io (@{$dragonphy_ios}) {
 //;   my $pad_domain = $io->{domain};
-//; #if next pad is in new domain, insert a PRCUT
+//; #if next pad is in new domain, insert a breaker cell
 //;   if($pad_domain != $current_domain) {
 //;     $current_domain = $pad_domain;
 //;     my $cut_cell_name = "IOPAD_top_cut_${pad_domain}";
-//;     push(@top_pads, $cut_cell_name);
-  PRCUT_V `$cut_cell_name`();
+//;     push(@{$pads{'top'}}, $cut_cell_name);
+  IN12LP_GPIO18_13M9S30P_FULLBRK_V `$cut_cell_name`();
 //;   }
 //;   my $pad_type = $io->{pad};
 //;   my $signal_name = $io->{name};
@@ -405,7 +382,7 @@ AhaGarnetSoC core (
 //;     $pad_name = "ANAIOPAD_${signal_name}";
 //;   }
 //;   if ($io->{pad} ne "NONE") {
-//;   push(@top_pads, $pad_name);
+//;   push(@{$pads{'top'}}, $pad_name);
   `$pad_type` `$pad_name` (
 //; if($pad_type eq "PDB2ANA_V") {
     .RTE(rte_`$pad_domain`)
@@ -438,14 +415,10 @@ AhaGarnetSoC core (
 
 //; }
 
-  PVDD1CDGM_V IOPAD_top_VDD_dom3 (.RTE(rte));
-//;  push (@top_pads, "IOPAD_top_VDD_dom3");
-  PVDD2POCM_V IOPAD_top_VDDPST_dom3(.RTE(rte_3));
-//;  push (@top_pads, "IOPAD_top_VDDPST_dom3");
-  PCBRTE_V IOPAD_top_rte_dom3 (.IRTE(1'b0), .RTE(rte_3));
-//;  push (@top_pads, "IOPAD_top_rte_dom3");
 //;  my $cnt = 0;
 //; if ($include_core) {
+  // No phy on Onyx but leaving this as placeholder for Kavya's block
+  /*
   dragonphy_top iphy (
 //; foreach my $io (@{$dragonphy_ios}) {
 //;   if($io->{is_power} == 0) {
@@ -455,7 +428,15 @@ AhaGarnetSoC core (
 //; }
     .clk_cgra(ALT_MASTER_CLK)
   );
+  */
+  // No ALT_MASTER_CLK for Onyx but tying to 0 for now
+  assign ALT_MASTER_CLK = 1'b0;
 //; }
+
+  IN12LP_GPIO18_13M9S30P_CORNER corner_ul (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+  IN12LP_GPIO18_13M9S30P_CORNER corner_ur (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+  IN12LP_GPIO18_13M9S30P_CORNER corner_ll (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
+  IN12LP_GPIO18_13M9S30P_CORNER corner_lr (.RETC(rte), .PWROK(pwrok), .IOPWROK(iopwrok));
 
 
 endmodule
@@ -468,128 +449,46 @@ endmodule
 //; print $fh "(globals\n	version = 3\n	io_order = default\n)\n(iopad\n";
 //; print $fh "	(top\n";
 //; # Iterate over each side's pads
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
-//; #
-//; # TERRIBLE HACK ALERT (steveri 11/2019)
-//; # Looks like manual offsets only occur on the top edge of the chip
-//; # So only using printpad in top_pads :(
 //; sub printpad {
-//;   my $fh = shift; my $pad=shift;
+//;   my $fh = shift; my $pad=shift; my $orientation=shift;
 //;   if (exists $pad_offset{$pad}) {
-//;     print $fh "		(inst name=\"$pad\" offset=$pad_offset{$pad})\n";
+//;     print $fh "		(inst name=\"$pad\" offset=$pad_offset{$pad} orientation=$orientation)\n";
 //;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
+//;     print $fh "		(inst name=\"$pad\" orientation=$orientation)\n";
 //;   }
 //; }
-//; foreach my $pad (@top_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt]; # FIXME looks like offset is UNUSED here
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     # print $fh "		(inst name=\"$pad\")\n";
-//;     printpad($fh, $pad);
-//;
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     printpad($fh, $pad);
-//;
-//;   } else {
-//;     printpad($fh, $pad)
-//;   }
+//; foreach my $pad (@{$pads{'top'}}) {
+//;   printpad($fh, $pad, $orientations{'top'})
 //; }
 //; print $fh "	)\n";
 
 //; print $fh "	(bottom\n";
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
-//; foreach my $pad (@bottom_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets_bottom[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
-//;   }
+//; foreach my $pad (@{$pads{'bottom'}}) {
+//;   printpad($fh, $pad, $orientations{'bottom'})
 //; }
-//; # rte and pocctrl
-//; print $fh "		(inst name=\"IOPAD_bottom_RTE_DIG\")\n";
-//; print $fh "		(inst name=\"IOPAD_bottom_POC_DIG\")\n";
+//; # rte
 //; print $fh "	)\n";
 
 //; print $fh "	(left\n";
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
-//; foreach my $pad (@left_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
-//;   }
+//; foreach my $pad (@{$pads{'left'}}) {
+//;   printpad($fh, $pad, $orientations{'left'})
 //; }
-//; # rte and pocctrl
-//; print $fh "		(inst name=\"IOPAD_left_RTE_DIG\")\n";
-//; print $fh "		(inst name=\"IOPAD_left_POC_DIG\")\n";
+//; # rte
 //; print $fh "	)\n";
 
 //; print $fh "	(right\n";
-//; my $vddpst_cnt = 0;
-//; my $vdd_cnt = 0;
-//; foreach my $pad (@right_pads) {
-//;   if (index($pad, "VDDPST") != -1) {
-//;     my $offset = $vddpst_offsets[$vddpst_cnt];
-//;     $vddpst_cnt = $vddpst_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } elsif (index($pad, "VDD_") != -1) {
-//;     my $offset = $vdd_offsets[$vdd_cnt];
-//;     $vdd_cnt = $vdd_cnt + 1;
-//;     if ($print_offset) {
-//;       print $fh "		(inst name=\"$pad\" offset=$offset)\n";
-//;     } else {
-//;       print $fh "		(inst name=\"$pad\")\n";
-//;     }
-//;   } else {
-//;     print $fh "		(inst name=\"$pad\")\n";
-//;   }
+//; foreach my $pad (@{$pads{'right'}}) {
+//;   printpad($fh, $pad, $orientations{'right'})
 //; }
-//; # rte and pocctrl
-//; print $fh "		(inst name=\"IOPAD_right_RTE_DIG\")\n";
-//; print $fh "		(inst name=\"IOPAD_right_POC_DIG\")\n";
+//; # rte
 //; print $fh "	)\n";
 
-//; #Now handle corner cells, which will be added in PD flow
+//; #Now handle corner cell placement
 //; print $fh "	(topleft\n";
 //; print $fh "		(inst name=\"corner_ul\" orientation=MX)\n";
+//; print $fh "	)\n";
+//; print $fh "	(topright\n";
+//; print $fh "		(inst name=\"corner_ur\" orientation=R180)\n";
 //; print $fh "	)\n";
 //; print $fh "	(bottomleft\n";
 //; print $fh "		(inst name=\"corner_ll\")\n";
