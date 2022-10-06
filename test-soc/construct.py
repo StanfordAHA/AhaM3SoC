@@ -64,8 +64,8 @@ def construct():
         'array_width': 32,
         'array_height': 16,
         'clock_period': 1.0,
-        'ARM_IP_DIR': '/home/nyengele/temp/soc/aham3soc_armip',
-        'AHA_IP_DIR': '/home/nyengele/temp/soc/aham3soc',
+        'ARM_IP_DIR': '/sim/kkoul/gcd/aham3soc_armip',
+        'AHA_IP_DIR': '/sim/kkoul/gcd/AhaM3SoC',
         'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
         'GARNET_DIR': '/sim/kkoul/garnet',
         'TLX_FWD_DATA_LO_WIDTH': 16,
@@ -83,7 +83,7 @@ def construct():
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
     amber_rtl  	        = Step(this_dir + '/amber')
-    xgcd_rtl            = Step(this_dir + "/xgcd")
+    xgcd_rtl            = Step(this_dir + '/xgcd_rtl')
     compile_design  	= Step(this_dir + '/compile_design')
     build_test      	= Step(this_dir + '/build_test')
     run_test        	= Step(this_dir + '/run_test')
