@@ -83,6 +83,7 @@ def construct():
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
     amber_rtl  	        = Step(this_dir + '/amber')
+    xgcd_rtl            = Step(this_dir + "/xgcd")
     compile_design  	= Step(this_dir + '/compile_design')
     build_test      	= Step(this_dir + '/build_test')
     run_test        	= Step(this_dir + '/run_test')
@@ -106,7 +107,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     # 'compile_design' step produces a simulation executable and its accompanying collateral
-    compile_design.extend_inputs(['design.v'])
+    compile_design.extend_inputs(['design.v', 'xgcd_design.v'])
 
     if parameters['SIMULATOR'] == 'VCS':
         compile_design.extend_outputs(['simv', 'simv.daidir'])
@@ -142,6 +143,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     g.add_step(amber_rtl)
+    g.add_step(xgcd_rtl)
     g.add_step(compile_design)
 
     for s in build_steps:
@@ -157,6 +159,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     g.connect_by_name(amber_rtl, compile_design)
+    g.connect_by_name(xgcd_rtl, compile_design)
 
     for r, b in zip(run_steps, build_steps):
         g.connect_by_name(b, r)
