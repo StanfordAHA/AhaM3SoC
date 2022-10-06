@@ -1028,7 +1028,7 @@ module AhaSoCPartialIntegration (
     .HRDATA_M_AHB_XGCD          (XGCD_HRDATA),
     .HREADYOUT_M_AHB_XGCD       (XGCD_HREADYOUT),
     .HRESP_M_AHB_XGCD           (XGCD_HRESP),
-    .HSELx_M_AHB_XGCD           (XGCD_HSELX),
+    .HSELx_M_AHB_XGCD           (XGCD_HSELx),
     .HREADY_M_AHB_XGCD          (XGCD_HREADY),
 
     // Instance: u_cd_XGCD, Port: M_AXI_XGCD0
