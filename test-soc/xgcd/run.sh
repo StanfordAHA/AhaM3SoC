@@ -13,6 +13,5 @@ CUR_DIR=$(pwd)
 rm -rf ${CUR_DIR}/outputs
 mkdir ${CUR_DIR}/outputs
 
-git clone git@github.com:thenextged/xgcd_stub.git
-
+git clone https://github.com/thenextged/xgcd_stub
 cat xgcd_stub/*.v > outputs/xgcd_design.v
