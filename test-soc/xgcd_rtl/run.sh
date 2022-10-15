@@ -34,10 +34,12 @@ python xgcd/hardware/extended_gcd/top/unique_gcd_wrappers.py
 
 cd xgcd/hardware/extended_gcd/top/gcd_wrapper/rtl
 
-cat AXItoSRAM.v AxiUnpacker.v AxiUnpackerCore.v GCDWrapper.v GCDWrapper_255_1279.v RegFile.v > $TOP/all_wrapper_rtl.v
+cat AXItoSRAM.v AxiUnpacker.v AxiUnpackerCore.v GCDWrapper_512_1279.v GCDWrapper_255_1279.v RegFile.v > $TOP/all_wrapper_rtl.v
 
 cd $TOP
 
-cat UniqueGCDWrappers.v all_wrapper_rtl.v xgcd/hardware/extended_gcd/top/top_without_ro.sv /cad/synopsys/syn/L-2016.03-SP5-5/dw/sim_ver/DW01_csa.v > all_rtl.v
+git clone https://github.com/StanfordAHA/AhaM3SoC.git
+
+cat UniqueGCDWrappers.v all_wrapper_rtl.v xgcd/hardware/extended_gcd/top/top_without_ro.sv /cad/synopsys/syn/L-2016.03-SP5-5/dw/sim_ver/DW01_csa.v AhaM3SoC/hardware/logical/AhaPlatformController/verilog/AhaResetSync.v > all_rtl.v
 
 cp all_rtl.v ../outputs/xgcd_design.v
