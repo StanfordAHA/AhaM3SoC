@@ -14,6 +14,22 @@ from mflowgen.components import Graph, Step
 def construct():
     g = Graph()
 
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+
+    #---------------------------------------------------------------------------
+    # Paths to design repos
+    #
+    # Assumption:
+    #   - test-soc (mflowgen design directory) is located at same level as
+    #     design repo directories
+    #---------------------------------------------------------------------------
+
+    shared_top_dir  = os.path.abspath(os.path.join(this_dir, "../"))
+    arm_ip_dir      = os.path.join(shared_top_dir, "aham3soc_armip")
+    aha_ip_dir      = os.path.join(shared_top_dir, "aham3soc")
+    garnet_dir      = os.path.join(shared_top_dir, "garnet")
+    gate_level_dir  = os.path.join(shared_top_dir, "gate_level_dec_pwr")
+
     # -------------------------------------------------------------------------
     # Supported tests
     # -------------------------------------------------------------------------
@@ -30,6 +46,7 @@ def construct():
         'cgra_test',
         'cgra_reset_test',
         'xgcd_test',
+        'app_test_onyx_dense_sparse',
         #'master_clock_test',
         #'app_tlx_test',
         #'app_test_stage1',
@@ -65,10 +82,10 @@ def construct():
         'array_width': 32,
         'array_height': 16,
         'clock_period': 1.0,
-        'ARM_IP_DIR': '/home/nyengele/temp/soc/aham3soc_armip',
-        'AHA_IP_DIR': '/home/nyengele/temp/soc/aham3soc',
-        'GATE_LEVEL_DIR': '/home/kkoul/gate_level_dec_pwr',
-        'GARNET_DIR': '/sim/kkoul/garnet',
+        'ARM_IP_DIR': arm_ip_dir,
+        'AHA_IP_DIR': aha_ip_dir,
+        'GATE_LEVEL_DIR': gate_level_dir,
+        'GARNET_DIR': garnet_dir,
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
         'IMPL_VIEW': 'SIM', # can be SIM or ASIC
@@ -81,9 +98,7 @@ def construct():
     # Custom steps
     # -------------------------------------------------------------------------
 
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-
-    amber_rtl  	        = Step(this_dir + '/amber')
+    garnet_rtl  	    = Step(this_dir + '/garnet')
     xgcd_rtl            = Step(this_dir + "/xgcd")
     compile_design  	= Step(this_dir + '/compile_design')
     build_test      	= Step(this_dir + '/build_test')
@@ -143,7 +158,7 @@ def construct():
     # Graph -- Add nodes
     # -------------------------------------------------------------------------
 
-    g.add_step(amber_rtl)
+    g.add_step(garnet_rtl)
     g.add_step(xgcd_rtl)
     g.add_step(compile_design)
 
@@ -159,7 +174,7 @@ def construct():
     # Graph -- Add edges
     # -------------------------------------------------------------------------
 
-    g.connect_by_name(amber_rtl, compile_design)
+    g.connect_by_name(garnet_rtl, compile_design)
     g.connect_by_name(xgcd_rtl, compile_design)
 
     for r, b in zip(run_steps, build_steps):
