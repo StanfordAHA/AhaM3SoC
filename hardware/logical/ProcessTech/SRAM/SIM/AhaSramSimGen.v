@@ -57,6 +57,10 @@ module AhaSramSimGen #(
             $fclose(fd);
             $readmemh(IMAGE_FILE, memory);
         end
+        else begin
+            for (i = 0; i < MEM_DEPTH; i=i+1)
+                memory[i] = {DATA_WIDTH{1'b0}};
+        end
     end
 
     //

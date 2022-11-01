@@ -49,10 +49,10 @@ else
 endif
 
 # Garnet RTL
-VCS_COMPILE_OPTS			+= -v $(TOP_DIR)/inputs/design.v
+VCS_COMPILE_OPTS			+= $(TOP_DIR)/inputs/design.v
 
 # XGCD RTL
-VCS_COMPILE_OPTS			+= -v $(TOP_DIR)/inputs/xgcd_design.v
+VCS_COMPILE_OPTS			+= $(TOP_DIR)/inputs/xgcd_design.v
 
 # ==============================================================================
 # Compilation File Lists
