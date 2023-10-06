@@ -5,6 +5,7 @@
 #
 ##############################################################################
 INPUT_FILE	= GarnetSOC_pad_frame.svp
+INPUT_FILE_PY	= GarnetSOC_pad_frame.py
 
 ##############################################################################
 # MODIFICATION: OPTIONAL
@@ -49,7 +50,7 @@ CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 #
 # Entry Target
 #
-all: genesis
+all: python
 
 	################################################################################
 	#
@@ -59,4 +60,10 @@ genesis:
 	mkdir -p $(TARG_DIR) ; \
 	cd $(TARG_DIR) ; \
 	Genesis2.pl -parse -generate -top $(TOP_NAME) -input $(CUR_DIR)/$(INPUT_FILE) -parameter $(TOP_NAME).include_core=$(INCLUDE_CORE); \
+	cd $(CUR_DIR)
+
+python:
+	mkdir -p $(TARG_DIR) ; \
+	cd $(TARG_DIR) ; \
+	python3 $(CUR_DIR)/$(INPUT_FILE_PY) --top $(TOP_NAME) --include_core $(INCLUDE_CORE) ; \
 	cd $(CUR_DIR)
