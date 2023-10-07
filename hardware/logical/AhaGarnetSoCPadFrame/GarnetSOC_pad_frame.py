@@ -389,7 +389,7 @@ ring_terminator_length = {
 
 bump_offset = {
     'top'   : 174.912,
-    'bottom': 174.912,
+    'bottom': 330.864,
     'left'  : 341.82,
     'right' : 341.82
 }
