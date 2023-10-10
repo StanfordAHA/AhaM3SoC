@@ -430,8 +430,10 @@ def post_process_pos(pos, pre_edge, filler_length, direction):
 with open("io_pad_placement.tcl", "w") as f:
     for side in ['top', 'bottom', 'left', 'right']:
         # can be arbitrary, but set it to be the same as the ring terminator length
-        space_between_terminator_and_corner = ring_terminator_length[side]
-
+        if side in ['top', 'bottom']:
+            space_between_terminator_and_corner = 2 * ring_terminator_length[side]
+        else:
+            space_between_terminator_and_corner = 4 * ring_terminator_length[side]
         # compute the total length of the pads on this side
         pad_length_sum = 0
         for pad in pads[side]:
