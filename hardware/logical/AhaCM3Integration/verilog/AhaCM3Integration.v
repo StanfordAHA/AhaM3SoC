@@ -95,8 +95,8 @@ module AhaCM3Integration (
   input   wire            CGRA_INT,
   input   wire            WDOG_INT,           // Watchdog interrupt used as NMI
   input   wire            TLX_INT,
-  input   wire            XGCD0_INT,
-  input   wire            XGCD1_INT,
+  // input   wire            XGCD0_INT,
+  // input   wire            XGCD1_INT,
 
   // SysTick
   input   wire            SYS_TICK_NOT_10MS_MULT, // Does the sys-tick calibration value
@@ -105,7 +105,7 @@ module AhaCM3Integration (
 );
 
   // ---------- Local Params --------------------------------------------------
-  localparam  NUM_IRQ     = 13;
+  localparam  NUM_IRQ     = 11;
   localparam  TRACE_LVL   = 1;
   localparam  DEBUG_LVL   = 3;
   localparam  WIC_LINES   = NUM_IRQ + 3;
@@ -607,22 +607,22 @@ module AhaCM3Integration (
   //    are derived from the same master clock.
   // XGCD clock is completely async to SYSTEM clock.
 
-  wire   sync_XGCD0_INT;
-  wire   sync_XGCD1_INT;
+  // wire   sync_XGCD0_INT;
+  // wire   sync_XGCD1_INT;
 
-  AhaDataSync u_aha_data_sync_XGCD0_INT (
-    .CLK        (SYS_CLK),
-    .RESETn     (CPU_PORESETn),
-    .D          (XGCD0_INT),
-    .Q          (sync_XGCD0_INT)
-  );
+  // AhaDataSync u_aha_data_sync_XGCD0_INT (
+  //   .CLK        (SYS_CLK),
+  //   .RESETn     (CPU_PORESETn),
+  //   .D          (XGCD0_INT),
+  //   .Q          (sync_XGCD0_INT)
+  // );
 
-  AhaDataSync u_aha_data_sync_XGCD1_INT (
-    .CLK        (SYS_CLK),
-    .RESETn     (CPU_PORESETn),
-    .D          (XGCD1_INT),
-    .Q          (sync_XGCD1_INT)
-  );
+  // AhaDataSync u_aha_data_sync_XGCD1_INT (
+  //   .CLK        (SYS_CLK),
+  //   .RESETn     (CPU_PORESETn),
+  //   .D          (XGCD1_INT),
+  //   .Q          (sync_XGCD1_INT)
+  // );
 
   assign cpu_int_isr[0]        = wic_pend[3]   | TIMER0_INT;
   assign cpu_int_isr[1]        = wic_pend[4]   | TIMER1_INT;
@@ -635,9 +635,9 @@ module AhaCM3Integration (
   assign cpu_int_isr[8]        = wic_pend[11]  | DMA1_INT[1];
   assign cpu_int_isr[9]        = wic_pend[12]  | CGRA_INT;
   assign cpu_int_isr[10]       = wic_pend[13]  | TLX_INT;
-  assign cpu_int_isr[11]       = wic_pend[14]  | sync_XGCD0_INT;
-  assign cpu_int_isr[12]       = wic_pend[15]  | sync_XGCD1_INT;
-  assign cpu_int_isr[239:13]   = {(240-13){1'b0}};
+  // assign cpu_int_isr[11]       = wic_pend[14]  | sync_XGCD0_INT;
+  // assign cpu_int_isr[12]       = wic_pend[15]  | sync_XGCD1_INT;
+  assign cpu_int_isr[239:11]   = {(240-11){1'b0}};
 
   assign cpu_int_nmi           = WDOG_INT;
 

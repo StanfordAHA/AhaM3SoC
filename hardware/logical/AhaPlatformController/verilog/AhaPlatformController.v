@@ -32,7 +32,7 @@ module AhaPlatformController (
   input   wire            TPIU_TRACECLKIN,
 
   // XGCD Bus Clock
-  input   wire            XGCD_BUS_CLK,
+  // input   wire            XGCD_BUS_CLK,
 
   // Generated Clocks
   output  wire            SYS_CLK,
@@ -71,7 +71,7 @@ module AhaPlatformController (
   output  wire            NIC_RESETn,
   output  wire            TLX_REV_RESETn,
   output  wire            TPIU_RESETn,
-  output  wire            XGCD_RESETn,
+  // output  wire            XGCD_RESETn,
 
   // NIC Clock Qualifiers for Peripheral Clocks
   output  wire            TIMER0_CLKEN,
@@ -553,11 +553,11 @@ AhaClockController u_clock_controller (
     // CGRA JTAG
     .CGRA_JTAG_TCK                  (CGRA_JTAG_TCK),
     .CGRA_JTAG_TRSTn                (CGRA_JTAG_TRSTn),
-    .CGRA_JTAG_RESETn               (cgra_jtag_resetn_w),
+    .CGRA_JTAG_RESETn               (cgra_jtag_resetn_w)
 
     // XGCD
-    .XGCD_BUS_CLK                   (XGCD_BUS_CLK),
-    .XGCD_RESETn                    (XGCD_RESETn)
+    // .XGCD_BUS_CLK                   (XGCD_BUS_CLK),
+    // .XGCD_RESETn                    (XGCD_RESETn)
   );
 
   assign dap_reset_req_w  = DBGRSTREQ;
