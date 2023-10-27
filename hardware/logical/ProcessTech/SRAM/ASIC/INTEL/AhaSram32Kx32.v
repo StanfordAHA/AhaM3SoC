@@ -68,6 +68,7 @@ module AhaSram32Kx32 #( parameter IMAGE_FILE = "None" )
         .mcen(mcen),
         .clkbyp(clkbyp),
         .din(D),
+        .wbeb(bwen),
         .wa(wa),
         .wpulse(wpulse),
         .wpulseen(wpulseen),
@@ -89,6 +90,7 @@ module Intel32Kx32SRAM (
    input             clkbyp,
    input [31:0]      din,
    input [1:0]       wa,
+   input [31:0]      wbeb,
    input [1:0]       wpulse,
    input             wpulseen,
    input             fwen,
@@ -99,11 +101,11 @@ module Intel32Kx32SRAM (
 
 reg [`INTEL32KX32SRAM_BANKS - 1:0] ren_int;
 reg [`INTEL32KX32SRAM_BANKS - 1:0] wen_int;
-reg [31:0] q_int [0:(`INTEL32KX32SRAM_BANKS-1)];
+reg [31:0] q_int [0: `INTEL32KX32SRAM_BANKS - 1];
 
 generate
     for (genvar i = 0; i < `INTEL32KX32SRAM_BANKS; i++) begin
-        ip224uhdlp1p11rf_8192x32m8b2c1s0_t0r0p0d0a1m1h u_mem (
+        ip224uhdlp1p11rf_8192x32m8b2c1s1_t0r0p0d0a1m1h u_mem (
             .clk(clk),
             .ren(ren_int[i]),
             .wen(wen_int[i]),
@@ -112,6 +114,7 @@ generate
             .mcen(mcen),
             .clkbyp(clkbyp),
             .din(din),
+            .wbeb(wbeb),
             .wa(wa),
             .wpulse(wpulse),
             .wpulseen(wpulseen),
