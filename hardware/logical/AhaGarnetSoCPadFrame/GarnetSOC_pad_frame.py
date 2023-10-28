@@ -313,8 +313,10 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
 # Settings for the full chip floorplan (v1)
 die_width         = 3924.72
 die_height        = 4084.92
-die_ring_hori     = 12.96
-die_ring_vert     = 13.86
+# die_ring_hori     = 12.96
+# die_ring_vert     = 13.86
+die_ring_hori     = 16.2
+die_ring_vert     = 17.64
 prs_width         = 58.32
 prs_height        = 57.96
 pad_ring_hori     = 45.36
