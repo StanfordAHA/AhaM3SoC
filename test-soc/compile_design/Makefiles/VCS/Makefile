@@ -10,11 +10,19 @@ TOP_DIR 					:= $(abspath $(TOP_DIR))
 LINT_OPTS					= +lint=PCWM,TFIPC
 
 # Compile Options
-VCS_COMPILE_OPTS 			:= +v2k -noIncrComp -debug -full64 +libext+.v+.sv
+VCS_COMPILE_OPTS 			:= +v2k -noIncrComp -debug_access+all -full64 +libext+.v+.sv -kdb -debug_region+cell+encrypt
 VCS_COMPILE_OPTS			+= -sverilog -timescale=1ns/1ps
+VCS_COMPILE_OPTS			+= -assert svaext
+VCS_COMPILE_OPTS			+= +vcs+initreg+random
 VCS_COMPILE_OPTS			+= $(LINT_OPTS)
 VCS_COMPILE_OPTS			+= +define+TLX_FWD_DATA_LO_WIDTH=$(TLX_FWD_DATA_LO_WIDTH)
 VCS_COMPILE_OPTS			+= +define+TLX_REV_DATA_LO_WIDTH=$(TLX_REV_DATA_LO_WIDTH)
+VCS_COMPILE_OPTS 			+= +define+INTC_FUNCTIONAL
+VCS_COMPILE_OPTS 			+= +define+INTC_MEM_NOXHANDLING
+VCS_COMPILE_OPTS 			+= +define+INTC_SVA_OFF
+VCS_COMPILE_OPTS 			+= +define+INTC_NO_PWR_PINS
+VCS_COMPILE_OPTS 			+= +define+FUNCTIONAL
+VCS_COMPILE_OPTS 			+= +define+INTCNOPWR
 
 # CGRA Exclusion
 ifeq ($(SOC_ONLY),True)
@@ -33,6 +41,13 @@ else
 	VCS_COMPILE_OPTS		+= +define+IMPL_SIM
 endif
 
+# JTAG or no JTAG Simulation
+ifeq ($(TEST_VIEW),JTAG)
+	VCS_COMPILE_OPTS		+= +define+JTAG
+else
+	VCS_COMPILE_OPTS		+= +define+NO_JTAG
+endif
+
 # Process-Dependent Files
 ifeq ($(IMPL_VIEW),ASIC)
 	ifeq ($(PROCESS),TSMC)
@@ -43,16 +58,20 @@ ifeq ($(IMPL_VIEW),ASIC)
 		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/ASIC/GF
 		VCS_COMPILE_OPTS	+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/ASIC/GF
 	endif
+	ifeq ($(PROCESS),INTEL)
+		VCS_COMPILE_OPTS	        += -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/ASIC/INTEL
+		VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/ASIC/INTEL
+		# for tlx mem
+		VCS_COMPILE_OPTS		+= $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/SIM/AhaSramSimGen.v
+	endif
 else
+        # SIM	
 	VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/SRAM/SIM
 	VCS_COMPILE_OPTS		+= -y $(AHA_IP_PATH)/hardware/logical/ProcessTech/StdCells/SIM
 endif
 
 # Garnet RTL
 VCS_COMPILE_OPTS			+= $(TOP_DIR)/inputs/design.v
-
-# XGCD RTL
-VCS_COMPILE_OPTS			+= $(TOP_DIR)/inputs/xgcd_design.v
 
 # ==============================================================================
 # Compilation File Lists

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 `ifdef IMPL_SIM
-    `define SOC_TOP     u_soc
+  `define SOC_TOP     u_soc
 `elsif IMPL_ASIC
     `define SOC_TOP     u_soc.core
 `endif
@@ -105,8 +105,12 @@ module Tbench;
         repeat(100) @(posedge MASTER_CLK);
         @(negedge MASTER_CLK) PO_RESET_N = 1'b1;
 
+	$display("release PORESET");
+
         repeat(100) @(posedge MASTER_CLK);
         @(negedge MASTER_CLK) SYS_RESET_N = 1'b1;
+
+	$display("release SYSRESET");
     end
 
 // =============================================================================
@@ -127,7 +131,6 @@ module Tbench;
         .DP_JTAG_TCK                        (TCK),
         .CGRA_JTAG_TCK                      (1'b0),
         .TPIU_TRACECLKIN                    (MASTER_CLK),
-        .XGCD_EXT_CLK                       (MASTER_CLK),
 
         // SoC JTAG Interface
         .DP_JTAG_TDI                        (TDI),
@@ -178,14 +181,8 @@ module Tbench;
         .OUT_PAD_DS_GRP7                    (/* unused */),
 
         .LOOP_BACK_SELECT                   (4'h0),
-        .LOOP_BACK                          (/* unused */),
+        .LOOP_BACK                          (/* unused */)
 
-        .XGCD_CLK_SELECT                    (2'b00),
-        .XGCD_DIV8_CLK                      (/* unused */),
-        .XGCD0_START                        (/* unused */),
-        .XGCD1_START                        (/* unused */),
-        .XGCD0_DONE                         (/* unused */),
-        .XGCD1_DONE                         (/* unused */)
     );
 `elsif IMPL_ASIC
     GarnetSOC_pad_frame u_soc (
@@ -206,7 +203,6 @@ module Tbench;
         .pad_DP_JTAG_TCK                    (TCK),
         .pad_CGRA_JTAG_TCK                  (1'b0),
         .pad_TPIU_TRACECLKIN                (MASTER_CLK),
-        .pad_XGCD_EXT_CLK                   (MASTER_CLK),
 
         .pad_DP_JTAG_TDI                    (TDI),
         .pad_DP_JTAG_TMS                    (TMS),
@@ -244,15 +240,8 @@ module Tbench;
 
         // LoopBack
         .pad_LOOP_BACK_SELECT               (4'h0),
-        .pad_LOOP_BACK                      (/* unused */),
+        .pad_LOOP_BACK                      (/* unused */)
 
-        // XGCD
-        .pad_XGCD_CLK_SELECT                (2'b00),
-        .pad_XGCD_DIV8_CLK                  (/* unused */),
-        .pad_XGCD0_START                    (/* unused */),
-        .pad_XGCD1_START                    (/* unused */),
-        .pad_XGCD0_DONE                     (/* unused */),
-        .pad_XGCD1_DONE                     (/* unused */)
     );
 `endif
 // =============================================================================
@@ -346,7 +335,7 @@ module Tbench;
 // CXDT Instantiation
 // -----------------------------------------------------------------------------
 
-`ifdef IMPL_ASIC
+`ifdef JTAG
     CXDT #(.IMAGENAME ("./CXDT.bin"))
     u_cxdt(.CLK       (MASTER_CLK),
            .PORESETn  (PO_RESET_N),
@@ -384,8 +373,8 @@ end
                 $recordfile("dump.trn");
                 $recordvars(Tbench);
             `else
-                $dumpfile("dump.vcd");
-                $dumpvars(0, u_soc.u_aha_soc_partial, u_soc.u_aha_xgcd_integration);
+                $fsdbDumpfile("dump.fsdb");
+                $fsdbDumpvars(0, Tbench, "+mda");
             `endif
         end
     end

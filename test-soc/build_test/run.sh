@@ -5,5 +5,6 @@ mkdir outputs
 
 TOP_DIR=$(pwd)
 
-make -f Makefiles/${IMPL_VIEW}/Makefile TESTNAME=${TEST_NAME} ARM_IP_DIR=${ARM_IP_DIR} \
-    TOP_DIR=${TOP_DIR}
+cp Makefiles/${TEST_VIEW}/Makefile .
+
+make TESTNAME=${TEST_NAME} ARM_IP_DIR=${ARM_IP_DIR} TOP_DIR=${TOP_DIR}

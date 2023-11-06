@@ -24,7 +24,8 @@ def construct():
     #     design repo directories
     #---------------------------------------------------------------------------
 
-    shared_top_dir  = os.path.abspath(os.path.join(this_dir, "../"))
+    # depends on where you placed build folder (place it at same level for ../../)
+    shared_top_dir  = os.path.abspath(os.path.join(this_dir, "../../"))
     arm_ip_dir      = os.path.join(shared_top_dir, "aham3soc_armip")
     aha_ip_dir      = os.path.join(shared_top_dir, "aham3soc")
     garnet_dir      = os.path.join(shared_top_dir, "garnet")
@@ -38,17 +39,13 @@ def construct():
         # CPU Tests
         'apb_mux_test',
         'hello_test',
-        #'memory_test',
+        'memory_test',
         'dma_single_channel',
         'default_slaves_test',
         #'interrupts_test',
         'tlx_test',
         'cgra_test',
         'cgra_reset_test',
-        'xgcd_test',
-        'xgcd_full_test',
-        'xgcd_1279',
-        'xgcd_comp_test',
         'app_test_onyx_dense_sparse',
         #'master_clock_test',
         #'app_tlx_test',
@@ -88,21 +85,21 @@ def construct():
         'ARM_IP_DIR': arm_ip_dir,
         'AHA_IP_DIR': aha_ip_dir,
         'GATE_LEVEL_DIR': gate_level_dir,
-        'GARNET_DIR': garnet_dir,
+        'GARNET_DIR': "/sim/kkoul/aha/garnet",
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
         'IMPL_VIEW': 'SIM', # can be SIM or ASIC
-        'PROCESS': 'GF', # can be GF or TSMC if IMPL_VIEW == ASIC
+        'TEST_VIEW': 'JTAG', # can be JTAG or NO_JTAG
+        'PROCESS': 'INTEL', # can be GF or TSMC if IMPL_VIEW == ASIC
         'SIMULATOR': 'VCS', # can be wither VCS or XCELIUM
-        'INCLUDE_XGCD' : True,
+        'INCLUDE_XGCD' : False,
     }
 
     # -------------------------------------------------------------------------
     # Custom steps
     # -------------------------------------------------------------------------
 
-    garnet_rtl  	    = Step(this_dir + '/garnet')
-    xgcd_rtl            = Step(this_dir + '/xgcd_rtl')
+    garnet_rtl  	    = Step(parameters['GARNET_DIR'] + '/mflowgen/common/rtl')
     compile_design  	= Step(this_dir + '/compile_design')
     build_test      	= Step(this_dir + '/build_test')
     run_test        	= Step(this_dir + '/run_test')
@@ -126,7 +123,7 @@ def construct():
     # -------------------------------------------------------------------------
 
     # 'compile_design' step produces a simulation executable and its accompanying collateral
-    compile_design.extend_inputs(['design.v', 'xgcd_design.v'])
+    compile_design.extend_inputs(['design.v'])
 
     if parameters['SIMULATOR'] == 'VCS':
         compile_design.extend_outputs(['simv', 'simv.daidir'])
@@ -135,14 +132,14 @@ def construct():
 
     # 'build_test' produces final images for both the CXDT and CPU
     for step in build_steps:
-        if parameters['IMPL_VIEW'] == 'ASIC':
+        if parameters['TEST_VIEW'] == 'JTAG':
             step.extend_outputs(['CXDT.bin'])
         else:
             step.extend_outputs(['ROM.hex'])
 
     # 'run_test' takes either CXDT.bin or ROM.hex
     for step, test in zip(run_steps, test_names):
-        if parameters['IMPL_VIEW'] == 'ASIC':
+        if parameters['TEST_VIEW'] == 'JTAG':
             step.extend_inputs(['CXDT.bin'])
         else:
             step.extend_inputs(['ROM.hex'])
@@ -162,7 +159,6 @@ def construct():
     # -------------------------------------------------------------------------
 
     g.add_step(garnet_rtl)
-    g.add_step(xgcd_rtl)
     g.add_step(compile_design)
 
     for s in build_steps:
@@ -178,7 +174,6 @@ def construct():
     # -------------------------------------------------------------------------
 
     g.connect_by_name(garnet_rtl, compile_design)
-    g.connect_by_name(xgcd_rtl, compile_design)
 
     for r, b in zip(run_steps, build_steps):
         g.connect_by_name(b, r)
@@ -201,6 +196,7 @@ def construct():
         step.update_params({'TEST_NAME': test})
         step.update_params({'SIMULATOR': parameters['SIMULATOR']})
         step.update_params({'IMPL_VIEW': parameters['IMPL_VIEW']})
+        step.update_params({'TEST_VIEW': parameters['TEST_VIEW']})
 
 
     # -------------------------------------------------------------------------
