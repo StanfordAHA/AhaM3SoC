@@ -78,7 +78,7 @@ sdio_pad_template["output"] = '''sdio_1v8_{orient} {pad_name} (
     .ana_io_1v8   (), // floating
     .outi_1v8     (), // floating
     .outi         (), // floating
-    .dq           ({io_name}_int[{bit}]),
+    .dq           (~{io_name}_int[{bit}]), // output is inverted
     .drv0         (out_pad_ds_grp0[0]),
     .drv1         (out_pad_ds_grp0[1]),
     .drv2         (out_pad_ds_grp0[2]),
