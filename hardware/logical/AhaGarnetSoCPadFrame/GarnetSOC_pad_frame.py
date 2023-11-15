@@ -428,6 +428,9 @@ def post_process_pos(pos, pre_edge, filler_length, direction):
             num_fillers = 1
         return pre_edge + num_fillers * filler_length, direction
 
+pad_core_space_top_bottom = 3 * io_filler_length['left']
+pad_core_space_left_right = 3 * io_filler_length['top']
+
 # Generate io_file (place the IO Pads)
 with open("io_pad_placement.tcl", "w") as f:
     for side in ['top', 'bottom', 'left', 'right']:
@@ -448,9 +451,9 @@ with open("io_pad_placement.tcl", "w") as f:
 
         # compute how many fillers are needed
         if side in ['top', 'bottom']:
-            total_gap_length = core_width - pad_length_sum
+            total_gap_length = core_width - pad_length_sum + pad_core_space_left_right
         else:
-            total_gap_length = core_height - pad_length_sum
+            total_gap_length = core_height - pad_length_sum + pad_core_space_top_bottom
         num_filler = total_gap_length / io_filler_length[side]
         # make sure it is very close to an integer
         assert abs(num_filler - round(num_filler)) < 0.01, f'number of fillers on side {side} is not close to an integer: {num_filler:.2f}'
@@ -555,21 +558,27 @@ with open("io_pad_placement.tcl", "w") as f:
         # Put starting ring terminators and initialize pad positions 
         if side == 'top':
             x, y = core_ul_xy
+            x -= pad_core_space_left_right
+            y += pad_core_space_top_bottom
             pre_edge = x
         elif side == 'bottom':
             x, y = core_ll_xy
             x += space_between_terminator_and_corner
             y -= pad_ring_vert
+            y -= pad_core_space_top_bottom
             f.write(f'placeInstance ring_terminator_{side} {x:.2f} {y:.2f} {ring_terminator_orientations[side]}\n')
             pre_edge = x + ring_terminator_length[side]
         elif side == 'left':
             x, y = core_ll_xy
+            x -= pad_core_space_left_right
             x -= pad_ring_hori
             y += space_between_terminator_and_corner
             f.write(f'placeInstance ring_terminator_{side} {x:.2f} {y:.2f} {ring_terminator_orientations[side]}\n')
             pre_edge = y + ring_terminator_length[side]
         elif side == 'right':
             x, y = core_lr_xy
+            x += pad_core_space_left_right
+            y -= pad_core_space_top_bottom
             pre_edge = y
             
         # we call the space between two bumps a slot
@@ -627,10 +636,18 @@ with open("io_pad_placement.tcl", "w") as f:
             # compute the x and y coordinates
             y = bound_pos - ring_terminator_length[side] - space_between_terminator_and_corner
             f.write(f'placeInstance ring_terminator_{side} {x:.2f} {y:.2f} {ring_terminator_orientations[side]}\n')
-        
-    for corner in ['ul', 'lr']:
-        x, y = corner_pad_xy[corner]
-        f.write(f'placeInstance corner_{corner} {x:.2f} {y:.2f} {corner_orientations[corner]}\n')
+    # upper-left corner
+    corner = 'ul'
+    x, y = corner_pad_xy[corner]
+    x -= pad_core_space_left_right
+    y += pad_core_space_top_bottom
+    f.write(f'placeInstance corner_{corner} {x:.2f} {y:.2f} {corner_orientations[corner]}\n')
+    # lower-right corner
+    corner = 'lr'
+    x, y = corner_pad_xy[corner]
+    x += pad_core_space_left_right
+    y -= pad_core_space_top_bottom
+    f.write(f'placeInstance corner_{corner} {x:.2f} {y:.2f} {corner_orientations[corner]}\n')
 
 with open("io_file", "w") as f:
     f.write('deprecated\n')
