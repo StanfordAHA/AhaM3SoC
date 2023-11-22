@@ -52,12 +52,12 @@ pads_postfix = {
     'right' : 'e1'
 }
 
-# SDIO Pad template
-sdio_pad_template = {}
-sdio_pad_template["input"] = '''sdio_1v8_{orient} {pad_name} (
+# GPIO Pad template
+pad_template = {}
+pad_template["input"] = '''gpio_1v2_{orient} {pad_name} (
     .pad          (pad_{io_name}[{bit}]),
-    .ana_io_1v8   (), // floating
-    .outi_1v8     (), // floating
+    .ana_io_1v2   (), // floating
+    .outi_1v2     (), // floating
     .outi         ({io_name}_int[{bit}]),
     .dq           (1'b0),
     .drv0         (out_pad_ds_grp0[0]),
@@ -73,10 +73,10 @@ sdio_pad_template["input"] = '''sdio_1v8_{orient} {pad_name} (
     .prg_slew     (1'b1)
 );
 '''
-sdio_pad_template["output"] = '''sdio_1v8_{orient} {pad_name} (
+pad_template["output"] = '''gpio_1v2_{orient} {pad_name} (
     .pad          (pad_{io_name}[{bit}]),
-    .ana_io_1v8   (), // floating
-    .outi_1v8     (), // floating
+    .ana_io_1v2   (), // floating
+    .outi_1v2     (), // floating
     .outi         (), // floating
     .dq           (~{io_name}_int[{bit}]), // output is inverted
     .drv0         (out_pad_ds_grp0[0]),
@@ -219,7 +219,7 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
         side = io_list[i]['side']
         for bit in range(width):
             pad_name = f"IOPAD_{side}_{name}_{bit}";
-            instance = sdio_pad_template[direction].format(orient=pads_postfix[side],
+            instance = pad_template[direction].format(orient=pads_postfix[side],
                                                            pad_name=pad_name,
                                                            io_name=name,
                                                            bit=bit)
@@ -368,7 +368,7 @@ supply_length = {
     'right' : 41.58
 }
 
-sdio_length = {
+gpio_length = {
     'top'   : 43.2,
     'bottom': 43.2,
     'left'  : 47.88,
@@ -445,7 +445,7 @@ with open("io_pad_placement.tcl", "w") as f:
             if 'SUPPLY' in pad:
                 pad_length_sum += supply_length[side]
             else:
-                pad_length_sum += sdio_length[side]
+                pad_length_sum += gpio_length[side]
         pad_length_sum += ring_terminator_length[side]
         pad_length_sum += space_between_terminator_and_corner
 
@@ -489,7 +489,7 @@ with open("io_pad_placement.tcl", "w") as f:
         #     else                 : y = y + gap_fillers * io_filler_length[side]
         #     f.write(f'placeInstance {pad} {x:.2f} {y:.2f} {pads_orientations[side]}\n')
         #     # advance to the next pad start position
-        #     io_cell_length = supply_length[side] if 'SUPPLY' in pad else sdio_length[side]
+        #     io_cell_length = supply_length[side] if 'SUPPLY' in pad else gpio_length[side]
         #     if   side == 'top'   : x = x + io_cell_length
         #     elif side == 'bottom': x = x + io_cell_length
         #     elif side == 'left'  : y = y + io_cell_length
@@ -530,7 +530,7 @@ with open("io_pad_placement.tcl", "w") as f:
         #     else                 : y = y + gap_fillers * io_filler_length[side]
         #     f.write(f'placeInstance {pad} {x:.2f} {y:.2f} {pads_orientations[side]}\n')
         #     # advance to the next pad start position
-        #     io_cell_length = supply_length[side] if 'SUPPLY' in pad else sdio_length[side]
+        #     io_cell_length = supply_length[side] if 'SUPPLY' in pad else gpio_length[side]
         #     if   side == 'top'   : x = x + io_cell_length
         #     elif side == 'bottom': x = x + io_cell_length
         #     elif side == 'left'  : y = y + io_cell_length
@@ -590,7 +590,7 @@ with open("io_pad_placement.tcl", "w") as f:
         while pads[side]:
             for n in range(1, pads_per_slot+1):
                 pad = pads[side].pop(0)
-                io_cell_length = supply_length[side] if 'SUPPLY' in pad else sdio_length[side]
+                io_cell_length = supply_length[side] if 'SUPPLY' in pad else gpio_length[side]
                 space = (bump_interval[side] - bump_length[side] - pads_per_slot*io_cell_length) / (pads_per_slot + 1)
                 new_pos = slot_start + n * space + (n - 1) * io_cell_length
                 # make sure it has integer multiple of fillers between the previous edge
