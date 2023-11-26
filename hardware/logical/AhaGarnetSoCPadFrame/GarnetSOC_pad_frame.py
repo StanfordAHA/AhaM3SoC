@@ -3,39 +3,41 @@ import argparse
 from math import ceil, floor
 
 io_list = [
-    {'name': 'TLX_FWD_CLK',             'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'DP_JTAG_TCK',             'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'DP_JTAG_TDI',             'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'DP_JTAG_TMS',             'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'DP_JTAG_TRSTn',           'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'DP_JTAG_TDO',             'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'CGRA_JTAG_TCK',           'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'CGRA_JTAG_TDI',           'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'CGRA_JTAG_TMS',           'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'CGRA_JTAG_TRSTn',         'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'CGRA_JTAG_TDO',           'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'MASTER_CLK',              'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'PORESETn',                'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'SYSRESETn',               'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'LOOP_BACK',               'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'LOOP_BACK_SELECT',        'width': 4, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_REV_CLK',             'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_REV_PAYLOAD_TVALID',  'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_FWD_PAYLOAD_TVALID',  'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_FWD_FLOW_TVALID',     'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_FWD_FLOW_TDATA',      'width': 2, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'TPIU_TRACE_SWO',          'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'TPIU_TRACECLKIN',         'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'UART0_RXD',               'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'UART0_TXD',               'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'UART1_RXD',               'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'UART1_TXD',               'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_REV_FLOW_TVALID',     'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_REV_FLOW_TDATA',      'width': 3, 'direction': 'input',  'pad': 'digital', 'side': 'left'},
-    {'name': 'TLX_REV_PAYLOAD_TDATA_LO','width': 45,'direction': 'input',  'pad': 'digital', 'side': 'top'},
-    {'name': 'TLX_REV_PAYLOAD_TDATA_HI','width': 35,'direction': 'input',  'pad': 'digital', 'side': 'right'},
-    {'name': 'TLX_FWD_PAYLOAD_TDATA_HI','width': 24,'direction': 'output', 'pad': 'digital', 'side': 'bottom'},
-    {'name': 'TLX_FWD_PAYLOAD_TDATA_LO','width': 16,'direction': 'output', 'pad': 'digital', 'side': 'bottom'}
+    {'name': 'TLX_REV_PAYLOAD_TDATA_LO', 'bstart': 5, 'width': 5, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_FWD_CLK',              'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_REV_CLK',              'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_REV_PAYLOAD_TVALID',   'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_FWD_PAYLOAD_TVALID',   'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_FWD_FLOW_TVALID',      'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_FWD_FLOW_TDATA',       'bstart': 0, 'width': 2, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_REV_FLOW_TVALID',      'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_REV_FLOW_TDATA',       'bstart': 0, 'width': 3, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'LOOP_BACK',                'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'LOOP_BACK_SELECT',         'bstart': 0, 'width': 4, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'PORESETn',                 'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'MASTER_CLK',               'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'SYSRESETn',                'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'DP_JTAG_TDI',              'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'DP_JTAG_TMS',              'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'DP_JTAG_TRSTn',            'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'DP_JTAG_TDO',              'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'DP_JTAG_TCK',              'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'CGRA_JTAG_TDI',            'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'CGRA_JTAG_TMS',            'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'CGRA_JTAG_TRSTn',          'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'CGRA_JTAG_TDO',            'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'CGRA_JTAG_TCK',            'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'UART0_RXD',                'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'UART0_TXD',                'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'UART1_RXD',                'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'UART1_TXD',                'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'TPIU_TRACECLKIN',          'bstart': 0, 'width': 1, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'TPIU_TRACE_SWO',           'bstart': 0, 'width': 1, 'direction': 'output', 'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_REV_PAYLOAD_TDATA_LO', 'bstart': 0, 'width': 5, 'direction': 'input',  'pad': 'digital', 'side': 'top'},
+    {'name': 'TLX_REV_PAYLOAD_TDATA_LO', 'bstart': 10, 'width': 35,'direction': 'input',  'pad': 'digital', 'side': 'left'},
+    {'name': 'TLX_REV_PAYLOAD_TDATA_HI', 'bstart': 0, 'width': 35,'direction': 'input',  'pad': 'digital', 'side': 'right'},
+    {'name': 'TLX_FWD_PAYLOAD_TDATA_HI', 'bstart': 0, 'width': 24,'direction': 'output', 'pad': 'digital', 'side': 'bottom'},
+    {'name': 'TLX_FWD_PAYLOAD_TDATA_LO', 'bstart': 0, 'width': 16,'direction': 'output', 'pad': 'digital', 'side': 'bottom'}
 ]
 
 pads = {
@@ -183,14 +185,24 @@ module_name = args.top
 if not os.path.exists('genesis_verif'):
     os.makedirs('genesis_verif')
 
+def get_pin_width(arg_io_list, pin_name):
+    width = 0
+    for io in arg_io_list:
+        if io['name'] == pin_name:
+            width += io['width']
+    return width
+
 # Generate the pad frame verilog in the above folder
 with open('genesis_verif/' + module_name + '.sv', 'w') as f:
     # module IO list
     f.write(f'module {module_name} (\n')
     for i in range(len(io_list)):
+        if (io_list[i]['bstart'] != 0):
+            continue
+        pin_name = io_list[i]['name']
+        width = get_pin_width(io_list, pin_name)
         direction = io_list[i]['direction']
-        width = io_list[i]['width']
-        name = f"pad_{io_list[i]['name']}"
+        name = f"pad_{pin_name}"
         f.write(f'    {direction} [{width-1}:0] {name},\n')
     # remove the last comma by moving back 2 characters
     f.seek(f.tell() - 2, os.SEEK_SET)
@@ -199,7 +211,12 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
     # create internal wires
     f.write(f'// Now create wires that will connect from pads to core module\n')
     for i in range(len(io_list)):
-        f.write(f"wire [{io_list[i]['width']-1}:0] {io_list[i]['name']}_int;\n")
+        if (io_list[i]['bstart'] != 0):
+            continue
+        else:
+            pin_name = io_list[i]['name']
+            width = get_pin_width(io_list, pin_name)
+            f.write(f"wire [{width-1}:0] {pin_name}_int;\n")
     f.write("wire [2:0] out_pad_ds_grp0;\n")
     f.write("wire [2:0] out_pad_ds_grp1;\n")
     f.write("wire [2:0] out_pad_ds_grp2;\n")
@@ -213,11 +230,12 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
     # Instantiate all pads
     for i in range(len(io_list)):
         name = io_list[i]['name']
+        bstart = io_list[i]['bstart']
         width = io_list[i]['width']
         direction = io_list[i]['direction']
         pad = io_list[i]['pad']
         side = io_list[i]['side']
-        for bit in range(width):
+        for bit in range(bstart, bstart+width):
             pad_name = f"IOPAD_{side}_{name}_{bit}";
             instance = pad_template[direction].format(orient=pads_postfix[side],
                                                            pad_name=pad_name,
@@ -239,6 +257,8 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
         f.write("  .OUT_PAD_DS_GRP7(out_pad_ds_grp7),\n")
         f.write("  .ALT_MASTER_CLK(1'b0),\n")
         for i in range(len(io_list)):
+            if (io_list[i]['bstart'] != 0):
+                continue
             f.write(f"  .{io_list[i]['name']}({io_list[i]['name']}_int),\n")
         # remove the last comma by moving back 2 characters
         f.seek(f.tell() - 2, os.SEEK_SET)
