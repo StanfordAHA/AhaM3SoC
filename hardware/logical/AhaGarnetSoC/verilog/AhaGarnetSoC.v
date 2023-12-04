@@ -1011,10 +1011,42 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   // Instantiate Platform Controller
   //------------------------------------------------------------------------------
+
+  wire MASTER_CLK_DIFF; 
+  diffclock_rx_1v2 u_aha_diff_clock (
+    // TODO might need to be an input
+    .powergood_vnn(1'b1),
+    .diffclkrx_ldo_vref(1'b0),
+    .diffclkrx_fz_ldo_vinvoltsel(2'b00),
+    .diffclkrx_ldo_hiz_debug(1'b0),
+    .diffclkrx_fz_ldo_fbtrim(4'b1111),
+    .diffclkrx_fz_ldo_reftrim(4'b1100),
+    .diffclkrx_fz_strong_ladder_en(1'b0),
+    .diffclkrx_fz_ldo_faststart(1'b0),
+    .diffclkrx_fz_ldo_bypass(1'b0),
+    .diffclkrx_fz_ldo_extrefsel(1'b0),
+    .diffclkrx_clkref(1'b0),
+    .diffclkrx_ldo_idq_debug(1'b0),
+    .diffclkrx_bias_config(2'b11),
+    .diffclkrx_inn(MASTER_CLK),
+    .diffclkrx_inp(ALT_MASTER_CLK),
+    .diffclkrx_rxen(1'b1),
+    .diffclkrx_out(MASTER_CLK_DIFF),
+    .diffclkrx_viewanabus(),
+    .diffclkrx_viewana_en(1'b0),
+    .diffclkrx_anaviewmux_sel0(2'b0),
+    .diffclkrx_odt_en(1'b1),
+    .diffclkrx_anaviewmux_sel1(2'b0),
+    .diffclkrx_viewdig_en(1'b0),
+    .diffclkrx_viewdigdfx_sel(1'b0),
+    .diffclkrx_viewdigout()
+  );
+
+
   AhaPlatformController u_aha_platform_ctrl (
     // Master Clocks and Resets
     .MASTER_CLK                   (MASTER_CLK),
-    .ALT_MASTER_CLK               (ALT_MASTER_CLK),
+    .ALT_MASTER_CLK               (MASTER_CLK_DIFF),
     .PORESETn                     (PORESETn),
     .SYSRESETn                    (SYSRESETn),
     .DP_JTAG_TRSTn                (DP_JTAG_TRSTn),
