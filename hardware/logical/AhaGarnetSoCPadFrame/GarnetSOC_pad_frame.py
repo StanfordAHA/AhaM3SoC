@@ -172,9 +172,41 @@ assign TLX_FWD_PAYLOAD_TDATA_LO_int = TLX_FWD_PAYLOAD_TDATA_LO_reg;
 // =================================================================
 '''
 
+# differential clock receiver
+diff_clk_rx_inst = '''
+diffclock_rx_1v2 u_diff_clk_rx (
+      .powergood_vnn                 ( 1'b1              )
+    , .diffclkrx_ldo_vref            ( 1'b0              )
+    , .diffclkrx_fz_ldo_vinvoltsel   ( 2'b00             )
+    , .diffclkrx_fz_ldo_fbtrim       ( 4'b1111           )
+    , .diffclkrx_fz_ldo_reftrim      ( 4'b1100           )
+    , .diffclkrx_fz_strong_ladder_en ( 1'b0              )
+    , .diffclkrx_fz_ldo_faststart    ( 1'b0              )
+    , .diffclkrx_fz_ldo_bypass       ( 1'b0              )
+    , .diffclkrx_fz_ldo_extrefsel    ( 1'b0              )
+    , .diffclkrx_odt_en              ( 1'b1              )
+    , .diffclkrx_bias_config         ( 2'b11             )
+    , .diffclkrx_ldo_hiz_debug       ( 1'b0              )
+    , .diffclkrx_ldo_idq_debug       ( 1'b0              )
+    , .diffclkrx_anaviewmux_sel0     ( 1'b0              )
+    , .diffclkrx_anaviewmux_sel1     ( 1'b0              )
+    , .diffclkrx_viewana_en          ( 1'b0              )
+    , .diffclkrx_viewdig_en          ( 1'b0              )
+    , .diffclkrx_viewdigdfx_sel      ( 1'b0              )
+    , .diffclkrx_clkref              ( 1'b0              )
+    , .diffclkrx_rxen                ( 1'b1              )
+    , .diffclkrx_viewanabus          (                   )
+    , .diffclkrx_viewdigout          (                   )
+    , .diffclkrx_inn                 ( pad_diffclkrx_inn )
+    , .diffclkrx_inp                 ( pad_diffclkrx_inp )
+    , .diffclkrx_out                 ( ALT_MASTER_CLK    )
+);
+'''
+
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--include_core', type=int, default=0, help='Include core (0 or 1)')
+parser.add_argument('--include_diff_clock_rx', type=int, default=0, help='Include differential clock receiver (0 or 1)')
 parser.add_argument('--top', type=str, default='GarnetSOC_pad_frame', help='Top module name')
 args = parser.parse_args()
 
@@ -204,9 +236,14 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
         direction = io_list[i]['direction']
         name = f"pad_{pin_name}"
         f.write(f'    {direction} [{width-1}:0] {name},\n')
-    # remove the last comma by moving back 2 characters
-    f.seek(f.tell() - 2, os.SEEK_SET)
-    f.write(f'\n);\n')
+    if args.include_diff_clock_rx == 1:
+        f.write(f'    input pad_diffclkrx_inn,\n')
+        f.write(f'    input pad_diffclkrx_inp\n')
+        f.write(f'\n);\n')
+    else:
+        # remove the last comma by moving back 2 characters
+        f.seek(f.tell() - 2, os.SEEK_SET)
+        f.write(f'\n);\n')
 
     # create internal wires
     f.write(f'// Now create wires that will connect from pads to core module\n')
@@ -244,6 +281,12 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
             f.write(instance)
             pads[side].append(pad_name)
     
+    # Instantiate differential clock receiver
+    if args.include_diff_clock_rx == 1:
+        f.write(diff_clk_rx_inst)
+    else:
+        f.write("// Differential clock receiver is not included\n")
+        f.write("assign ALT_MASTER_CLK = 1'b0;")
     # Create Core
     if args.include_core == 1:
         f.write("AhaGarnetSoC core (\n")
@@ -255,7 +298,7 @@ with open('genesis_verif/' + module_name + '.sv', 'w') as f:
         f.write("  .OUT_PAD_DS_GRP5(out_pad_ds_grp5),\n")
         f.write("  .OUT_PAD_DS_GRP6(out_pad_ds_grp6),\n")
         f.write("  .OUT_PAD_DS_GRP7(out_pad_ds_grp7),\n")
-        f.write("  .ALT_MASTER_CLK(1'b0),\n")
+        f.write("  .ALT_MASTER_CLK(ALT_MASTER_CLK),\n")
         for i in range(len(io_list)):
             if (io_list[i]['bstart'] != 0):
                 continue

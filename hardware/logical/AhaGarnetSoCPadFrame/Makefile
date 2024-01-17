@@ -27,6 +27,12 @@ else
   INCLUDE_CORE          = 1
 endif
 
+ifdef include_diff_clock_rx
+  INCLUDE_DIFF_CLOCK_RX = $(include_diff_clock_rx)
+else
+  INCLUDE_DIFF_CLOCK_RX = 1
+endif
+
 ##############################################################################
 # MODIFICATION: OPTIONAL
 #-----------------------------------------------------------------------------
@@ -65,5 +71,5 @@ genesis:
 python:
 	mkdir -p $(TARG_DIR) ; \
 	cd $(TARG_DIR) ; \
-	python3 $(CUR_DIR)/$(INPUT_FILE_PY) --top $(TOP_NAME) --include_core $(INCLUDE_CORE) ; \
+	python3 $(CUR_DIR)/$(INPUT_FILE_PY) --top $(TOP_NAME) --include_core $(INCLUDE_CORE) --include_diff_clock_rx $(INCLUDE_DIFF_CLOCK_RX); \
 	cd $(CUR_DIR)
