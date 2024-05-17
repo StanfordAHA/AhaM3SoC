@@ -12,7 +12,10 @@ name: run_test
 # -----------------------------------------------------------------------------
 commands:
   - bash run.sh
+  - cp run.fsdb ./outputs/run.fsdb
 
+outputs:
+  - run.fsdb
 
 # -----------------------------------------------------------------------------
 # Parameters
@@ -21,4 +24,4 @@ commands:
 parameters:
   TEST_NAME: undefined
   SIMULATOR: undefined
-  IMPL_VIEW: undefined
+  SIM_TYPE: undefined

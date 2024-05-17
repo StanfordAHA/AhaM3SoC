@@ -1,0 +1,126 @@
+//////////////////////////////////////////////////////
+// Testbench files
+//////////////////////////////////////////////////////
+-y ../tbench_files
+-y ${ARM_IP_DIR}/logical/cxdt/verilog
++incdir+${ARM_IP_DIR}/logical/cxdt/verilog
+-y ${AHA_IP_DIR}/hardware/logical/AhaMemIntegration/verilog
+-y ${AHA_IP_DIR}/hardware/logical/AhaTlxIntegration/verilog
+-y ${AHA_IP_DIR}/hardware/logical/AhaPlatformController/verilog
+-v ${AHA_IP_DIR}/hardware/logical/ProcessTech/SRAM/SIM/AhaSramSimGen.v
+-v ../tbench_files/filler.v
+
+//////////////////////////////////////////////////////
+// Netlists
+//////////////////////////////////////////////////////
+-v /sim/pohan/garnet_build/1203/31-cadence-innovus-signoff/outputs/design.vcs.pg.v
+-v /sim/pohan/garnet_build/1203/15-glb_top/25-cadence-innovus-signoff/outputs/design.vcs.pg.v
+-v /sim/pohan/garnet_build/1203/15-glb_top/7-glb_tile/outputs/glb_tile.vcs.pg.v
+-v /sim/pohan/garnet_build/1203/17-tile_array/outputs/tile_array.vcs.pg.v
+-v /sim/pohan/garnet_build/1130/17-tile_array/14-Tile_PE/26-cadence-innovus-signoff/outputs/design.vcs.pg.v
+-v /sim/pohan/garnet_build/1130/17-tile_array/13-Tile_MemCore/26-cadence-innovus-signoff/outputs/design.vcs.pg.v
+
+//////////////////////////////////////////////////////
+// SRAMs
+//////////////////////////////////////////////////////
+-v /sim/pohan/Memory_Behavior_Models_for_GL/macro_4096x64b.sv
+-v /sim/pohan/Memory_Behavior_Models_for_GL/macro_512x32b.sv
+-v /sim/pohan/Memory_Behavior_Models_for_GL/macro_8192x32b.sv
+// -v /sim/kkoul/build_gls/10-compile_design/netlist_tapeout/MEM_Tile_sram.v
+// -v /sim/kkoul/build_gls/10-compile_design/netlist_tapeout/GLB_Tile_sram.v
+// -v /sim/kkoul/build_gls/10-compile_design/netlist_tapeout/SOC_sram.v
+
+//////////////////////////////////////////////////////
+// Standard cells
+//////////////////////////////////////////////////////
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-lplvt/stdcells-ldrseq-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-nom/stdcells-spcl-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-nom/stdcells-supclk-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-ulvt/stdcells-ldrseq-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-hp/stdcells-suppwm-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-lvt/stdcells-seq-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-lvt/stdcells-spcl-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-hp/stdcells-clk-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-hp/stdcells-dsclk1-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-lp/stdcells-seq-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-hp/stdcells-base-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-lp/stdcells-ldrseq-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-lvt/stdcells-supclk-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-ulp/stdcells-suppwm-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-ulvt/stdcells-supseq-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-ulp/stdcells-dsclk1-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-ulp/stdcells-supbase-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-lp/stdcells-spcl-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-nom/stdcells-seq-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-lp/stdcells-ldrsupseq-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-lplvt/stdcells-supbase-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-ulp/stdcells-spcl-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-lplvt/stdcells-pwm-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-lplvt/stdcells-ldrsupseq-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-lplvt/stdcells-supclk-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-lp/stdcells-supbase-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-lp/stdcells-pwm-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-ulp/stdcells-supclk-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-lvt/stdcells-suppwm-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-lvt/stdcells-dsclk1-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-lvt/stdcells-supbase-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-lplvt/stdcells-supseq-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-ulvt/stdcells-dsclk1-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-ulvt/stdcells-base-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-ulvt/stdcells-clk-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-nom/stdcells-suppwm-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-nom/stdcells-dsclk1-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-ulvt/stdcells-suppwm-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-nom/stdcells-supbase-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-hp/stdcells-supseq-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-ulp/stdcells-seq-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-lp/stdcells-supclk-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-hp/stdcells-ldrsupseq-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-nom/stdcells-ldrseq-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-ulvt/stdcells-supclk-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-hp/stdcells-supbase-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-hp/stdcells-pwm-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-lvt/stdcells-clk-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-ulp/stdcells-pwm-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-ulvt/stdcells-pwm-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-ulvt/stdcells-spcl-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-nom/stdcells-base-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-lplvt/stdcells-dsclk1-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-ulp/stdcells-ldrsupseq-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-nom/stdcells-supseq-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-lplvt/stdcells-spcl-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-lvt/stdcells-ldrseq-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-nom/stdcells-clk-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-ulvt/stdcells-ldrsupseq-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-lvt/stdcells-base-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-lvt/stdcells-supseq-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-lp/stdcells-supseq-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-hp/stdcells-supclk-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-ulp/stdcells-ldrseq-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-lplvt/stdcells-base-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-nom/stdcells-pwm-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-ulp/stdcells-base-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-nom/stdcells-ldrsupseq-nom.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-lp/stdcells-suppwm-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-ulvt/stdcells-seq-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supseq-ulp/stdcells-supseq-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-lp/stdcells-clk-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-hp/stdcells-seq-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-dsclk1-lp/stdcells-dsclk1-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-suppwm-lplvt/stdcells-suppwm-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-hp/stdcells-ldrseq-hp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-lplvt/stdcells-clk-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-base-lp/stdcells-base-lp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-clk-ulp/stdcells-clk-ulp.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-pwm-lvt/stdcells-pwm-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrsupseq-lvt/stdcells-ldrsupseq-lvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-seq-lplvt/stdcells-seq-lplvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supbase-ulvt/stdcells-supbase-ulvt.v
+-v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-hp/stdcells-spcl-hp.v
+
+//////////////////////////////////////////////////////
+// Tape-out & Pad Frame Collaterals
+//////////////////////////////////////////////////////
+-v /intel16/ip/io/ip224_gpio_1v2/rtl/src/rtl/gpio_1v2_n1.sv
+-v /intel16/ip/io/ip224_gpio_1v2/rtl/src/rtl/gpio_1v2_e1.sv
+-v /sim/pohan/garnet_build/1202/9-intel16-adk/pdk/intel22tic.v

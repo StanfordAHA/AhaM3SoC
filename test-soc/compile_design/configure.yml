@@ -30,8 +30,10 @@ parameters:
   soc_only: undefined
   TLX_FWD_DATA_LO_WIDTH: undefined
   TLX_REV_DATA_LO_WIDTH: undefined
-  IMPL_VIEW: undefined
+  SIM_TYPE: undefined
   TEST_VIEW: undefined
   PROCESS: undefined
   SIMULATOR: undefined
   INCLUDE_XGCD: undefined
+  GEN_PWR_SAIF: undefined
+

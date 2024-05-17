@@ -46,6 +46,6 @@ make -f Makefiles/${SIMULATOR}/Makefile compile \
     SOC_ONLY=${soc_only} \
     TLX_FWD_DATA_LO_WIDTH=${TLX_FWD_DATA_LO_WIDTH} \
     TLX_REV_DATA_LO_WIDTH=${TLX_REV_DATA_LO_WIDTH} \
-    IMPL_VIEW=${IMPL_VIEW} \
+    SIM_TYPE=${SIM_TYPE} \
     TEST_VIEW=${TEST_VIEW} \
     PROCESS=${PROCESS}

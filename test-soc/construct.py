@@ -37,16 +37,16 @@ def construct():
 
     test_names = [
         # CPU Tests
-        'apb_mux_test',
-        'hello_test',
-        'memory_test',
-        'dma_single_channel',
-        'default_slaves_test',
+        # 'apb_mux_test',
+        # 'hello_test',
+        # 'memory_test',
+        # 'dma_single_channel',
+        # 'default_slaves_test',
         #'interrupts_test',
-        'tlx_test',
-        'cgra_test',
-        'cgra_reset_test',
-        'app_test_onyx_dense_sparse',
+        # 'tlx_test',
+        # 'cgra_test',
+        # 'cgra_reset_test',
+        'app_test_onyx',
         #'master_clock_test',
         #'app_tlx_test',
         #'app_test_stage1',
@@ -57,7 +57,7 @@ def construct():
         #'app_test_reconfig',
         #'app_test_reconfig_pipeline',
         #'app_test_2_kernels_1_cgra',
-       # 'cascade_test',
+        # 'cascade_test',
         #'resnet_test',
         #'resnet_test_i4_o3',
         #'demosaic_complex',
@@ -79,20 +79,24 @@ def construct():
         'design_name': 'test-soc',
         'soc_only'  : False,
         'interconnect_only' : False,
-        'array_width': 32,
+        'array_width': 28,
         'array_height': 16,
         'clock_period': 1.0,
         'ARM_IP_DIR': arm_ip_dir,
         'AHA_IP_DIR': aha_ip_dir,
         'GATE_LEVEL_DIR': gate_level_dir,
-        'GARNET_DIR': "/sim/kkoul/aha/garnet",
+        'GARNET_DIR': "/sim/pohan/garnet",
+        'GARNET_HOME': "/sim/pohan/garnet",
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
-        'IMPL_VIEW': 'SIM', # can be SIM or ASIC
+        'SIM_TYPE': 'GATELEVEL', # can be RTL or GATELEVEL
         'TEST_VIEW': 'JTAG', # can be JTAG or NO_JTAG
         'PROCESS': 'INTEL', # can be GF or TSMC if IMPL_VIEW == ASIC
         'SIMULATOR': 'VCS', # can be wither VCS or XCELIUM
         'INCLUDE_XGCD' : False,
+        'use_local_garnet' : False,
+        'glb_tile_mem_size': 128,
+        'GEN_PWR_SAIF': True
     }
 
     # -------------------------------------------------------------------------
@@ -104,6 +108,7 @@ def construct():
     build_test      	= Step(this_dir + '/build_test')
     run_test        	= Step(this_dir + '/run_test')
     verdict         	= Step(this_dir + '/verdict')
+    power_analysis     	= Step(this_dir + '/gatelevel_power_analysis')
 
     # -------------------------------------------------------------------------
     # Parallelize test build and run
@@ -112,11 +117,14 @@ def construct():
     test_count = len(test_names)
     build_steps = list(map((lambda _: build_test.clone()), range(test_count)))
     run_steps = list(map((lambda _: run_test.clone()), range(test_count)))
+    pwr_steps = list(map((lambda _: power_analysis.clone()), range(test_count)))
 
     for step, name in zip(build_steps, test_names):
         step.set_name('build_' + name)
     for step, name in zip(run_steps, test_names):
         step.set_name('run_' + name)
+    for step, name in zip(pwr_steps, test_names):
+        step.set_name('pwr_' + name)
 
     # -------------------------------------------------------------------------
     # Input/output dependencies
@@ -166,6 +174,9 @@ def construct():
 
     for s in run_steps:
         g.add_step(s)
+    
+    for s in pwr_steps:
+        g.add_step(s)
 
     g.add_step(verdict)
 
@@ -175,10 +186,11 @@ def construct():
 
     g.connect_by_name(garnet_rtl, compile_design)
 
-    for r, b in zip(run_steps, build_steps):
+    for p, r, b in zip(pwr_steps, run_steps, build_steps):
         g.connect_by_name(b, r)
         g.connect_by_name(compile_design, r)
         g.connect_by_name(r, verdict)
+        g.connect_by_name(r, p)
 
     # -------------------------------------------------------------------------
     # Set general parameters
@@ -195,7 +207,7 @@ def construct():
     for step, test in zip(run_steps, test_names):
         step.update_params({'TEST_NAME': test})
         step.update_params({'SIMULATOR': parameters['SIMULATOR']})
-        step.update_params({'IMPL_VIEW': parameters['IMPL_VIEW']})
+        step.update_params({'SIM_TYPE': parameters['SIM_TYPE']})
         step.update_params({'TEST_VIEW': parameters['TEST_VIEW']})
 
 
