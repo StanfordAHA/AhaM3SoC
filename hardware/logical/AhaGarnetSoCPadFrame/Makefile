@@ -30,7 +30,7 @@ endif
 ifdef include_diff_clock_rx
   INCLUDE_DIFF_CLOCK_RX = $(include_diff_clock_rx)
 else
-  INCLUDE_DIFF_CLOCK_RX = 1
+  INCLUDE_DIFF_CLOCK_RX = 0
 endif
 
 ##############################################################################
