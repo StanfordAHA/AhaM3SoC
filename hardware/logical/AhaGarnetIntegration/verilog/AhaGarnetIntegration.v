@@ -255,7 +255,7 @@ module AhaGarnetIntegration (
     );
 
     // CGRA Instantiation
-    Garnet u_garnet (
+    Zircon u_zircon (
         .axi4_slave_araddr              (slave_araddr[12:0]),
         .axi4_slave_arready             (slave_arready),
         .axi4_slave_arvalid             (slave_arvalid),
