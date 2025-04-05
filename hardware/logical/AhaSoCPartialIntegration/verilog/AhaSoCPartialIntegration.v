@@ -183,6 +183,43 @@ module AhaSoCPartialIntegration (
     input       wire            CGRA_REG_RVALID,
     output      wire            CGRA_REG_RREADY,
 
+    // MU
+    output      wire [3:0]      MU_REG_AWID,
+    output      wire [31:0]     MU_REG_AWADDR,
+    output      wire [7:0]      MU_REG_AWLEN,
+    output      wire [2:0]      MU_REG_AWSIZE,
+    output      wire [1:0]      MU_REG_AWBURST,
+    output      wire            MU_REG_AWLOCK,
+    output      wire [3:0]      MU_REG_AWCACHE,
+    output      wire [2:0]      MU_REG_AWPROT,
+    output      wire            MU_REG_AWVALID,
+    input       wire            MU_REG_AWREADY,
+    output      wire [63:0]     MU_REG_WDATA,
+    output      wire [7:0]      MU_REG_WSTRB,
+    output      wire            MU_REG_WLAST,
+    output      wire            MU_REG_WVALID,
+    input       wire            MU_REG_WREADY,
+    input       wire [3:0]      MU_REG_BID,
+    input       wire [1:0]      MU_REG_BRESP,
+    input       wire            MU_REG_BVALID,
+    output      wire            MU_REG_BREADY,
+    output      wire [3:0]      MU_REG_ARID,
+    output      wire [31:0]     MU_REG_ARADDR,
+    output      wire [7:0]      MU_REG_ARLEN,
+    output      wire [2:0]      MU_REG_ARSIZE,
+    output      wire [1:0]      MU_REG_ARBURST,
+    output      wire            MU_REG_ARLOCK,
+    output      wire [3:0]      MU_REG_ARCACHE,
+    output      wire [2:0]      MU_REG_ARPROT,
+    output      wire            MU_REG_ARVALID,
+    input       wire            MU_REG_ARREADY,
+    input       wire [3:0]      MU_REG_RID,
+    input       wire [63:0]     MU_REG_RDATA,
+    input       wire [1:0]      MU_REG_RRESP,
+    input       wire            MU_REG_RLAST,
+    input       wire            MU_REG_RVALID,
+    output      wire            MU_REG_RREADY,
+
   // TLX
     input       wire            TLX_INT,
 
@@ -629,7 +666,7 @@ module AhaSoCPartialIntegration (
     wire                        wdog_int;
 
     // Instantiate System Interconnect
-    nic400_OnyxIntegration u_nic_interconnect (
+    nic400_ZirconIntegration u_nic_interconnect (
 
     // Instance: u_cd_CGRA, Port: M_AXI_CGRA_DATA
 
@@ -706,6 +743,44 @@ module AhaSoCPartialIntegration (
     .RLAST_M_AXI_CGRA_REG       (CGRA_REG_RLAST),
     .RVALID_M_AXI_CGRA_REG      (CGRA_REG_RVALID),
     .RREADY_M_AXI_CGRA_REG      (CGRA_REG_RREADY),
+
+    // Instance: u_cd_CGRA, Port: M_AXI_MU_REG
+
+    .AWID_M_AXI_MU_REG          (MU_REG_AWID),
+    .AWADDR_M_AXI_MU_REG        (MU_REG_AWADDR),
+    .AWLEN_M_AXI_MU_REG         (MU_REG_AWLEN),
+    .AWSIZE_M_AXI_MU_REG        (MU_REG_AWSIZE),
+    .AWBURST_M_AXI_MU_REG       (MU_REG_AWBURST),
+    .AWLOCK_M_AXI_MU_REG        (MU_REG_AWLOCK),
+    .AWCACHE_M_AXI_MU_REG       (MU_REG_AWCACHE),
+    .AWPROT_M_AXI_MU_REG        (MU_REG_AWPROT),
+    .AWVALID_M_AXI_MU_REG       (MU_REG_AWVALID),
+    .AWREADY_M_AXI_MU_REG       (MU_REG_AWREADY),
+    .WDATA_M_AXI_MU_REG         (MU_REG_WDATA),
+    .WSTRB_M_AXI_MU_REG         (MU_REG_WSTRB),
+    .WLAST_M_AXI_MU_REG         (MU_REG_WLAST),
+    .WVALID_M_AXI_MU_REG        (MU_REG_WVALID),
+    .WREADY_M_AXI_MU_REG        (MU_REG_WREADY),
+    .BID_M_AXI_MU_REG           (MU_REG_BID),
+    .BRESP_M_AXI_MU_REG         (MU_REG_BRESP),
+    .BVALID_M_AXI_MU_REG        (MU_REG_BVALID),
+    .BREADY_M_AXI_MU_REG        (MU_REG_BREADY),
+    .ARID_M_AXI_MU_REG          (MU_REG_ARID),
+    .ARADDR_M_AXI_MU_REG        (MU_REG_ARADDR),
+    .ARLEN_M_AXI_MU_REG         (MU_REG_ARLEN),
+    .ARSIZE_M_AXI_MU_REG        (MU_REG_ARSIZE),
+    .ARBURST_M_AXI_MU_REG       (MU_REG_ARBURST),
+    .ARLOCK_M_AXI_MU_REG        (MU_REG_ARLOCK),
+    .ARCACHE_M_AXI_MU_REG       (MU_REG_ARCACHE),
+    .ARPROT_M_AXI_MU_REG        (MU_REG_ARPROT),
+    .ARVALID_M_AXI_MU_REG       (MU_REG_ARVALID),
+    .ARREADY_M_AXI_MU_REG       (MU_REG_ARREADY),
+    .RID_M_AXI_MU_REG           (MU_REG_RID),
+    .RDATA_M_AXI_MU_REG         (MU_REG_RDATA),
+    .RRESP_M_AXI_MU_REG         (MU_REG_RRESP),
+    .RLAST_M_AXI_MU_REG         (MU_REG_RLAST),
+    .RVALID_M_AXI_MU_REG        (MU_REG_RVALID),
+    .RREADY_M_AXI_MU_REG        (MU_REG_RREADY),
 
     // Instance: u_cd_SYSTEM, Port: M_AHB_PERIPH
 
@@ -1016,98 +1091,6 @@ module AhaSoCPartialIntegration (
     .RVALID_M_AXI_TLX_DATA      (TLX_RVALID),
     .RREADY_M_AXI_TLX_DATA      (TLX_RREADY),
 
-    // Instance: u_cd_XGCD, Port: M_AHB_XGCD
-
-    // .HADDR_M_AHB_XGCD           (XGCD_HADDR),
-    // .HBURST_M_AHB_XGCD          (XGCD_HBURST),
-    // .HPROT_M_AHB_XGCD           (XGCD_HPROT),
-    // .HSIZE_M_AHB_XGCD           (XGCD_HSIZE),
-    // .HTRANS_M_AHB_XGCD          (XGCD_HTRANS),
-    // .HWDATA_M_AHB_XGCD          (XGCD_HWDATA),
-    // .HWRITE_M_AHB_XGCD          (XGCD_HWRITE),
-    // .HRDATA_M_AHB_XGCD          (XGCD_HRDATA),
-    // .HREADYOUT_M_AHB_XGCD       (XGCD_HREADYOUT),
-    // .HRESP_M_AHB_XGCD           (XGCD_HRESP),
-    // .HSELx_M_AHB_XGCD           (XGCD_HSELx),
-    // .HREADY_M_AHB_XGCD          (XGCD_HREADY),
-
-    // Instance: u_cd_XGCD, Port: M_AXI_XGCD0
-
-    // .AWID_M_AXI_XGCD0           (XGCD0_AWID),
-    // .AWADDR_M_AXI_XGCD0         (XGCD0_AWADDR),
-    // .AWLEN_M_AXI_XGCD0          (XGCD0_AWLEN),
-    // .AWSIZE_M_AXI_XGCD0         (XGCD0_AWSIZE),
-    // .AWBURST_M_AXI_XGCD0        (XGCD0_AWBURST),
-    // .AWLOCK_M_AXI_XGCD0         (XGCD0_AWLOCK),
-    // .AWCACHE_M_AXI_XGCD0        (XGCD0_AWCACHE),
-    // .AWPROT_M_AXI_XGCD0         (XGCD0_AWPROT),
-    // .AWVALID_M_AXI_XGCD0        (XGCD0_AWVALID),
-    // .AWREADY_M_AXI_XGCD0        (XGCD0_AWREADY),
-    // .WDATA_M_AXI_XGCD0          (XGCD0_WDATA),
-    // .WSTRB_M_AXI_XGCD0          (XGCD0_WSTRB),
-    // .WLAST_M_AXI_XGCD0          (XGCD0_WLAST),
-    // .WVALID_M_AXI_XGCD0         (XGCD0_WVALID),
-    // .WREADY_M_AXI_XGCD0         (XGCD0_WREADY),
-    // .BID_M_AXI_XGCD0            (XGCD0_BID),
-    // .BRESP_M_AXI_XGCD0          (XGCD0_BRESP),
-    // .BVALID_M_AXI_XGCD0         (XGCD0_BVALID),
-    // .BREADY_M_AXI_XGCD0         (XGCD0_BREADY),
-    // .ARID_M_AXI_XGCD0           (XGCD0_ARID),
-    // .ARADDR_M_AXI_XGCD0         (XGCD0_ARADDR),
-    // .ARLEN_M_AXI_XGCD0          (XGCD0_ARLEN),
-    // .ARSIZE_M_AXI_XGCD0         (XGCD0_ARSIZE),
-    // .ARBURST_M_AXI_XGCD0        (XGCD0_ARBURST),
-    // .ARLOCK_M_AXI_XGCD0         (XGCD0_ARLOCK),
-    // .ARCACHE_M_AXI_XGCD0        (XGCD0_ARCACHE),
-    // .ARPROT_M_AXI_XGCD0         (XGCD0_ARPROT),
-    // .ARVALID_M_AXI_XGCD0        (XGCD0_ARVALID),
-    // .ARREADY_M_AXI_XGCD0        (XGCD0_ARREADY),
-    // .RID_M_AXI_XGCD0            (XGCD0_RID),
-    // .RDATA_M_AXI_XGCD0          (XGCD0_RDATA),
-    // .RRESP_M_AXI_XGCD0          (XGCD0_RRESP),
-    // .RLAST_M_AXI_XGCD0          (XGCD0_RLAST),
-    // .RVALID_M_AXI_XGCD0         (XGCD0_RVALID),
-    // .RREADY_M_AXI_XGCD0         (XGCD0_RREADY),
-
-    // Instance: u_cd_XGCD, Port: M_AXI_XGCD1
-
-    // .AWID_M_AXI_XGCD1           (XGCD1_AWID),
-    // .AWADDR_M_AXI_XGCD1         (XGCD1_AWADDR),
-    // .AWLEN_M_AXI_XGCD1          (XGCD1_AWLEN),
-    // .AWSIZE_M_AXI_XGCD1         (XGCD1_AWSIZE),
-    // .AWBURST_M_AXI_XGCD1        (XGCD1_AWBURST),
-    // .AWLOCK_M_AXI_XGCD1         (XGCD1_AWLOCK),
-    // .AWCACHE_M_AXI_XGCD1        (XGCD1_AWCACHE),
-    // .AWPROT_M_AXI_XGCD1         (XGCD1_AWPROT),
-    // .AWVALID_M_AXI_XGCD1        (XGCD1_AWVALID),
-    // .AWREADY_M_AXI_XGCD1        (XGCD1_AWREADY),
-    // .WDATA_M_AXI_XGCD1          (XGCD1_WDATA),
-    // .WSTRB_M_AXI_XGCD1          (XGCD1_WSTRB),
-    // .WLAST_M_AXI_XGCD1          (XGCD1_WLAST),
-    // .WVALID_M_AXI_XGCD1         (XGCD1_WVALID),
-    // .WREADY_M_AXI_XGCD1         (XGCD1_WREADY),
-    // .BID_M_AXI_XGCD1            (XGCD1_BID),
-    // .BRESP_M_AXI_XGCD1          (XGCD1_BRESP),
-    // .BVALID_M_AXI_XGCD1         (XGCD1_BVALID),
-    // .BREADY_M_AXI_XGCD1         (XGCD1_BREADY),
-    // .ARID_M_AXI_XGCD1           (XGCD1_ARID),
-    // .ARADDR_M_AXI_XGCD1         (XGCD1_ARADDR),
-    // .ARLEN_M_AXI_XGCD1          (XGCD1_ARLEN),
-    // .ARSIZE_M_AXI_XGCD1         (XGCD1_ARSIZE),
-    // .ARBURST_M_AXI_XGCD1        (XGCD1_ARBURST),
-    // .ARLOCK_M_AXI_XGCD1         (XGCD1_ARLOCK),
-    // .ARCACHE_M_AXI_XGCD1        (XGCD1_ARCACHE),
-    // .ARPROT_M_AXI_XGCD1         (XGCD1_ARPROT),
-    // .ARVALID_M_AXI_XGCD1        (XGCD1_ARVALID),
-    // .ARREADY_M_AXI_XGCD1        (XGCD1_ARREADY),
-    // .RID_M_AXI_XGCD1            (XGCD1_RID),
-    // .RDATA_M_AXI_XGCD1          (XGCD1_RDATA),
-    // .RRESP_M_AXI_XGCD1          (XGCD1_RRESP),
-    // .RLAST_M_AXI_XGCD1          (XGCD1_RLAST),
-    // .RVALID_M_AXI_XGCD1         (XGCD1_RVALID),
-    // .RREADY_M_AXI_XGCD1         (XGCD1_RREADY),
-
-
     //  Non-bus signals
 
     .CGRAclk                    (CGRA_CLK),
@@ -1116,8 +1099,6 @@ module AhaSoCPartialIntegration (
     .SYSTEMresetn               (NIC_RESETn),
     .TLXclk                     (TLX_CLK),
     .TLXresetn                  (TLX_RESETn)
-    // .XGCDclk                    (XGCD_BUS_CLK),
-    // .XGCDresetn                 (XGCD_RESETn)
     );
 
     // Instantiate CPU Integration

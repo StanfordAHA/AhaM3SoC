@@ -30,7 +30,7 @@ module AhaGarnetIntegration (
     input   wire            JTAG_TMS,
     input   wire            JTAG_TRSTn,
 
-    // Data Interface
+    // CGRA Data Interface
     input   wire [3 :0]     CGRA_DATA_AWID,
     input   wire [31:0]     CGRA_DATA_AWADDR,
     input   wire [7 :0]     CGRA_DATA_AWLEN,
@@ -67,7 +67,7 @@ module AhaGarnetIntegration (
     output  wire            CGRA_DATA_RVALID,
     input   wire            CGRA_DATA_RREADY,
 
-    // Register Interface
+    // CGRA Register Interface
     input   wire [3:0]      CGRA_REG_AWID,
     input   wire [31:0]     CGRA_REG_AWADDR,
     input   wire [7:0]      CGRA_REG_AWLEN,
@@ -102,7 +102,44 @@ module AhaGarnetIntegration (
     output  wire [1:0]      CGRA_REG_RRESP,
     output  wire            CGRA_REG_RLAST,
     output  wire            CGRA_REG_RVALID,
-    input   wire            CGRA_REG_RREADY
+    input   wire            CGRA_REG_RREADY,
+
+    // MU Register Interface
+    input   wire [3:0]      MU_REG_AWID,
+    input   wire [31:0]     MU_REG_AWADDR,
+    input   wire [7:0]      MU_REG_AWLEN,
+    input   wire [2:0]      MU_REG_AWSIZE,
+    input   wire [1:0]      MU_REG_AWBURST,
+    input   wire            MU_REG_AWLOCK,
+    input   wire [3:0]      MU_REG_AWCACHE,
+    input   wire [2:0]      MU_REG_AWPROT,
+    input   wire            MU_REG_AWVALID,
+    output  wire            MU_REG_AWREADY,
+    input   wire [63:0]     MU_REG_WDATA,
+    input   wire [7:0]      MU_REG_WSTRB,
+    input   wire            MU_REG_WLAST,
+    input   wire            MU_REG_WVALID,
+    output  wire            MU_REG_WREADY,
+    output  wire [3:0]      MU_REG_BID,
+    output  wire [1:0]      MU_REG_BRESP,
+    output  wire            MU_REG_BVALID,
+    input   wire            MU_REG_BREADY,
+    input   wire [3:0]      MU_REG_ARID,
+    input   wire [31:0]     MU_REG_ARADDR,
+    input   wire [7:0]      MU_REG_ARLEN,
+    input   wire [2:0]      MU_REG_ARSIZE,
+    input   wire [1:0]      MU_REG_ARBURST,
+    input   wire            MU_REG_ARLOCK,
+    input   wire [3:0]      MU_REG_ARCACHE,
+    input   wire [2:0]      MU_REG_ARPROT,
+    input   wire            MU_REG_ARVALID,
+    output  wire            MU_REG_ARREADY,
+    output  wire [3:0]      MU_REG_RID,
+    output  wire [63:0]     MU_REG_RDATA,
+    output  wire [1:0]      MU_REG_RRESP,
+    output  wire            MU_REG_RLAST,
+    output  wire            MU_REG_RVALID,
+    input   wire            MU_REG_RREADY
 );
 
 
@@ -254,8 +291,100 @@ module AhaGarnetIntegration (
         .SIF_RD_VALID       (sif_rd_valid)
     );
 
-    // CGRA Instantiation
+    // AXI to MU-AXI Interface
+    wire                    auto_axi_in_aw_ready;
+    wire                    auto_axi_in_aw_valid;
+    wire                    auto_axi_in_aw_bits_id;
+    wire [29:0]             auto_axi_in_aw_bits_addr;
+    wire [7:0]              auto_axi_in_aw_bits_len;
+    wire [2:0]              auto_axi_in_aw_bits_size;
+    wire                    auto_axi_in_w_ready;
+    wire                    auto_axi_in_w_valid;
+    wire [63:0]             auto_axi_in_w_bits_data;
+    wire [7:0]              auto_axi_in_w_bits_strb;
+    wire                    auto_axi_in_w_bits_last;
+    wire                    auto_axi_in_b_ready;
+    wire                    auto_axi_in_b_valid;
+    wire                    auto_axi_in_ar_ready;
+    wire                    auto_axi_in_ar_valid;
+    wire                    auto_axi_in_ar_bits_id;
+    wire [29:0]             auto_axi_in_ar_bits_addr;
+    wire [7:0]              auto_axi_in_ar_bits_len;
+    wire [2:0]              auto_axi_in_ar_bits_size;
+    wire                    auto_axi_in_r_ready;
+    wire                    auto_axi_in_r_valid;
+    wire                    auto_axi_in_r_bits_id;
+    wire [63:0]             auto_axi_in_r_bits_data;
+    wire [1:0]              auto_axi_in_r_bits_resp;
+    wire                    auto_axi_in_r_bits_last;
+
+    AhaAxiToMU u_axi_to_mu (
+        .AXI_AWID           (MU_REG_AWID),
+        .AXI_AWADDR         (MU_REG_AWADDR),
+        .AXI_AWLEN          (MU_REG_AWLEN),
+        .AXI_AWSIZE         (MU_REG_AWSIZE),
+        .AXI_AWBURST        (MU_REG_AWBURST),
+        .AXI_AWLOCK         (MU_REG_AWLOCK),
+        .AXI_AWCACHE        (MU_REG_AWCACHE),
+        .AXI_AWPROT         (MU_REG_AWPROT),
+        .AXI_AWVALID        (MU_REG_AWVALID),
+        .AXI_AWREADY        (MU_REG_AWREADY),
+        .AXI_WDATA          (MU_REG_WDATA),
+        .AXI_WSTRB          (MU_REG_WSTRB),
+        .AXI_WLAST          (MU_REG_WLAST),
+        .AXI_WVALID         (MU_REG_WVALID),
+        .AXI_WREADY         (MU_REG_WREADY),
+        .AXI_BID            (MU_REG_BID),
+        .AXI_BRESP          (MU_REG_BRESP),
+        .AXI_BVALID         (MU_REG_BVALID),
+        .AXI_BREADY         (MU_REG_BREADY),
+        .AXI_ARID           (MU_REG_ARID),
+        .AXI_ARADDR         (MU_REG_ARADDR),
+        .AXI_ARLEN          (MU_REG_ARLEN),
+        .AXI_ARSIZE         (MU_REG_ARSIZE),
+        .AXI_ARBURST        (MU_REG_ARBURST),
+        .AXI_ARLOCK         (MU_REG_ARLOCK),
+        .AXI_ARCACHE        (MU_REG_ARCACHE),
+        .AXI_ARPROT         (MU_REG_ARPROT),
+        .AXI_ARVALID        (MU_REG_ARVALID),
+        .AXI_ARREADY        (MU_REG_ARREADY),
+        .AXI_RID            (MU_REG_RID),
+        .AXI_RDATA          (MU_REG_RDATA),
+        .AXI_RRESP          (MU_REG_RRESP),
+        .AXI_RLAST          (MU_REG_RLAST),
+        .AXI_RVALID         (MU_REG_RVALID),
+        .AXI_RREADY         (MU_REG_RREADY),
+
+        .mu_aw_ready        (auto_axi_in_aw_ready),
+        .mu_aw_valid        (auto_axi_in_aw_valid),
+        .mu_aw_bits_id      (auto_axi_in_aw_bits_id),
+        .mu_aw_bits_addr    (auto_axi_in_aw_bits_addr),
+        .mu_aw_bits_len     (auto_axi_in_aw_bits_len),
+        .mu_aw_bits_size    (auto_axi_in_aw_bits_size),
+        .mu_w_ready         (auto_axi_in_w_ready),
+        .mu_w_valid         (auto_axi_in_w_valid),
+        .mu_w_bits_data     (auto_axi_in_w_bits_data),
+        .mu_w_bits_strb     (auto_axi_in_w_bits_strb),
+        .mu_w_bits_last     (auto_axi_in_w_bits_last),
+        .mu_b_ready         (auto_axi_in_b_ready),
+        .mu_b_valid         (auto_axi_in_b_valid),
+        .mu_ar_ready        (auto_axi_in_ar_ready),
+        .mu_ar_valid        (auto_axi_in_ar_valid),
+        .mu_ar_bits_id      (auto_axi_in_ar_bits_id),
+        .mu_ar_bits_addr    (auto_axi_in_ar_bits_addr),
+        .mu_ar_bits_len     (auto_axi_in_ar_bits_len),
+        .mu_ar_bits_size    (auto_axi_in_ar_bits_size),
+        .mu_r_ready         (auto_axi_in_r_ready),
+        .mu_r_valid         (auto_axi_in_r_valid),
+        .mu_r_bits_id       (auto_axi_in_r_bits_id),
+        .mu_r_bits_data     (auto_axi_in_r_bits_data),
+        .mu_r_bits_resp     (auto_axi_in_r_bits_resp),
+        .mu_r_bits_last     (auto_axi_in_r_bits_last)
+    );
+
+    // Zircon CGRA Instantiation
     Zircon u_zircon (
+        // CGRA_REG Interface (AXI-Lite Interface, converted from AXI4)
         .axi4_slave_araddr              (slave_araddr[12:0]),
         .axi4_slave_arready             (slave_arready),
         .axi4_slave_arvalid             (slave_arvalid),
@@ -273,28 +402,58 @@ module AhaGarnetIntegration (
         .axi4_slave_wready              (slave_wready),
         .axi4_slave_wvalid              (slave_wvalid),
 
+        // CGRA_DATA Interface (Simple Interface, converted from AXI4)
+        // sif_rd_addr and sif_wr_addr might be truncated
+        .proc_packet_rd_addr            (sif_rd_addr[21:0]),
+        .proc_packet_rd_data            (sif_rd_data),
+        .proc_packet_rd_data_valid      (sif_rd_valid),
+        .proc_packet_rd_en              (sif_rd_en),
+        .proc_packet_wr_addr            (sif_wr_addr[21:0]),
+        .proc_packet_wr_data            (sif_wr_data),
+        .proc_packet_wr_en              (sif_wr_en),
+        .proc_packet_wr_strb            (sif_wr_strb),
+
+        // Clock and Interrupt
         .cgra_running_clk_out           (/*unused*/),
         .clk_in                         (CLK),
-        .reset_in                       (~RESETn),
-
         .interrupt                      (INTERRUPT),
 
+        // CGRA JTAG Interface
         .jtag_tck                       (JTAG_TCK),
         .jtag_tdi                       (JTAG_TDI),
         .jtag_tdo                       (JTAG_TDO),
         .jtag_tms                       (JTAG_TMS),
         .jtag_trst_n                    (JTAG_TRSTn),
 
-        // sif_rd_addr and sif_wr_addr might be truncated
-        .proc_packet_rd_addr            (sif_rd_addr[21:0]),
-        .proc_packet_rd_data            (sif_rd_data),
-        .proc_packet_rd_data_valid      (sif_rd_valid),
-        .proc_packet_rd_en              (sif_rd_en),
+        // CGRA Reset
+        .reset_in                       (~RESETn),
 
-        .proc_packet_wr_addr            (sif_wr_addr[21:0]),
-        .proc_packet_wr_data            (sif_wr_data),
-        .proc_packet_wr_en              (sif_wr_en),
-        .proc_packet_wr_strb            (sif_wr_strb)
+        // MU_REG Interface (converted from AXI4)
+        .auto_axi_in_aw_ready           (auto_axi_in_aw_ready),
+        .auto_axi_in_aw_valid           (auto_axi_in_aw_valid),
+        .auto_axi_in_aw_bits_id         (auto_axi_in_aw_bits_id),
+        .auto_axi_in_aw_bits_addr       (auto_axi_in_aw_bits_addr),
+        .auto_axi_in_aw_bits_len        (auto_axi_in_aw_bits_len),
+        .auto_axi_in_aw_bits_size       (auto_axi_in_aw_bits_size),
+        .auto_axi_in_w_ready            (auto_axi_in_w_ready),
+        .auto_axi_in_w_valid            (auto_axi_in_w_valid),
+        .auto_axi_in_w_bits_data        (auto_axi_in_w_bits_data),
+        .auto_axi_in_w_bits_strb        (auto_axi_in_w_bits_strb),
+        .auto_axi_in_w_bits_last        (auto_axi_in_w_bits_last),
+        .auto_axi_in_b_ready            (auto_axi_in_b_ready),
+        .auto_axi_in_b_valid            (auto_axi_in_b_valid),
+        .auto_axi_in_ar_ready           (auto_axi_in_ar_ready),
+        .auto_axi_in_ar_valid           (auto_axi_in_ar_valid),
+        .auto_axi_in_ar_bits_id         (auto_axi_in_ar_bits_id),
+        .auto_axi_in_ar_bits_addr       (auto_axi_in_ar_bits_addr),
+        .auto_axi_in_ar_bits_len        (auto_axi_in_ar_bits_len),
+        .auto_axi_in_ar_bits_size       (auto_axi_in_ar_bits_size),
+        .auto_axi_in_r_ready            (auto_axi_in_r_ready),
+        .auto_axi_in_r_valid            (auto_axi_in_r_valid),
+        .auto_axi_in_r_bits_id          (auto_axi_in_r_bits_id),
+        .auto_axi_in_r_bits_data        (auto_axi_in_r_bits_data),
+        .auto_axi_in_r_bits_resp        (auto_axi_in_r_bits_resp),
+        .auto_axi_in_r_bits_last        (auto_axi_in_r_bits_last)
     );
 `else
     wire unused =   (| CGRA_DATA_AWID)    |
@@ -345,12 +504,36 @@ module AhaGarnetIntegration (
                     (| CGRA_REG_ARPROT)   |
                     (| CGRA_REG_ARVALID)  |
                     (| CGRA_REG_RREADY)   |
+                    (| MU_REG_AWID)       |
+                    (| MU_REG_AWADDR)     |
+                    (| MU_REG_AWLEN)      |
+                    (| MU_REG_AWSIZE)     |
+                    (| MU_REG_AWBURST)    |
+                    (| MU_REG_AWLOCK)     |
+                    (| MU_REG_AWCACHE)    |
+                    (| MU_REG_AWPROT)     |
+                    (| MU_REG_AWVALID)    |
+                    (| MU_REG_WDATA)      |
+                    (| MU_REG_WSTRB)      |
+                    (| MU_REG_WLAST)      |
+                    (| MU_REG_WVALID)     |
+                    (| MU_REG_BREADY)     |
+                    (| MU_REG_ARID)       |
+                    (| MU_REG_ARADDR)     |
+                    (| MU_REG_ARLEN)      |
+                    (| MU_REG_ARSIZE)     |
+                    (| MU_REG_ARBURST)    |
+                    (| MU_REG_ARLOCK)     |
+                    (| MU_REG_ARCACHE)    |
+                    (| MU_REG_ARPROT)     |
+                    (| MU_REG_ARVALID)    |
+                    (| MU_REG_RREADY)     |
                     (| CLK)               |
                     (| RESETn)            |
                     (| JTAG_TCK)          |
                     (| JTAG_TDI)          |
                     (| JTAG_TMS)          |
-                    (| JTAG_TRSTn);
+                    (| JTAG_TRSTn)        ;
 
     assign INTERRUPT          = 1'b0;
 
@@ -379,6 +562,18 @@ module AhaGarnetIntegration (
     assign CGRA_REG_RRESP     = 2'b00;
     assign CGRA_REG_RLAST     = 1'b1;
     assign CGRA_REG_RVALID    = 1'b0;
+
+    assign MU_REG_AWREADY     = 1'b1;
+    assign MU_REG_WREADY      = 1'b1;
+    assign MU_REG_BID         = 4'h0;
+    assign MU_REG_BRESP       = 2'b00;
+    assign MU_REG_BVALID      = 1'b0;
+    assign MU_REG_ARREADY     = 1'b1;
+    assign MU_REG_RID         = 4'h0;
+    assign MU_REG_RDATA       = {64{1'b0}};
+    assign MU_REG_RRESP       = 2'b00;
+    assign MU_REG_RLAST       = 1'b1;
+    assign MU_REG_RVALID      = 1'b0;
 `endif
 
 endmodule
