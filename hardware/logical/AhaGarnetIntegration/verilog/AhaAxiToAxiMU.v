@@ -89,7 +89,7 @@ module AhaAxiToMU (
   // ====================================================
   assign AXI_AWREADY     = mu_aw_ready;
   assign mu_aw_valid     = AXI_AWVALID;
-  assign mu_aw_bits_id   = 4'b0000;
+  assign mu_aw_bits_id   = 1'b0;
   assign mu_aw_bits_addr = AXI_AWADDR[29:0];
   assign mu_aw_bits_len  = AXI_AWLEN;
   assign mu_aw_bits_size = AXI_AWSIZE;
@@ -116,7 +116,7 @@ module AhaAxiToMU (
   // ====================================================
   assign AXI_ARREADY     = mu_ar_ready;
   assign mu_ar_valid     = AXI_ARVALID;
-  assign mu_ar_bits_id   = 4'b0000;
+  assign mu_ar_bits_id   = 1'b0;
   assign mu_ar_bits_addr = AXI_ARADDR[29:0];
   assign mu_ar_bits_len  = AXI_ARLEN;
   assign mu_ar_bits_size = AXI_ARSIZE;
