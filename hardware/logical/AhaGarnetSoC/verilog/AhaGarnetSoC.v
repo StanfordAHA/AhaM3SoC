@@ -239,41 +239,41 @@ module AhaGarnetSoC (
   wire            cgra_reg_rready;
 
   // MU Wires
-  wire [3:0]      mu_reg_awid,
-  wire [31:0]     mu_reg_awaddr,
-  wire [7:0]      mu_reg_awlen,
-  wire [2:0]      mu_reg_awsize,
-  wire [1:0]      mu_reg_awburst,
-  wire            mu_reg_awlock,
-  wire [3:0]      mu_reg_awcache,
-  wire [2:0]      mu_reg_awprot,
-  wire            mu_reg_awvalid,
-  wire            mu_reg_awready,
-  wire [63:0]     mu_reg_wdata,
-  wire [7:0]      mu_reg_wstrb,
-  wire            mu_reg_wlast,
-  wire            mu_reg_wvalid,
-  wire            mu_reg_wready,
-  wire [3:0]      mu_reg_bid,
-  wire [1:0]      mu_reg_bresp,
-  wire            mu_reg_bvalid,
-  wire            mu_reg_bready,
-  wire [3:0]      mu_reg_arid,
-  wire [31:0]     mu_reg_araddr,
-  wire [7:0]      mu_reg_arlen,
-  wire [2:0]      mu_reg_arsize,
-  wire [1:0]      mu_reg_arburst,
-  wire            mu_reg_arlock,
-  wire [3:0]      mu_reg_arcache,
-  wire [2:0]      mu_reg_arprot,
-  wire            mu_reg_arvalid,
-  wire            mu_reg_arready,
-  wire [3:0]      mu_reg_rid,
-  wire [63:0]     mu_reg_rdata,
-  wire [1:0]      mu_reg_rresp,
-  wire            mu_reg_rlast,
-  wire            mu_reg_rvalid,
-  wire            mu_reg_rready,
+  wire [3:0]      mu_reg_awid;
+  wire [31:0]     mu_reg_awaddr;
+  wire [7:0]      mu_reg_awlen;
+  wire [2:0]      mu_reg_awsize;
+  wire [1:0]      mu_reg_awburst;
+  wire            mu_reg_awlock;
+  wire [3:0]      mu_reg_awcache;
+  wire [2:0]      mu_reg_awprot;
+  wire            mu_reg_awvalid;
+  wire            mu_reg_awready;
+  wire [63:0]     mu_reg_wdata;
+  wire [7:0]      mu_reg_wstrb;
+  wire            mu_reg_wlast;
+  wire            mu_reg_wvalid;
+  wire            mu_reg_wready;
+  wire [3:0]      mu_reg_bid;
+  wire [1:0]      mu_reg_bresp;
+  wire            mu_reg_bvalid;
+  wire            mu_reg_bready;
+  wire [3:0]      mu_reg_arid;
+  wire [31:0]     mu_reg_araddr;
+  wire [7:0]      mu_reg_arlen;
+  wire [2:0]      mu_reg_arsize;
+  wire [1:0]      mu_reg_arburst;
+  wire            mu_reg_arlock;
+  wire [3:0]      mu_reg_arcache;
+  wire [2:0]      mu_reg_arprot;
+  wire            mu_reg_arvalid;
+  wire            mu_reg_arready;
+  wire [3:0]      mu_reg_rid;
+  wire [63:0]     mu_reg_rdata;
+  wire [1:0]      mu_reg_rresp;
+  wire            mu_reg_rlast;
+  wire            mu_reg_rvalid;
+  wire            mu_reg_rready;
 
   // TLX Wires
   wire            tlx_int;
