@@ -116,7 +116,7 @@ ALL_FILE_LISTS				+= $(foreach file,$(GATE_LEVEL_FILE_LISTS),-f $(file))
 # NIC400 Interconnect File List
 file-list-nic.vc:
 	python $(TOP_DIR)/scripts/vc_expand_paths.py \
-	$(ARM_IP_PATH)/logical/nic400_OnyxIntegration/nic400/verilog/nic400_OnyxIntegration.vc \
+	$(ARM_IP_PATH)/logical/nic400_ZirconIntegration/nic400/verilog/nic400_ZirconIntegration.vc \
 	$@
 
 # TLX File List

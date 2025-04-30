@@ -13,6 +13,9 @@
 //////////////////////////////////////////////////////
 // Netlists
 //////////////////////////////////////////////////////
+
+FIXME: Need to change the following paths to Zircon netlists
+
 -v /sim/pohan/garnet_build/1203/31-cadence-innovus-signoff/outputs/design.vcs.pg.v
 -v /sim/pohan/garnet_build/1203/15-glb_top/25-cadence-innovus-signoff/outputs/design.vcs.pg.v
 -v /sim/pohan/garnet_build/1203/15-glb_top/7-glb_tile/outputs/glb_tile.vcs.pg.v
@@ -23,16 +26,20 @@
 //////////////////////////////////////////////////////
 // SRAMs
 //////////////////////////////////////////////////////
--v /sim/pohan/Memory_Behavior_Models_for_GL/macro_4096x64b.sv
--v /sim/pohan/Memory_Behavior_Models_for_GL/macro_512x32b.sv
--v /sim/pohan/Memory_Behavior_Models_for_GL/macro_8192x32b.sv
-// -v /sim/kkoul/build_gls/10-compile_design/netlist_tapeout/MEM_Tile_sram.v
-// -v /sim/kkoul/build_gls/10-compile_design/netlist_tapeout/GLB_Tile_sram.v
-// -v /sim/kkoul/build_gls/10-compile_design/netlist_tapeout/SOC_sram.v
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/RFRAM_1024x64b.sv
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/RFRAM_2048x8b.sv
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/RFRAM_32x128b.sv
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/SRAM_1024x64b.sv
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/SRAM_4096x64b.sv
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/SRAM_512x32b.sv
+-v /sim/pohan/zircon/Memory_Behavior_Models_for_GL/SRAM_8192x32b.sv
 
 //////////////////////////////////////////////////////
 // Standard cells
 //////////////////////////////////////////////////////
+
+FIXME: Need to change the following paths to Zircon netlists
+
 -v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-ldrseq-lplvt/stdcells-ldrseq-lplvt.v
 -v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-spcl-nom/stdcells-spcl-nom.v
 -v /sim/pohan/garnet_build/1203/9-intel16-adk/stdcells-supclk-nom/stdcells-supclk-nom.v
@@ -121,6 +128,9 @@
 //////////////////////////////////////////////////////
 // Tape-out & Pad Frame Collaterals
 //////////////////////////////////////////////////////
+
+FIXME: Need to change the following paths to Zircon netlists
+
 -v /intel16/ip/io/ip224_gpio_1v2/rtl/src/rtl/gpio_1v2_n1.sv
 -v /intel16/ip/io/ip224_gpio_1v2/rtl/src/rtl/gpio_1v2_e1.sv
 -v /sim/pohan/garnet_build/1202/9-intel16-adk/pdk/intel22tic.v

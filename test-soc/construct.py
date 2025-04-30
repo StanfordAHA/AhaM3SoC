@@ -38,7 +38,7 @@ def construct():
     test_names = [
         # CPU Tests
         # 'apb_mux_test',
-        # 'hello_test',
+        'hello_test',
         # 'memory_test',
         # 'dma_single_channel',
         # 'default_slaves_test',
@@ -85,18 +85,18 @@ def construct():
         'ARM_IP_DIR': arm_ip_dir,
         'AHA_IP_DIR': aha_ip_dir,
         'GATE_LEVEL_DIR': gate_level_dir,
-        'GARNET_DIR': "/sim/pohan/zircon/garnet",
-        'GARNET_HOME': "/sim/pohan/zircon/garnet",
+        'GARNET_DIR': garnet_dir,
+        'GARNET_HOME': garnet_dir,
         'TLX_FWD_DATA_LO_WIDTH': 16,
         'TLX_REV_DATA_LO_WIDTH': 45,
-        'SIM_TYPE': 'GATELEVEL', # can be RTL or GATELEVEL
+        'SIM_TYPE': 'RTL', # can be RTL or GATELEVEL
         'TEST_VIEW': 'JTAG', # can be JTAG or NO_JTAG
         'PROCESS': 'INTEL', # can be GF or TSMC if IMPL_VIEW == ASIC
         'SIMULATOR': 'VCS', # can be wither VCS or XCELIUM
         'INCLUDE_XGCD' : False,
         'use_local_garnet' : False,
         'glb_tile_mem_size': 128,
-        'GEN_PWR_SAIF': True
+        'GEN_PWR_SAIF': False
     }
 
     # -------------------------------------------------------------------------
