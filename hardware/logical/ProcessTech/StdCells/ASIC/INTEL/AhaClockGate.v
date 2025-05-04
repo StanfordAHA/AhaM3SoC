@@ -17,7 +17,13 @@ module AhaClockGate (
     output  wire            Q
 );
     // Instantiate ICG cell here
-    b15cilb01hn1n16x5 u_icg (
+    // b15cilb01hn1n16x5 u_icg (
+    //     .te                     (TE),
+    //     .en                     (E),
+    //     .clk                    (CP),
+    //     .clkout                 (Q)
+    // );
+    b0mcilb05as1n16x5 u_icg (
         .te                     (TE),
         .en                     (E),
         .clk                    (CP),
