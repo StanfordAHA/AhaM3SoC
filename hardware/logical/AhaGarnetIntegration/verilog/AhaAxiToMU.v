@@ -90,9 +90,12 @@ module AhaAxiToMU (
   assign AXI_AWREADY     = mu_aw_ready;
   assign mu_aw_valid     = AXI_AWVALID;
   assign mu_aw_bits_id   = 1'b0;
-  assign mu_aw_bits_addr = AXI_AWADDR[29:0];
-  assign mu_aw_bits_len  = AXI_AWLEN;
-  assign mu_aw_bits_size = AXI_AWSIZE;
+  // assign mu_aw_bits_addr = AXI_AWADDR[29:0];
+  assign mu_aw_bits_addr = {24'b0, AXI_AWADDR[5:0]};
+  // assign mu_aw_bits_len  = AXI_AWLEN;
+  // assign mu_aw_bits_size = AXI_AWSIZE;
+  assign mu_aw_bits_len = 8'b0;
+  assign mu_aw_bits_size = 3'd3; // 2^3 = 8 bytes per transfer
 
   // ====================================================
   // W Channel (Write Data)
@@ -100,9 +103,10 @@ module AhaAxiToMU (
   assign AXI_WREADY     = mu_w_ready;
   assign mu_w_valid     = AXI_WVALID;
   assign mu_w_bits_data = AXI_WDATA;
-  assign mu_w_bits_strb = AXI_WSTRB;
-  assign mu_w_bits_last = AXI_WLAST;
-
+  // assign mu_w_bits_strb = AXI_WSTRB;
+  // assign mu_w_bits_last = AXI_WLAST;
+  assign mu_w_bits_strb = 8'hFF; // Strb is all high
+  assign mu_w_bits_last = 1'b1;
   // ====================================================
   // B Channel (Write Response)
   // ====================================================
