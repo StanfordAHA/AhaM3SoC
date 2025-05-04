@@ -17,7 +17,9 @@
 //      - Integrated XGCD
 //------------------------------------------------------------------------------
 
-module AhaSoCPartialIntegration (
+module AhaSoCPartialIntegration #(
+    parameter MU_REG_AXI_DATA_WIDTH = 32,
+) (
     // Resets
     input       wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_CLK
     input       wire            CPU_SYSRESETn,      // CPU soft reset synchronized to CPU_CLK
@@ -194,7 +196,7 @@ module AhaSoCPartialIntegration (
     output      wire [2:0]      MU_REG_AWPROT,
     output      wire            MU_REG_AWVALID,
     input       wire            MU_REG_AWREADY,
-    output      wire [63:0]     MU_REG_WDATA,
+    output      wire [MU_REG_AXI_DATA_WIDTH-1:0]     MU_REG_WDATA,
     output      wire [7:0]      MU_REG_WSTRB,
     output      wire            MU_REG_WLAST,
     output      wire            MU_REG_WVALID,
@@ -214,7 +216,7 @@ module AhaSoCPartialIntegration (
     output      wire            MU_REG_ARVALID,
     input       wire            MU_REG_ARREADY,
     input       wire [3:0]      MU_REG_RID,
-    input       wire [63:0]     MU_REG_RDATA,
+    input       wire [MU_REG_AXI_DATA_WIDTH-1:0]     MU_REG_RDATA,
     input       wire [1:0]      MU_REG_RRESP,
     input       wire            MU_REG_RLAST,
     input       wire            MU_REG_RVALID,

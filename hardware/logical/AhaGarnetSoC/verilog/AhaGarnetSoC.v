@@ -15,7 +15,9 @@
 //      - Integrated XGCD
 //------------------------------------------------------------------------------
 
-module AhaGarnetSoC (
+module AhaGarnetSoC #(
+  parameter MU_REG_AXI_DATA_WIDTH = 32,
+) (
   // Resets
   input   wire            PORESETn,           // Global Power-on Reset
   input   wire            SYSRESETn,          // CPU-only Reset
@@ -249,7 +251,7 @@ module AhaGarnetSoC (
   wire [2:0]      mu_reg_awprot;
   wire            mu_reg_awvalid;
   wire            mu_reg_awready;
-  wire [63:0]     mu_reg_wdata;
+  wire [MU_REG_AXI_DATA_WIDTH-1:0]     mu_reg_wdata;
   wire [7:0]      mu_reg_wstrb;
   wire            mu_reg_wlast;
   wire            mu_reg_wvalid;
@@ -269,7 +271,7 @@ module AhaGarnetSoC (
   wire            mu_reg_arvalid;
   wire            mu_reg_arready;
   wire [3:0]      mu_reg_rid;
-  wire [63:0]     mu_reg_rdata;
+  wire [MU_REG_AXI_DATA_WIDTH-1:0]     mu_reg_rdata;
   wire [1:0]      mu_reg_rresp;
   wire            mu_reg_rlast;
   wire            mu_reg_rvalid;
@@ -436,7 +438,9 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   // Instantiate Partial SoC Integration
   //------------------------------------------------------------------------------
-  AhaSoCPartialIntegration u_aha_soc_partial (
+  AhaSoCPartialIntegration #(
+    .MU_REG_AXI_DATA_WIDTH        (MU_REG_AXI_DATA_WIDTH)
+  ) u_aha_soc_partial (
     // Resets
     .CPU_PORESETn                 (cpu_poreset_n),
     .CPU_SYSRESETn                (cpu_sysreset_n),
@@ -800,7 +804,9 @@ module AhaGarnetSoC (
   //------------------------------------------------------------------------------
   // Instantiate Garnet CGRA
   //------------------------------------------------------------------------------
-  AhaGarnetIntegration u_aha_garnet (
+  AhaGarnetIntegration #(
+    .MU_REG_AXI_DATA_WIDTH        (MU_REG_AXI_DATA_WIDTH)
+  ) u_aha_garnet (
     .CLK                          (cgra_clk),
     .RESETn                       (cgra_reset_n),
 
