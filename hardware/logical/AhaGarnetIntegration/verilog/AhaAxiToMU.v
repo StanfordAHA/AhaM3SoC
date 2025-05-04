@@ -7,7 +7,9 @@
 // Author   : Po-Han Chen
 // Date     : Apr 3, 2025
 //------------------------------------------------------------------------------
-module AhaAxiToMU (
+module AhaAxiToMU #(
+  parameter MU_REG_AXI_DATA_WIDTH = 32,
+) (
   // AXI4 Slave Interface
   input   wire [3:0]   AXI_AWID,
   input   wire [31:0]  AXI_AWADDR,
@@ -19,7 +21,7 @@ module AhaAxiToMU (
   input   wire [2:0]   AXI_AWPROT,
   input   wire         AXI_AWVALID,
   output  wire         AXI_AWREADY,
-  input   wire [63:0]  AXI_WDATA,
+  input   wire [MU_REG_AXI_DATA_WIDTH-1:0]  AXI_WDATA,
   input   wire [7:0]   AXI_WSTRB,
   input   wire         AXI_WLAST,
   input   wire         AXI_WVALID,
@@ -39,7 +41,7 @@ module AhaAxiToMU (
   input   wire         AXI_ARVALID,
   output  wire         AXI_ARREADY,
   output  wire [3:0]   AXI_RID,
-  output  wire [63:0]  AXI_RDATA,
+  output  wire [MU_REG_AXI_DATA_WIDTH-1:0]  AXI_RDATA,
   output  wire [1:0]   AXI_RRESP,
   output  wire         AXI_RLAST,
   output  wire         AXI_RVALID,
@@ -53,7 +55,7 @@ module AhaAxiToMU (
   output  wire [2:0]   mu_aw_bits_size,
   input   wire         mu_w_ready,
   output  wire         mu_w_valid,
-  output  wire [63:0]  mu_w_bits_data,
+  output  wire [MU_REG_AXI_DATA_WIDTH-1:0]  mu_w_bits_data,
   output  wire [7:0]   mu_w_bits_strb,
   output  wire         mu_w_bits_last,
   output  wire         mu_b_ready,
@@ -67,7 +69,7 @@ module AhaAxiToMU (
   output  wire         mu_r_ready,
   input   wire         mu_r_valid,
   input   wire         mu_r_bits_id,
-  input   wire [63:0]  mu_r_bits_data,
+  input   wire [MU_REG_AXI_DATA_WIDTH-1:0]  mu_r_bits_data,
   input   wire [1:0]   mu_r_bits_resp,
   input   wire         mu_r_bits_last
 );

@@ -15,7 +15,9 @@
 //          - 08/10/2022    : Fixed ID_WIDTH to 4 bits
 //------------------------------------------------------------------------------
 
-module AhaGarnetIntegration (
+module AhaGarnetIntegration #(
+    parameter MU_REG_AXI_DATA_WIDTH = 32,
+) (
     // Clock and Reset
     input   wire            CLK,                // CGRA Clock
     input   wire            RESETn,             // CGRA PowerOn Reset
@@ -115,7 +117,7 @@ module AhaGarnetIntegration (
     input   wire [2:0]      MU_REG_AWPROT,
     input   wire            MU_REG_AWVALID,
     output  wire            MU_REG_AWREADY,
-    input   wire [63:0]     MU_REG_WDATA,
+    input   wire [MU_REG_AXI_DATA_WIDTH-1:0]     MU_REG_WDATA,
     input   wire [7:0]      MU_REG_WSTRB,
     input   wire            MU_REG_WLAST,
     input   wire            MU_REG_WVALID,
@@ -135,7 +137,7 @@ module AhaGarnetIntegration (
     input   wire            MU_REG_ARVALID,
     output  wire            MU_REG_ARREADY,
     output  wire [3:0]      MU_REG_RID,
-    output  wire [63:0]     MU_REG_RDATA,
+    output  wire [MU_REG_AXI_DATA_WIDTH-1:0]     MU_REG_RDATA,
     output  wire [1:0]      MU_REG_RRESP,
     output  wire            MU_REG_RLAST,
     output  wire            MU_REG_RVALID,
@@ -300,7 +302,7 @@ module AhaGarnetIntegration (
     wire [2:0]              auto_axi_in_aw_bits_size;
     wire                    auto_axi_in_w_ready;
     wire                    auto_axi_in_w_valid;
-    wire [63:0]             auto_axi_in_w_bits_data;
+    wire [MU_REG_AXI_DATA_WIDTH-1:0]             auto_axi_in_w_bits_data;
     wire [7:0]              auto_axi_in_w_bits_strb;
     wire                    auto_axi_in_w_bits_last;
     wire                    auto_axi_in_b_ready;
@@ -314,11 +316,13 @@ module AhaGarnetIntegration (
     wire                    auto_axi_in_r_ready;
     wire                    auto_axi_in_r_valid;
     wire                    auto_axi_in_r_bits_id;
-    wire [63:0]             auto_axi_in_r_bits_data;
+    wire [MU_REG_AXI_DATA_WIDTH-1:0]             auto_axi_in_r_bits_data;
     wire [1:0]              auto_axi_in_r_bits_resp;
     wire                    auto_axi_in_r_bits_last;
 
-    AhaAxiToMU u_axi_to_mu (
+    AhaAxiToMU #(
+        .MU_REG_AXI_DATA_WIDTH (MU_REG_AXI_DATA_WIDTH)
+    ) u_axi_to_mu (
         .AXI_AWID           (MU_REG_AWID),
         .AXI_AWADDR         (MU_REG_AWADDR),
         .AXI_AWLEN          (MU_REG_AWLEN),
@@ -570,7 +574,7 @@ module AhaGarnetIntegration (
     assign MU_REG_BVALID      = 1'b0;
     assign MU_REG_ARREADY     = 1'b1;
     assign MU_REG_RID         = 4'h0;
-    assign MU_REG_RDATA       = {64{1'b0}};
+    assign MU_REG_RDATA       = {MU_REG_AXI_DATA_WIDTH{1'b0}};
     assign MU_REG_RRESP       = 2'b00;
     assign MU_REG_RLAST       = 1'b1;
     assign MU_REG_RVALID      = 1'b0;
