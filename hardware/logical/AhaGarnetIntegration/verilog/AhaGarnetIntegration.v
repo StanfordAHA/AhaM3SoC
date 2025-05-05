@@ -321,8 +321,12 @@ module AhaGarnetIntegration #(
     wire                    auto_axi_in_r_bits_last;
 
     AhaAxiToMU #(
-        .MU_REG_AXI_DATA_WIDTH (MU_REG_AXI_DATA_WIDTH)
+        .MU_REG_AXI_DATA_WIDTH (MU_REG_AXI_DATA_WIDTH),
+        .ID_WIDTH(4)
     ) u_axi_to_mu (
+        .clk                (CLK),
+        .reset              (~RESETn),
+
         .AXI_AWID           (MU_REG_AWID),
         .AXI_AWADDR         (MU_REG_AWADDR),
         .AXI_AWLEN          (MU_REG_AWLEN),

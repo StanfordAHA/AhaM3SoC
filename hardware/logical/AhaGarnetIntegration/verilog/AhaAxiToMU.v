@@ -9,9 +9,13 @@
 //------------------------------------------------------------------------------
 module AhaAxiToMU #(
   parameter MU_REG_AXI_DATA_WIDTH = 32,
+  parameter ID_WIDTH = 4
 ) (
+  // Clock and Reset
+  input   wire         clk,
+  input   wire         reset,
   // AXI4 Slave Interface
-  input   wire [3:0]   AXI_AWID,
+  input   wire [ID_WIDTH-1:0]   AXI_AWID,
   input   wire [31:0]  AXI_AWADDR,
   input   wire [7:0]   AXI_AWLEN,
   input   wire [2:0]   AXI_AWSIZE,
@@ -26,11 +30,11 @@ module AhaAxiToMU #(
   input   wire         AXI_WLAST,
   input   wire         AXI_WVALID,
   output  wire         AXI_WREADY,
-  output  wire [3:0]   AXI_BID,
+  output  wire [ID_WIDTH-1:0]   AXI_BID,
   output  wire [1:0]   AXI_BRESP,
   output  wire         AXI_BVALID,
   input   wire         AXI_BREADY,
-  input   wire [3:0]   AXI_ARID,
+  input   wire [ID_WIDTH-1:0]   AXI_ARID,
   input   wire [31:0]  AXI_ARADDR,
   input   wire [7:0]   AXI_ARLEN,
   input   wire [2:0]   AXI_ARSIZE,
@@ -40,7 +44,7 @@ module AhaAxiToMU #(
   input   wire [2:0]   AXI_ARPROT,
   input   wire         AXI_ARVALID,
   output  wire         AXI_ARREADY,
-  output  wire [3:0]   AXI_RID,
+  output  wire [ID_WIDTH-1:0]   AXI_RID,
   output  wire [MU_REG_AXI_DATA_WIDTH-1:0]  AXI_RDATA,
   output  wire [1:0]   AXI_RRESP,
   output  wire         AXI_RLAST,
@@ -74,12 +78,10 @@ module AhaAxiToMU #(
   input   wire         mu_r_bits_last
 );
 
-  wire unused = (| AXI_AWID)     |
-                (| AXI_AWBURST)  |
+  wire unused = (| AXI_AWBURST)  |
                 (| AXI_AWLOCK)   |
                 (| AXI_AWCACHE)  |
                 (| AXI_AWPROT)   |
-                (| AXI_ARID)     |
                 (| AXI_ARBURST)  |
                 (| AXI_ARLOCK)   |
                 (| AXI_ARCACHE)  |
@@ -112,7 +114,15 @@ module AhaAxiToMU #(
   // ====================================================
   // B Channel (Write Response)
   // ====================================================
-  assign AXI_BID    = 4'b0000;
+  reg [ID_WIDTH-1:0] bid;
+  always@(posedge clk or negedge rstn) begin
+    if(!rstn) begin
+      bid <= {ID_WIDTH{1'b0}};
+    end else if(AXI_AWVALID & AXI_AWREADY) begin
+      bid <= AXI_AWID;
+    end
+  end
+  assign AXI_BID    = bid;
   assign AXI_BRESP  = 2'b00;
   assign AXI_BVALID = mu_b_valid;
   assign mu_b_ready = AXI_BREADY;
@@ -130,7 +140,15 @@ module AhaAxiToMU #(
   // ====================================================
   // R Channel (Read Data)
   // ====================================================
-  assign AXI_RID    = 4'b0000;
+  reg [ID_WIDTH-1:0] rid;
+  always@(posedge clk or negedge rstn) begin
+    if(!rstn) begin
+      rid <= {ID_WIDTH{1'b0}};
+    end else if(AXI_ARVALID & AXI_ARREADY) begin
+      rid <= AXI_ARID;
+    end
+  end
+  assign AXI_RID    = rid;
   assign AXI_RDATA  = mu_r_bits_data;
   assign AXI_RRESP  = mu_r_bits_resp;
   assign AXI_RLAST  = mu_r_bits_last;
