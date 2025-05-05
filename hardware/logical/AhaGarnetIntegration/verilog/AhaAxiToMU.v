@@ -9,7 +9,8 @@
 //------------------------------------------------------------------------------
 module AhaAxiToMU #(
   parameter MU_REG_AXI_DATA_WIDTH = 32,
-  parameter ID_WIDTH = 4
+  parameter ID_WIDTH = 4,
+  parameter MU_REG_AXI_STRB_WIDTH = MU_REG_AXI_DATA_WIDTH / 8
 ) (
   // Clock and Reset
   input   wire         CLK,
@@ -26,7 +27,7 @@ module AhaAxiToMU #(
   input   wire         AXI_AWVALID,
   output  wire         AXI_AWREADY,
   input   wire [MU_REG_AXI_DATA_WIDTH-1:0]  AXI_WDATA,
-  input   wire [3:0]   AXI_WSTRB,
+  input   wire [MU_REG_AXI_STRB_WIDTH-1:0]   AXI_WSTRB,
   input   wire         AXI_WLAST,
   input   wire         AXI_WVALID,
   output  wire         AXI_WREADY,
@@ -60,7 +61,7 @@ module AhaAxiToMU #(
   input   wire         mu_w_ready,
   output  wire         mu_w_valid,
   output  wire [MU_REG_AXI_DATA_WIDTH-1:0]  mu_w_bits_data,
-  output  wire [3:0]   mu_w_bits_strb,
+  output  wire [MU_REG_AXI_STRB_WIDTH-1:0]   mu_w_bits_strb,
   output  wire         mu_w_bits_last,
   output  wire         mu_b_ready,
   input   wire         mu_b_valid,
@@ -109,6 +110,7 @@ module AhaAxiToMU #(
   assign mu_w_bits_data = AXI_WDATA;
   // assign mu_w_bits_strb = AXI_WSTRB;
   // assign mu_w_bits_last = AXI_WLAST;
+  // assign mu_w_bits_strb = 8'hFF; // Strb is all high
   assign mu_w_bits_strb = 4'hF; // Strb is all high
   assign mu_w_bits_last = 1'b1;
   // ====================================================

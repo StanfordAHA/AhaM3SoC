@@ -16,7 +16,8 @@
 //------------------------------------------------------------------------------
 
 module AhaGarnetSoC #(
-  parameter MU_REG_AXI_DATA_WIDTH = 32
+  parameter MU_REG_AXI_DATA_WIDTH = 32,
+  parameter MU_REG_AXI_STRB_WIDTH = MU_REG_AXI_DATA_WIDTH / 8
 ) (
   // Resets
   input   wire            PORESETn,           // Global Power-on Reset
@@ -252,7 +253,7 @@ module AhaGarnetSoC #(
   wire            mu_reg_awvalid;
   wire            mu_reg_awready;
   wire [MU_REG_AXI_DATA_WIDTH-1:0]     mu_reg_wdata;
-  wire [3:0]      mu_reg_wstrb;
+  wire [MU_REG_AXI_STRB_WIDTH-1:0]      mu_reg_wstrb;
   wire            mu_reg_wlast;
   wire            mu_reg_wvalid;
   wire            mu_reg_wready;
@@ -1025,7 +1026,7 @@ module AhaGarnetSoC #(
   //------------------------------------------------------------------------------
   // AhaXGCDIntegration u_aha_xgcd_integration (
   //   .XGCD_EXT_CLK                   (XGCD_EXT_CLK),
-  //   .XGCD_SOC_CLK                   (sys_clk),                 
+  //   .XGCD_SOC_CLK                   (sys_clk),
   //   .XGCD_CLK_SELECT                (XGCD_CLK_SELECT),
   //   .PORESETn                       (PORESETn),
   //   .XGCD_DIV8_CLK                  (XGCD_DIV8_CLK),

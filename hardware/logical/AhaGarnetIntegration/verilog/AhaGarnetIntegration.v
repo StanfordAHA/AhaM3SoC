@@ -16,7 +16,8 @@
 //------------------------------------------------------------------------------
 
 module AhaGarnetIntegration #(
-    parameter MU_REG_AXI_DATA_WIDTH = 32
+    parameter MU_REG_AXI_DATA_WIDTH = 32,
+    parameter MU_REG_AXI_STRB_WIDTH = MU_REG_AXI_DATA_WIDTH / 8
 ) (
     // Clock and Reset
     input   wire            CLK,                // CGRA Clock
@@ -118,7 +119,7 @@ module AhaGarnetIntegration #(
     input   wire            MU_REG_AWVALID,
     output  wire            MU_REG_AWREADY,
     input   wire [MU_REG_AXI_DATA_WIDTH-1:0]     MU_REG_WDATA,
-    input   wire [3:0]      MU_REG_WSTRB,
+    input   wire [MU_REG_AXI_STRB_WIDTH-1:0]      MU_REG_WSTRB,
     input   wire            MU_REG_WLAST,
     input   wire            MU_REG_WVALID,
     output  wire            MU_REG_WREADY,
@@ -303,7 +304,7 @@ module AhaGarnetIntegration #(
     wire                    auto_axi_in_w_ready;
     wire                    auto_axi_in_w_valid;
     wire [MU_REG_AXI_DATA_WIDTH-1:0]             auto_axi_in_w_bits_data;
-    wire [7:0]              auto_axi_in_w_bits_strb;
+    wire [MU_REG_AXI_STRB_WIDTH-1:0]              auto_axi_in_w_bits_strb;
     wire                    auto_axi_in_w_bits_last;
     wire                    auto_axi_in_b_ready;
     wire                    auto_axi_in_b_valid;
@@ -445,8 +446,8 @@ module AhaGarnetIntegration #(
         .auto_axi_in_aw_bits_size       (auto_axi_in_aw_bits_size),
         .auto_axi_in_w_ready            (auto_axi_in_w_ready),
         .auto_axi_in_w_valid            (auto_axi_in_w_valid),
-        .auto_axi_in_w_bits_data        (auto_axi_in_w_bits_data),
-        .auto_axi_in_w_bits_strb        (auto_axi_in_w_bits_strb),
+        .auto_axi_in_w_bits_data        ({32'b0, auto_axi_in_w_bits_data}), // TEMPORARY HACK
+        .auto_axi_in_w_bits_strb        ({4'b1111, auto_axi_in_w_bits_strb}), // TEMPORARY HACK
         .auto_axi_in_w_bits_last        (auto_axi_in_w_bits_last),
         .auto_axi_in_b_ready            (auto_axi_in_b_ready),
         .auto_axi_in_b_valid            (auto_axi_in_b_valid),
