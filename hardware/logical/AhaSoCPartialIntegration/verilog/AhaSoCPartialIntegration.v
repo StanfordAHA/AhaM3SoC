@@ -709,7 +709,6 @@ module AhaSoCPartialIntegration #(
     .RVALID_M_AXI_CGRA_DATA     (CGRA_DATA_RVALID),
     .RREADY_M_AXI_CGRA_DATA     (CGRA_DATA_RREADY),
 
-    // *** BEGIN REAL CODE *** //
     // // Instance: u_cd_CGRA, Port: M_AXI_CGRA_REG
 
     .AWID_M_AXI_CGRA_REG        (CGRA_REG_AWID),
@@ -785,89 +784,6 @@ module AhaSoCPartialIntegration #(
     .RLAST_M_AXI_MU_REG         (MU_REG_RLAST),
     .RVALID_M_AXI_MU_REG        (MU_REG_RVALID),
     .RREADY_M_AXI_MU_REG        (MU_REG_RREADY),
-
-    // *** END REAL CODE *** //
-
-
-    // *** BEGIN HACKED CODE *** //
-     // Instance: u_cd_CGRA, Port: M_AXI_CGRA_REG
-
-//    .AWID_M_AXI_CGRA_REG        (MU_REG_AWID),
-//    .AWADDR_M_AXI_CGRA_REG      (MU_REG_AWADDR),
-//    .AWLEN_M_AXI_CGRA_REG       (MU_REG_AWLEN),
-//    .AWSIZE_M_AXI_CGRA_REG      (MU_REG_AWSIZE),
-//    .AWBURST_M_AXI_CGRA_REG     (MU_REG_AWBURST),
-//    .AWLOCK_M_AXI_CGRA_REG      (MU_REG_AWLOCK),
-//    .AWCACHE_M_AXI_CGRA_REG     (MU_REG_AWCACHE),
-//    .AWPROT_M_AXI_CGRA_REG      (MU_REG_AWPROT),
-//    .AWVALID_M_AXI_CGRA_REG     (MU_REG_AWVALID),
-//    .AWREADY_M_AXI_CGRA_REG     (MU_REG_AWREADY),
-//    .WDATA_M_AXI_CGRA_REG       (MU_REG_WDATA),
-//    .WSTRB_M_AXI_CGRA_REG       (MU_REG_WSTRB),
-//    .WLAST_M_AXI_CGRA_REG       (MU_REG_WLAST),
-//    .WVALID_M_AXI_CGRA_REG      (MU_REG_WVALID),
-//    .WREADY_M_AXI_CGRA_REG      (MU_REG_WREADY),
-//    .BID_M_AXI_CGRA_REG         (MU_REG_BID),
-//    .BRESP_M_AXI_CGRA_REG       (MU_REG_BRESP),
-//    .BVALID_M_AXI_CGRA_REG      (MU_REG_BVALID),
-//    .BREADY_M_AXI_CGRA_REG      (MU_REG_BREADY),
-//    .ARID_M_AXI_CGRA_REG        (MU_REG_ARID),
-//    .ARADDR_M_AXI_CGRA_REG      (MU_REG_ARADDR),
-//    .ARLEN_M_AXI_CGRA_REG       (MU_REG_ARLEN),
-//    .ARSIZE_M_AXI_CGRA_REG      (MU_REG_ARSIZE),
-//    .ARBURST_M_AXI_CGRA_REG     (MU_REG_ARBURST),
-//    .ARLOCK_M_AXI_CGRA_REG      (MU_REG_ARLOCK),
-//    .ARCACHE_M_AXI_CGRA_REG     (MU_REG_ARCACHE),
-//    .ARPROT_M_AXI_CGRA_REG      (MU_REG_ARPROT),
-//    .ARVALID_M_AXI_CGRA_REG     (MU_REG_ARVALID),
-//    .ARREADY_M_AXI_CGRA_REG     (MU_REG_ARREADY),
-//    .RID_M_AXI_CGRA_REG         (MU_REG_RID),
-//    .RDATA_M_AXI_CGRA_REG       (MU_REG_RDATA),
-//    .RRESP_M_AXI_CGRA_REG       (MU_REG_RRESP),
-//    .RLAST_M_AXI_CGRA_REG       (MU_REG_RLAST),
-//    .RVALID_M_AXI_CGRA_REG      (MU_REG_RVALID),
-//    .RREADY_M_AXI_CGRA_REG      (MU_REG_RREADY),
-
-//    // Instance: u_cd_CGRA, Port: M_AXI_MU_REG
-
-//     .AWID_M_AXI_MU_REG          (CGRA_REG_AWID),
-//     .AWADDR_M_AXI_MU_REG        (CGRA_REG_AWADDR),
-//     .AWLEN_M_AXI_MU_REG         (CGRA_REG_AWLEN),
-//     .AWSIZE_M_AXI_MU_REG        (CGRA_REG_AWSIZE),
-//     .AWBURST_M_AXI_MU_REG       (CGRA_REG_AWBURST),
-//     .AWLOCK_M_AXI_MU_REG        (CGRA_REG_AWLOCK),
-//     .AWCACHE_M_AXI_MU_REG       (CGRA_REG_AWCACHE),
-//     .AWPROT_M_AXI_MU_REG        (CGRA_REG_AWPROT),
-//     .AWVALID_M_AXI_MU_REG       (CGRA_REG_AWVALID),
-//     .AWREADY_M_AXI_MU_REG       (CGRA_REG_AWREADY),
-//     .WDATA_M_AXI_MU_REG         (CGRA_REG_WDATA),
-//     .WSTRB_M_AXI_MU_REG         (CGRA_REG_WSTRB),
-//     .WLAST_M_AXI_MU_REG         (CGRA_REG_WLAST),
-//     .WVALID_M_AXI_MU_REG        (CGRA_REG_WVALID),
-//     .WREADY_M_AXI_MU_REG        (CGRA_REG_WREADY),
-//     .BID_M_AXI_MU_REG           (CGRA_REG_BID),
-//     .BRESP_M_AXI_MU_REG         (CGRA_REG_BRESP),
-//     .BVALID_M_AXI_MU_REG        (CGRA_REG_BVALID),
-//     .BREADY_M_AXI_MU_REG        (CGRA_REG_BREADY),
-//     .ARID_M_AXI_MU_REG          (CGRA_REG_ARID),
-//     .ARADDR_M_AXI_MU_REG        (CGRA_REG_ARADDR),
-//     .ARLEN_M_AXI_MU_REG         (CGRA_REG_ARLEN),
-//     .ARSIZE_M_AXI_MU_REG        (CGRA_REG_ARSIZE),
-//     .ARBURST_M_AXI_MU_REG       (CGRA_REG_ARBURST),
-//     .ARLOCK_M_AXI_MU_REG        (CGRA_REG_ARLOCK),
-//     .ARCACHE_M_AXI_MU_REG       (CGRA_REG_ARCACHE),
-//     .ARPROT_M_AXI_MU_REG        (CGRA_REG_ARPROT),
-//     .ARVALID_M_AXI_MU_REG       (CGRA_REG_ARVALID),
-//     .ARREADY_M_AXI_MU_REG       (CGRA_REG_ARREADY),
-//     .RID_M_AXI_MU_REG           (CGRA_REG_RID),
-//     .RDATA_M_AXI_MU_REG         (CGRA_REG_RDATA),
-//     .RRESP_M_AXI_MU_REG         (CGRA_REG_RRESP),
-//     .RLAST_M_AXI_MU_REG         (CGRA_REG_RLAST),
-//     .RVALID_M_AXI_MU_REG        (CGRA_REG_RVALID),
-//     .RREADY_M_AXI_MU_REG        (CGRA_REG_RREADY),
-
-
-    // *** END HACKED CODE *** //
 
     // Instance: u_cd_SYSTEM, Port: M_AHB_PERIPH
 
