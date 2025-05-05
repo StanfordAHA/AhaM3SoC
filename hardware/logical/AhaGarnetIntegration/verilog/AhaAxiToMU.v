@@ -12,8 +12,8 @@ module AhaAxiToMU #(
   parameter ID_WIDTH = 4
 ) (
   // Clock and Reset
-  input   wire         clk,
-  input   wire         reset,
+  input   wire         CLK,
+  input   wire         RESETn,
   // AXI4 Slave Interface
   input   wire [ID_WIDTH-1:0]   AXI_AWID,
   input   wire [31:0]  AXI_AWADDR,
@@ -26,7 +26,7 @@ module AhaAxiToMU #(
   input   wire         AXI_AWVALID,
   output  wire         AXI_AWREADY,
   input   wire [MU_REG_AXI_DATA_WIDTH-1:0]  AXI_WDATA,
-  input   wire [7:0]   AXI_WSTRB,
+  input   wire [3:0]   AXI_WSTRB,
   input   wire         AXI_WLAST,
   input   wire         AXI_WVALID,
   output  wire         AXI_WREADY,
@@ -60,7 +60,7 @@ module AhaAxiToMU #(
   input   wire         mu_w_ready,
   output  wire         mu_w_valid,
   output  wire [MU_REG_AXI_DATA_WIDTH-1:0]  mu_w_bits_data,
-  output  wire [7:0]   mu_w_bits_strb,
+  output  wire [3:0]   mu_w_bits_strb,
   output  wire         mu_w_bits_last,
   output  wire         mu_b_ready,
   input   wire         mu_b_valid,
@@ -109,14 +109,14 @@ module AhaAxiToMU #(
   assign mu_w_bits_data = AXI_WDATA;
   // assign mu_w_bits_strb = AXI_WSTRB;
   // assign mu_w_bits_last = AXI_WLAST;
-  assign mu_w_bits_strb = 8'hFF; // Strb is all high
+  assign mu_w_bits_strb = 4'hF; // Strb is all high
   assign mu_w_bits_last = 1'b1;
   // ====================================================
   // B Channel (Write Response)
   // ====================================================
   reg [ID_WIDTH-1:0] bid;
-  always@(posedge clk or negedge rstn) begin
-    if(!rstn) begin
+  always@(posedge CLK or negedge RESETn) begin
+    if(!RESETn) begin
       bid <= {ID_WIDTH{1'b0}};
     end else if(AXI_AWVALID & AXI_AWREADY) begin
       bid <= AXI_AWID;
@@ -141,8 +141,8 @@ module AhaAxiToMU #(
   // R Channel (Read Data)
   // ====================================================
   reg [ID_WIDTH-1:0] rid;
-  always@(posedge clk or negedge rstn) begin
-    if(!rstn) begin
+  always@(posedge CLK or negedge RESETn) begin
+    if(!RESETn) begin
       rid <= {ID_WIDTH{1'b0}};
     end else if(AXI_ARVALID & AXI_ARREADY) begin
       rid <= AXI_ARID;

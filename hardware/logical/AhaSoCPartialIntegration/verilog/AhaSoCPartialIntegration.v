@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------
 
 module AhaSoCPartialIntegration #(
-    parameter MU_REG_AXI_DATA_WIDTH = 32,
+    parameter MU_REG_AXI_DATA_WIDTH = 32
 ) (
     // Resets
     input       wire            CPU_PORESETn,       // CPU Power on reset synchronized to CPU_CLK
@@ -197,7 +197,7 @@ module AhaSoCPartialIntegration #(
     output      wire            MU_REG_AWVALID,
     input       wire            MU_REG_AWREADY,
     output      wire [MU_REG_AXI_DATA_WIDTH-1:0]     MU_REG_WDATA,
-    output      wire [7:0]      MU_REG_WSTRB,
+    output      wire [3:0]      MU_REG_WSTRB,
     output      wire            MU_REG_WLAST,
     output      wire            MU_REG_WVALID,
     input       wire            MU_REG_WREADY,

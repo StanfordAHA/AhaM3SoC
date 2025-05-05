@@ -16,7 +16,7 @@
 //------------------------------------------------------------------------------
 
 module AhaGarnetSoC #(
-  parameter MU_REG_AXI_DATA_WIDTH = 32,
+  parameter MU_REG_AXI_DATA_WIDTH = 32
 ) (
   // Resets
   input   wire            PORESETn,           // Global Power-on Reset
@@ -252,7 +252,7 @@ module AhaGarnetSoC #(
   wire            mu_reg_awvalid;
   wire            mu_reg_awready;
   wire [MU_REG_AXI_DATA_WIDTH-1:0]     mu_reg_wdata;
-  wire [7:0]      mu_reg_wstrb;
+  wire [3:0]      mu_reg_wstrb;
   wire            mu_reg_wlast;
   wire            mu_reg_wvalid;
   wire            mu_reg_wready;
