@@ -446,8 +446,8 @@ module AhaGarnetIntegration #(
         .auto_axi_in_aw_bits_size       (auto_axi_in_aw_bits_size),
         .auto_axi_in_w_ready            (auto_axi_in_w_ready),
         .auto_axi_in_w_valid            (auto_axi_in_w_valid),
-        .auto_axi_in_w_bits_data        ({32'b0, auto_axi_in_w_bits_data}), // TEMPORARY HACK
-        .auto_axi_in_w_bits_strb        ({4'b1111, auto_axi_in_w_bits_strb}), // TEMPORARY HACK
+        .auto_axi_in_w_bits_data        ({32'b0, auto_axi_in_w_bits_data}), // Conversion necessary b/c MU axi master data ifc is 32b
+        .auto_axi_in_w_bits_strb        ({4'hF, auto_axi_in_w_bits_strb}), // Conversion necessary b/c MU axi master data ifc is 32b
         .auto_axi_in_w_bits_last        (auto_axi_in_w_bits_last),
         .auto_axi_in_b_ready            (auto_axi_in_b_ready),
         .auto_axi_in_b_valid            (auto_axi_in_b_valid),
