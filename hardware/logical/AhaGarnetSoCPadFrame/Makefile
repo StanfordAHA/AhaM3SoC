@@ -58,16 +58,6 @@ CUR_DIR  		:= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 #
 all: python
 
-	################################################################################
-	#
-	# Genesis Run Target
-	#
-genesis:
-	mkdir -p $(TARG_DIR) ; \
-	cd $(TARG_DIR) ; \
-	Genesis2.pl -parse -generate -top $(TOP_NAME) -input $(CUR_DIR)/$(INPUT_FILE) -parameter $(TOP_NAME).include_core=$(INCLUDE_CORE); \
-	cd $(CUR_DIR)
-
 python:
 	mkdir -p $(TARG_DIR) ; \
 	cd $(TARG_DIR) ; \

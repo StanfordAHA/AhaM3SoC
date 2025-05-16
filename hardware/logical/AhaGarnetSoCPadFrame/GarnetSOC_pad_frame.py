@@ -711,6 +711,3 @@ with open("io_pad_placement.tcl", "w") as f:
     x += pad_core_space_left_right
     y -= pad_core_space_top_bottom
     f.write(f'placeInstance corner_{corner} {x:.2f} {y:.2f} {corner_orientations[corner]}\n')
-
-with open("io_file", "w") as f:
-    f.write('deprecated\n')
